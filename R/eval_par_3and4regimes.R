@@ -158,7 +158,7 @@ true_states=df2016CO246$type
 
 
 df2016CO246=df2016CO246[,c("a","e","theta","omega")]
-df2016CO246=compute_feat(df2016CO246,wdn=10,am1=T)
+df2016CO246=compute_feat(df2016CO246,wdn=75,am1=T)
 
 lambda=c(0,5,10,15,20,30)
 kappa=seq(1,ceiling(sqrt(dim(df2016CO246)[2])),by=1)
@@ -173,7 +173,7 @@ modsel2016CO246=data.frame(hp,FTIC=unlist(lapply(est2016CO246,function(x)x$FTIC)
 
 modsel2016CO246
 
-estw2016CO246=data.frame(weight=est2016CO246[[24]]$est_weights,
+estw2016CO246=data.frame(weight=est2016CO246[[2]]$est_weights,
                          feat=colnames(df2016CO246))
 
 # Sort by weight
@@ -187,7 +187,7 @@ plot(df2016CO246$sdwdn_omega,type='l',ylab="sdwdn_omega")
 plot(df2016CO246$sdwdn_a,type='l',ylab="sdwdn_a")
 plot(df2016CO246$sdwdn_theta,type='l',ylab="sdwdn_theta")
 
-df2016CO246_b=data.frame(df2016CO246,type=est2016CO246[[24]]$est_states)
+df2016CO246_b=data.frame(df2016CO246,type=est2016CO246[[2]]$est_states)
 p2016CO246_b=plot_real4(df2016CO246_b)
 
 Pest2016CO246_b=ggarrange(p2016CO246_b$Pa,

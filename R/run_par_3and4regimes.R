@@ -86,7 +86,7 @@ true_states=order_states(df2016CO246$type)
 
 df2016CO246=df2016CO246[,c("a","e","theta","omega")]
 
-df2016CO246=compute_feat(df2016CO246,wdn=10,am1=T)
+df2016CO246=compute_feat(df2016CO246,wdn=75,am1=T)
 N=dim(df2016CO246)[1]
 
 lambda=c(0,5,10,15,20,30)
