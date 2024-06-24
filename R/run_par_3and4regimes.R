@@ -4,6 +4,40 @@ library(zoo)
 import("scipy")
 source_python('SJ.py')
 
+# 2015XX169 ---------------------------------------------------------------
+df2015XX169=read.table("propagation_2015XX169_new_v2.txt",header=T)
+unique(df2015XX169$type)
+
+true_states=order_states(df2015XX169$type)
+
+df2015XX169=df2015XX169[,c("a","e","theta","omega")]
+
+df2015XX169=compute_feat(df2015XX169,wdn=10,am1=T)
+N=dim(df2015XX169)[1]
+
+lambda=c(0,5,10,15,20,30)
+kappa=seq(1,ceiling(sqrt(dim(df2015XX169)[2])),by=1)
+hp=expand.grid(lambda=lambda,kappa=kappa)
+
+true_states=tail(true_states,N)
+
+sat_mod=SJM_sat(df2015XX169)
+Lnsat=sat_mod$Lnsat
+
+start_est2015XX169=Sys.time()
+est2015XX169 <- parallel::mclapply(1:nrow(hp),
+                                   function(x)
+                                     SJM_lambdakappa(lambda=hp[x,]$lambda,
+                                                     kappa=hp[x,]$kappa,
+                                                     df=df2015XX169,
+                                                     Lnsat=Lnsat,
+                                                     K=3,
+                                                     true_states=true_states),
+                                   mc.cores = parallel::detectCores()-1)
+end_est2015XX169=Sys.time()
+elapsed_est2015XX169=end_est2015XX169-start_est2015XX169
+save(est2015XX169,elapsed_est2015XX169,file="est2015XX169.RData")
+
 
 # 2016CA138 ---------------------------------------------------------------
 df2016CA138=read.table("propagation_2016CA138_new_v2.txt",header=T)
@@ -106,40 +140,6 @@ est2014OL339 <- parallel::mclapply(1:nrow(hp),
 end_est2014OL339=Sys.time()
 elapsed_est2014OL339=end_est2014OL339-start_est2014OL339
 save(est2014OL339,elapsed_est2014OL339,file="est2014OL339.RData")
-
-# 2015XX169 ---------------------------------------------------------------
-df2015XX169=read.table("propagation_2015XX169_new_v2.txt",header=T)
-unique(df2015XX169$type)
-
-true_states=order_states(df2015XX169$type)
-
-df2015XX169=df2015XX169[,c("a","e","theta","omega")]
-
-df2015XX169=compute_feat(df2015XX169,wdn=10,am1=T)
-N=dim(df2015XX169)[1]
-
-lambda=c(0,5,10,15,20,30)
-kappa=seq(1,ceiling(sqrt(dim(df2015XX169)[2])),by=1)
-hp=expand.grid(lambda=lambda,kappa=kappa)
-
-true_states=tail(true_states,N)
-
-sat_mod=SJM_sat(df2015XX169)
-Lnsat=sat_mod$Lnsat
-
-start_est2015XX169=Sys.time()
-est2015XX169 <- parallel::mclapply(1:nrow(hp),
-                                   function(x)
-                                     SJM_lambdakappa(lambda=hp[x,]$lambda,
-                                                     kappa=hp[x,]$kappa,
-                                                     df=df2015XX169,
-                                                     Lnsat=Lnsat,
-                                                     K=4,
-                                                     true_states=true_states),
-                                   mc.cores = parallel::detectCores()-1)
-end_est2015XX169=Sys.time()
-elapsed_est2015XX169=end_est2015XX169-start_est2015XX169
-save(est2015XX169,elapsed_est2015XX169,file="est2015XX169.RData")
 
 # 2020PN1 -----------------------------------------------------------------
 df2020PN1=read.table("propagation_2020PN1_new_v2.txt",header=T)
