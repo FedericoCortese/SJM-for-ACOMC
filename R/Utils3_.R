@@ -1,0 +1,253 @@
+order_states=function(states){
+  
+  # This function organizes states by assigning 1 to the first observed state and sequentially numbering each new state as 2, 3, etc., incrementing by 1 for each newly observed state.
+  # states is a vector of observed states
+  
+  N=length(states)
+  states_temp=rep(0,N)
+  new=1
+  states_temp[1]=new
+  for(i in 2:N){
+    if(sum(states[i]==states[1:(i-1)])==0){
+      # we enter this is if-stat. whenever a new state appeares
+      states_temp[i]=new+1
+      new=new+1
+    }
+    else{
+      states_temp[i]=states_temp[which(states[1:(i-1)]==states[i])[1]]
+    }
+  }
+  return(states_temp)
+}
+
+
+SJM_sat=function(df,Ksat=6){
+  
+  #  df is a data.frame WITHOUT time column
+  
+  # library(reticulate)
+  # import("scipy")
+  # source_python('SJ.py')
+  # Remove time
+  #Y=df[,-1]
+  Y=apply(df,2,scale)
+  
+  res_sat=sparse_jump(Y=as.matrix(Y), n_states=as.integer(Ksat), 
+                      max_features=sqrt(dim(Y)[2]), 
+                      jump_penalty=0,
+                      max_iter=as.integer(10), 
+                      tol=1e-4, 
+                      n_init=as.integer(10), 
+                      verbose=F)
+ 
+  
+  est_states_sat=order_states(res_sat[[1]])
+  
+  Lnsat=sum(get_BCSS(as.matrix(Y),est_states_sat))
+  
+  return(list(Lnsat=Lnsat,Ksat=Ksat))
+  
+}
+
+SJM_lambdakappa=function(lambda,kappa,K=2,df,Lnsat,Ksat=6,alpha0=NULL,K0=NULL,pers0=.95,true_states=NULL){
+  
+  #  df is a data.frame WITHOUT time column
+  
+  if(is.null(K0)){
+    K0=K
+  }
+  
+  # library(reticulate)
+  # import("scipy")
+  # source_python('SJ.py')
+  
+  #Y=df[,-1]
+  
+  YY=apply(df,2,scale)
+  PP=dim(YY)[2]
+  
+  if(is.null(alpha0)){
+    alpha0=PP
+  }
+  
+  N=dim(YY)[1]
+  
+  res=sparse_jump(Y=as.matrix(YY), 
+                  n_states=as.integer(K), 
+                  max_features=kappa, 
+                  jump_penalty=lambda,
+                  max_iter=as.integer(10), 
+                  tol=1e-4, 
+                  n_init=as.integer(10), 
+                  verbose=F)
+  
+  
+  est_weights=res[[2]]
+  est_weights=est_weights/sum(est_weights)
+  
+  est_states=order_states(res[[1]])
+  
+  indx=which( est_weights!=0)
+  XX=YY[,indx]
+  ### First version: compute BCSS as L1 norm
+  Ln=sum(get_BCSS(as.matrix(XX),est_states))
+  
+  pen=sum(est_states[1:(N-1)]!=est_states[2:N])
+  alphak=length(which(est_weights!=0))
+  
+  CKp=-log(K)-log(2*pi)*kappa/2
+  CKp_sat=-log(Ksat)-log(2*pi)*sqrt(PP)/2
+  
+  anFTIC=log(log(N))*log(PP)
+  anAIC=rep(2,length(N))
+  anBIC=log(N)
+  
+  pen0=(1-pers0)*N*(K0-1)
+  
+  TotalPenalty=(alpha0+pen0)*K+K0*(alphak-alpha0+pen-pen0) 
+  Ln_diff=Lnsat-Ln
+  CKp_diff=CKp_sat-CKp
+  
+  FTIC=2*CKp_diff+(Ln_diff+anFTIC*TotalPenalty)/N
+  BIC=2*CKp_diff+(Ln_diff+anBIC*TotalPenalty)/N
+  AIC=2*CKp_diff+(Ln_diff+anAIC*TotalPenalty)/N
+  
+  if(!is.null(true_states)){
+    true_states=order_states(true_states)
+    est_states=order_states(est_states)
+    overlap=sum(true_states==est_states)/N
+    ARI=pdfCluster::adj.rand.index(true_states,est_states)
+    return(list(FTIC=FTIC,
+                BIC=BIC,
+                AIC=AIC,
+                ARI=ARI,
+                overlap=overlap,
+                est_states=est_states,
+                est_weights=est_weights))
+  }
+  else{
+    return(list(FTIC=FTIC,
+                BIC=BIC,
+                AIC=AIC,
+                est_states=est_states,
+                est_weights=est_weights))
+  }
+  
+}
+compute_feat=function(dat,wdn=10){
+  
+  # Add first differences for each variable to dat2
+  dat$da=c(NA,diff(dat$a))
+  dat$de=c(NA,diff(dat$e))
+  dat$dtheta=c(NA,diff(dat$theta))
+  dat$domega=c(NA,diff(dat$omega))
+  
+  # Add moving average
+  dat$mawdn_a=rollapply(dat$a, wdn, mean, fill=NA)
+  dat$mawdn_e=rollapply(dat$e, wdn, mean, fill=NA)
+  dat$mawdn_theta=rollapply(dat$theta, wdn, mean, fill=NA)
+  dat$mawdn_omega=rollapply(dat$omega, wdn, mean, fill=NA)
+  
+  # Add moving standard deviation for each variable to dat2
+  dat$sdwdn_a=rollapply(dat$a, wdn, sd, fill=NA)
+  dat$sdwdn_e=rollapply(dat$e, wdn, sd, fill=NA)
+  dat$sdwdn_theta=rollapply(dat$theta, wdn, sd, fill=NA)
+  dat$sdwdn_omega=rollapply(dat$omega, wdn, sd, fill=NA)
+  
+  # Add moving st. dev. of first differences
+  dat$sdda=rollapply(dat$da, wdn, sd, fill=NA)
+  dat$sdde=rollapply(dat$de, wdn, sd, fill=NA)
+  dat$sddtheta=rollapply(dat$dtheta, wdn, sd, fill=NA)
+  dat$sddomega=rollapply(dat$domega, wdn, sd, fill=NA)
+  
+  # Add moving correlation 
+  library(zoo)
+  cor_wdn=wdn
+  dat$corrwdn_a_e=c(rep(NA,cor_wdn-1),rollapply(dat[,c("a","e")], 
+                                                width=cor_wdn, function(x) cor(x[,1],x[,2]), 
+                                                by.column=FALSE))
+  dat$corrwdn_a_theta=c(rep(NA,cor_wdn-1),rollapply(dat[,c("a","theta")], 
+                                                    width=cor_wdn, function(x) cor(x[,1],x[,2]), 
+                                                    by.column=FALSE))
+  dat$corrwdn_e_theta=c(rep(NA,cor_wdn-1),rollapply(dat[,c("e","theta")], 
+                                                    width=cor_wdn, function(x) cor(x[,1],x[,2]), 
+                                                    by.column=FALSE))
+  dat$corrwdn_a_omega=c(rep(NA,cor_wdn-1),rollapply(dat[,c("a","omega")], 
+                                                    width=cor_wdn, function(x) cor(x[,1],x[,2]), 
+                                                    by.column=FALSE))
+  dat$corrwdn_e_omega=c(rep(NA,cor_wdn-1),rollapply(dat[,c("e","omega")],
+                                                    width=cor_wdn, function(x) cor(x[,1],x[,2]), 
+                                                    by.column=FALSE))
+  dat$corrwdn_theta_omega=c(rep(NA,cor_wdn-1),rollapply(dat[,c("theta","omega")], 
+                                                        width=cor_wdn, function(x) cor(x[,1],x[,2]), 
+                                                        by.column=FALSE))
+  
+  # Add moving correlations between first differences
+  dat$corrwdn_da_de=c(rep(NA,cor_wdn-1),rollapply(dat[,c("da","de")],
+                                                  width=cor_wdn, function(x) cor(x[,1],x[,2]),
+                                                  by.column=FALSE))
+  dat$corrwdn_da_dtheta=c(rep(NA,cor_wdn-1),rollapply(dat[,c("da","dtheta")],
+                                                      width=cor_wdn, function(x) cor(x[,1],x[,2]),
+                                                      by.column=FALSE))
+  dat$corrwdn_da_domega=c(rep(NA,cor_wdn-1),rollapply(dat[,c("da","domega")],
+                                                      width=cor_wdn, function(x) cor(x[,1],x[,2]),
+                                                      by.column=FALSE))
+  dat$corrwdn_de_dtheta=c(rep(NA,cor_wdn-1),rollapply(dat[,c("de","dtheta")],
+                                                      width=cor_wdn, function(x) cor(x[,1],x[,2]), 
+                                                      by.column=FALSE))
+  dat$corrwdn_de_domega=c(rep(NA,cor_wdn-1),rollapply(dat[,c("de","domega")],
+                                                      width=cor_wdn, function(x) cor(x[,1],x[,2]), 
+                                                      by.column=FALSE))
+  dat$corrwdn_dtheta_domega=c(rep(NA,cor_wdn-1),rollapply(dat[,c("dtheta","domega")],
+                                                          width=cor_wdn, function(x) cor(x[,1],x[,2]), 
+                                                          by.column=FALSE))
+  
+  # Others
+  # dat$am1=dat$a-1
+  
+  datC=dat[complete.cases(dat),]
+  
+  return(datC)
+  
+}
+
+plot_real=function(df,color="red"){
+  
+  # This function plots time-series of a, e, theta, and omega highlighting the regimes with different colors
+  
+  # df is a data.frame with columns t, a, e, theta, omega, and type, and without time
+  
+  df$t=1:nrow(df)
+  
+  df$type=factor(df$type)
+  levels(df$type)=c(1,2)
+  
+  back_res=df[df$type == 1,]
+  back_res$tend=back_res$t + 1
+  
+  Pa=ggplot(df, aes(t, a)) +
+    geom_rect(ymin = -Inf, ymax = Inf, aes(xmin = t, xmax = tend),
+              data = back_res, fill = color, alpha = 0.15) +
+    geom_line(colour = "black") +
+    theme_bw()
+  
+  Pe=ggplot(df, aes(t, e)) +
+    geom_rect(ymin = -Inf, ymax = Inf, aes(xmin = t, xmax = tend),
+              data = back_res, fill = color, alpha = 0.15) +
+    geom_line(colour = "black") +
+    theme_bw()
+  
+  Ptheta=ggplot(df, aes(t, theta)) +
+    geom_rect(ymin = -Inf, ymax = Inf, aes(xmin = t, xmax = tend),
+              data = back_res, fill = color, alpha = 0.15) +
+    geom_line(colour = "black") +
+    theme_bw()
+  
+  Pomega=ggplot(df, aes(t, omega)) +
+    geom_rect(ymin = -Inf, ymax = Inf, aes(xmin = t, xmax = tend),
+              data = back_res, fill = color, alpha = 0.15) +
+    geom_line(colour = "black") +
+    theme_bw()
+  
+  return(list(Pa=Pa,Pe=Pe,Ptheta=Ptheta,Pomega=Pomega))
+}
