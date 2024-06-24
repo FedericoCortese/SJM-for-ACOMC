@@ -134,7 +134,7 @@ SJM_lambdakappa=function(lambda,kappa,K=2,df,Lnsat,Ksat=6,alpha0=NULL,K0=NULL,pe
   }
   
 }
-compute_feat=function(dat,wdn=10){
+compute_feat=function(dat,wdn=10,am1=F){
   
   # Add first differences for each variable to dat2
   dat$da=c(NA,diff(dat$a))
@@ -202,8 +202,9 @@ compute_feat=function(dat,wdn=10){
                                                           width=cor_wdn, function(x) cor(x[,1],x[,2]), 
                                                           by.column=FALSE))
   
-  # Others
-  # dat$am1=dat$a-1
+  if(am1){
+    dat$am1=dat$a-1
+  }
   
   datC=dat[complete.cases(dat),]
   
@@ -251,3 +252,67 @@ plot_real=function(df,color="red"){
   
   return(list(Pa=Pa,Pe=Pe,Ptheta=Ptheta,Pomega=Pomega))
 }
+
+plot_real4=function(df,color=c("red3","orange","blue")){
+  
+  # This function plots time-series of a, e, theta, and omega highlighting the regimes with different colors
+  
+  # df is a data.frame with columns t, a, e, theta, omega, and type, and without time
+  
+  df$t=1:nrow(df)
+  
+  df$type=factor(df$type)
+  levels(df$type)=c(1,2,3,4)
+  
+  back_res1=df[df$type == 1,]
+  back_res1$tend=back_res1$t + 1
+  
+  back_res2=df[df$type == 2,]
+  back_res2$tend=back_res2$t + 1
+  
+  back_res3=df[df$type == 3,]
+  back_res3$tend=back_res3$t + 1
+  
+  Pa=ggplot(df, aes(t, a)) +
+    geom_rect(ymin = -Inf, ymax = Inf, aes(xmin = t, xmax = tend),
+              data = back_res1, fill = color[1], alpha = 0.15) +
+    geom_rect(ymin = -Inf, ymax = Inf, aes(xmin = t, xmax = tend),
+              data = back_res2, fill = color[2], alpha = 0.15) +
+    geom_rect(ymin = -Inf, ymax = Inf, aes(xmin = t, xmax = tend),
+              data = back_res3, fill = color[3], alpha = 0.15) +
+    geom_line(colour = "black") +
+    theme_bw()
+  
+  Pe=ggplot(df, aes(t, e)) +
+    geom_rect(ymin = -Inf, ymax = Inf, aes(xmin = t, xmax = tend),
+              data = back_res1, fill = color[1], alpha = 0.15) +
+    geom_rect(ymin = -Inf, ymax = Inf, aes(xmin = t, xmax = tend),
+              data = back_res2, fill = color[2], alpha = 0.15) +
+    geom_rect(ymin = -Inf, ymax = Inf, aes(xmin = t, xmax = tend),
+              data = back_res3, fill = color[3], alpha = 0.15) +
+    geom_line(colour = "black") +
+    theme_bw()
+  
+  Ptheta=ggplot(df, aes(t, theta)) +
+    geom_rect(ymin = -Inf, ymax = Inf, aes(xmin = t, xmax = tend),
+              data = back_res1, fill = color[1], alpha = 0.15) +
+    geom_rect(ymin = -Inf, ymax = Inf, aes(xmin = t, xmax = tend),
+              data = back_res2, fill = color[2], alpha = 0.15) +
+    geom_rect(ymin = -Inf, ymax = Inf, aes(xmin = t, xmax = tend),
+              data = back_res3, fill = color[3], alpha = 0.15) +
+    geom_line(colour = "black") +
+    theme_bw()
+  
+  Pomega=ggplot(df, aes(t, omega)) +
+    geom_rect(ymin = -Inf, ymax = Inf, aes(xmin = t, xmax = tend),
+              data = back_res1, fill = color[1], alpha = 0.15) +
+    geom_rect(ymin = -Inf, ymax = Inf, aes(xmin = t, xmax = tend),
+              data = back_res2, fill = color[2], alpha = 0.15) +
+    geom_rect(ymin = -Inf, ymax = Inf, aes(xmin = t, xmax = tend),
+              data = back_res3, fill = color[3], alpha = 0.15) +
+    geom_line(colour = "black") +
+    theme_bw()
+  
+  return(list(Pa=Pa,Pe=Pe,Ptheta=Ptheta,Pomega=Pomega))
+}
+
