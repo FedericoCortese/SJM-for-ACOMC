@@ -204,6 +204,7 @@ compute_feat=function(dat,wdn=10,am1=F){
   
   if(am1){
     dat$am1=dat$a-1
+    dat$belowabove1=rollapply(dat$a, 75, function(x){all(x<1)|all(x>1)}, fill=NA)
   }
   
   datC=dat[complete.cases(dat),]

@@ -215,10 +215,6 @@ elapsed_est2015SO2=end_est2015SO2-start_est2015SO2
 save(est2015SO2,elapsed_est2015SO2,file="est2015SO2.RData")
 
 
-# 2016CO246 ---------------------------------------------------------------
-
-
-
 # 2016HO3 -----------------------------------------------------------------
 
 df2016HO3=read.table("propagation_2016HO3_new_v2.txt",header=T)
