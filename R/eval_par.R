@@ -42,7 +42,7 @@ modsel164207=data.frame(hp,FTIC=unlist(lapply(est164207,function(x)x$FTIC)),
 
 modsel164207
 
-estw164207=data.frame(weight=est164207[[4]]$est_weights,feat=colnames(df164207))
+estw164207=data.frame(weight=est164207[[6]]$est_weights,feat=colnames(df164207))
 
 # Sort by weight
 estw164207=estw164207[order(estw164207$weight,decreasing = T),]
@@ -55,7 +55,7 @@ plot(df164207$sdwdn_omega,type='l',ylab="sdwdn_omega")
 plot(df164207$sdwdn_a,type='l',ylab="sdwdn_a")
 plot(df164207$sdwdn_theta,type='l',ylab="sdwdn_theta")
 
-df164207_b=data.frame(df164207,type=est164207[[4]]$est_states)
+df164207_b=data.frame(df164207,type=est164207[[6]]$est_states)
 p164207_b=plot_real(df164207_b,"red")
 
 Pest164207_b=ggarrange(p164207_b$Pa,
@@ -135,6 +135,10 @@ windows()
 annotate_figure(Pest2001GO2_b,
                 top = text_grob("2001GO2 - est", color = "black", face = "bold", size = 14))
 
+
+# 2002AA29 --------------------------------------------------------------------
+
+df2002AA29=read.table("propagation_2002AA29_new_v2.txt",header=T)
 
 # 2016HO3 -----------------------------------------------------------------
 

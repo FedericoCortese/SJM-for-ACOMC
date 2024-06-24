@@ -1,4 +1,74 @@
+library(ggplot2)
+library(ggpubr)
+library(dplyr)
+library(zoo)
 source("Utils3_.R")
+# 2015XX169 ---------------------------------------------------------------
+
+df2015XX169=read.table("propagation_2015XX169_new_v2.txt",header=T)
+
+p2015XX169=plot_real4(df2015XX169)
+
+Ptrue2015XX169=ggarrange(p2015XX169$Pa,
+                         p2015XX169$Pe,
+                         p2015XX169$Ptheta,
+                         p2015XX169$Pomega,
+                         nrow=4
+                         #,main="164207"
+)
+windows()
+annotate_figure(Ptrue2015XX169,
+                top = text_grob("2015XX169 - true", color = "black", face = "bold", size = 14))
+
+true_states=df2015XX169$type
+# TRUE STATES
+
+
+df2015XX169=df2015XX169[,c("a","e","theta","omega")]
+df2015XX169=compute_feat(df2015XX169,wdn=10,am1=T)
+
+lambda=c(0,5,10,15,20,30)
+kappa=seq(1,ceiling(sqrt(dim(df2015XX169)[2])),by=1)
+hp=expand.grid(lambda=lambda,kappa=kappa)
+# unlist(lapply(est2015XX169,function(x)x$FTIC))
+# unlist(lapply(est2015XX169,function(x)x$overlap))
+
+modsel2015XX169=data.frame(hp,FTIC=unlist(lapply(est2015XX169,function(x)x$FTIC)),
+                           overlap=unlist(lapply(est2015XX169,function(x)x$overlap)),
+                           ARI=unlist(lapply(est2015XX169,function(x)x$ARI))
+)
+
+modsel2015XX169
+
+estw2015XX169=data.frame(weight=est2015XX169[[12]]$est_weights,
+                         feat=colnames(df2015XX169))
+
+# Sort by weight
+estw2015XX169=estw2015XX169[order(estw2015XX169$weight,decreasing = T),]
+estw2015XX169
+
+windows()
+par(mfrow=c(4,1))
+plot(df2015XX169$sddtheta,type='l',main="2015XX169",ylab="sddtheta")
+plot(df2015XX169$sdwdn_omega,type='l',ylab="sdwdn_omega")
+plot(df2015XX169$sdwdn_a,type='l',ylab="sdwdn_a")
+plot(df2015XX169$sdwdn_theta,type='l',ylab="sdwdn_theta")
+
+df2015XX169_b=data.frame(df2015XX169,type=est2015XX169[[12]]$est_states)
+p2015XX169_b=plot_real4(df2015XX169_b)
+
+Pest2015XX169_b=ggarrange(p2015XX169_b$Pa,
+                          p2015XX169_b$Pe,
+                          p2015XX169_b$Ptheta,
+                          p2015XX169_b$Pomega,
+                          nrow=4
+                          #,main="2015XX169"
+)
+windows()
+annotate_figure(Pest2015XX169_b,
+                top = text_grob("2015XX169 - est", color = "black", face = "bold", size = 14))
+
+
 
 
 # 2016CA138 ---------------------------------------------------------------
@@ -103,7 +173,7 @@ modsel2016CO246=data.frame(hp,FTIC=unlist(lapply(est2016CO246,function(x)x$FTIC)
 
 modsel2016CO246
 
-estw2016CO246=data.frame(weight=est2016CO246[[2]]$est_weights,
+estw2016CO246=data.frame(weight=est2016CO246[[24]]$est_weights,
                          feat=colnames(df2016CO246))
 
 # Sort by weight
@@ -117,7 +187,7 @@ plot(df2016CO246$sdwdn_omega,type='l',ylab="sdwdn_omega")
 plot(df2016CO246$sdwdn_a,type='l',ylab="sdwdn_a")
 plot(df2016CO246$sdwdn_theta,type='l',ylab="sdwdn_theta")
 
-df2016CO246_b=data.frame(df2016CO246,type=est2016CO246[[2]]$est_states)
+df2016CO246_b=data.frame(df2016CO246,type=est2016CO246[[24]]$est_states)
 p2016CO246_b=plot_real4(df2016CO246_b)
 
 Pest2016CO246_b=ggarrange(p2016CO246_b$Pa,
@@ -169,21 +239,21 @@ modsel2014OL339=data.frame(hp,FTIC=unlist(lapply(est2014OL339,function(x)x$FTIC)
 
 modsel2014OL339
 
-estw2014OL339=data.frame(weight=est2014OL339[[2]]$est_weights,
+estw2014OL339=data.frame(weight=est2014OL339[[12]]$est_weights,
                          feat=colnames(df2014OL339))
 
 # Sort by weight
 estw2014OL339=estw2014OL339[order(estw2014OL339$weight,decreasing = T),]
 estw2014OL339
 
-windows()
-par(mfrow=c(4,1))
-plot(df2014OL339$sddtheta,type='l',main="2014OL339",ylab="sddtheta")
-plot(df2014OL339$sdwdn_omega,type='l',ylab="sdwdn_omega")
-plot(df2014OL339$sdwdn_a,type='l',ylab="sdwdn_a")
-plot(df2014OL339$sdwdn_theta,type='l',ylab="sdwdn_theta")
+# windows()
+# par(mfrow=c(4,1))
+# plot(df2014OL339$sddtheta,type='l',main="2014OL339",ylab="sddtheta")
+# plot(df2014OL339$sdwdn_omega,type='l',ylab="sdwdn_omega")
+# plot(df2014OL339$sdwdn_a,type='l',ylab="sdwdn_a")
+# plot(df2014OL339$sdwdn_theta,type='l',ylab="sdwdn_theta")
 
-df2014OL339_b=data.frame(df2014OL339,type=est2014OL339[[2]]$est_states)
+df2014OL339_b=data.frame(df2014OL339,type=est2014OL339[[12]]$est_states)
 p2014OL339_b=plot_real4(df2014OL339_b)
 
 Pest2014OL339_b=ggarrange(p2014OL339_b$Pa,
@@ -196,74 +266,6 @@ Pest2014OL339_b=ggarrange(p2014OL339_b$Pa,
 windows()
 annotate_figure(Pest2014OL339_b,
                 top = text_grob("2014OL339 - est", color = "black", face = "bold", size = 14))
-
-
-
-
-# 2015XX169 ---------------------------------------------------------------
-
-df2015XX169=read.table("propagation_2015XX169_new_v2.txt",header=T)
-
-p2015XX169=plot_real4(df2015XX169)
-
-Ptrue2015XX169=ggarrange(p2015XX169$Pa,
-                      p2015XX169$Pe,
-                      p2015XX169$Ptheta,
-                      p2015XX169$Pomega,
-                      nrow=4
-                      #,main="164207"
-)
-windows()
-annotate_figure(Ptrue2015XX169,
-                top = text_grob("2015XX169 - true", color = "black", face = "bold", size = 14))
-
-true_states=df2015XX169$type
-# TRUE STATES
-
-
-df2015XX169=df2015XX169[,c("a","e","theta","omega")]
-df2015XX169=compute_feat(df2015XX169,wdn=10,am1=T)
-
-lambda=c(0,5,10,15,20,30)
-kappa=seq(1,ceiling(sqrt(dim(df2015XX169)[2])),by=1)
-hp=expand.grid(lambda=lambda,kappa=kappa)
-# unlist(lapply(est2015XX169,function(x)x$FTIC))
-# unlist(lapply(est2015XX169,function(x)x$overlap))
-
-modsel2015XX169=data.frame(hp,FTIC=unlist(lapply(est2015XX169,function(x)x$FTIC)),
-                           overlap=unlist(lapply(est2015XX169,function(x)x$overlap)),
-                           ARI=unlist(lapply(est2015XX169,function(x)x$ARI))
-)
-
-modsel2015XX169
-
-estw2015XX169=data.frame(weight=est2015XX169[[2]]$est_weights,
-                         feat=colnames(df2015XX169))
-
-# Sort by weight
-estw2015XX169=estw2015XX169[order(estw2015XX169$weight,decreasing = T),]
-estw2015XX169
-
-windows()
-par(mfrow=c(4,1))
-plot(df2015XX169$sddtheta,type='l',main="2015XX169",ylab="sddtheta")
-plot(df2015XX169$sdwdn_omega,type='l',ylab="sdwdn_omega")
-plot(df2015XX169$sdwdn_a,type='l',ylab="sdwdn_a")
-plot(df2015XX169$sdwdn_theta,type='l',ylab="sdwdn_theta")
-
-df2015XX169_b=data.frame(df2015XX169,type=est2015XX169[[2]]$est_states)
-p2015XX169_b=plot_real4(df2015XX169_b)
-
-Pest2015XX169_b=ggarrange(p2015XX169_b$Pa,
-                          p2015XX169_b$Pe,
-                          p2015XX169_b$Ptheta,
-                          p2015XX169_b$Pomega,
-                          nrow=4
-                          #,main="2015XX169"
-)
-windows()
-annotate_figure(Pest2015XX169_b,
-                top = text_grob("2015XX169 - est", color = "black", face = "bold", size = 14))
 
 
 
@@ -304,19 +306,19 @@ modsel2020PN1=data.frame(hp,FTIC=unlist(lapply(est2020PN1,function(x)x$FTIC)),
 
 modsel2020PN1
 
-estw2020PN1=data.frame(weight=est2020PN1[[2]]$est_weights,
+estw2020PN1=data.frame(weight=est2020PN1[[10]]$est_weights,
                        feat=colnames(df2020PN1))
 
 # Sort by weight
 estw2020PN1=estw2020PN1[order(estw2020PN1$weight,decreasing = T),]
 estw2020PN1
 
-windows()
-par(mfrow=c(4,1))
-plot(df2020PN1$sddtheta,type='l',main="2020PN1",ylab="sddtheta")
-plot(df2020PN1$sdwdn_omega,type='l',ylab="sdwdn_omega")
-plot(df2020PN1$sdwdn_a,type='l',ylab="sdwdn_a")
-plot(df2020PN1$sdwdn_theta,type='l',ylab="sdwdn_theta")
+# windows()
+# par(mfrow=c(4,1))
+# plot(df2020PN1$sddtheta,type='l',main="2020PN1",ylab="sddtheta")
+# plot(df2020PN1$sdwdn_omega,type='l',ylab="sdwdn_omega")
+# plot(df2020PN1$sdwdn_a,type='l',ylab="sdwdn_a")
+# plot(df2020PN1$sdwdn_theta,type='l',ylab="sdwdn_theta")
 
 df2020PN1_b=data.frame(df2020PN1,type=est2020PN1[[10]]$est_states)
 p2020PN1_b=plot_real4(df2020PN1_b)

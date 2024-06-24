@@ -77,6 +77,11 @@ save(est2016CA138,elapsed_est2016CA138,file="est2016CA138.RData")
 df2016CO246=read.table("propagation_2016CO246_new_v2.txt",header=T)
 unique(df2016CO246$type)
 
+windows()
+par(mfrow=c(2,1))
+plot(df2016CO246$t,df2016CO246$a,type='l')
+plot(df2016CO246$t,df2016CO246$type,type='l',col='red')
+
 true_states=order_states(df2016CO246$type)
 
 df2016CO246=df2016CO246[,c("a","e","theta","omega")]

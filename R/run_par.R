@@ -109,6 +109,115 @@ end_est2001GO2=Sys.time()
 elapsed_est2001GO2=end_est2001GO2-start_est2001GO2
 save(est2001GO2,elapsed_est2001GO2,file="est2001GO2.RData")
 
+# 2002AA29 --------------------------------------------------------------------
+
+df2002AA29=read.table("propagation_2002AA29_new_v2.txt",header=T)
+true_states=order_states(df2002AA29$type)
+
+df2002AA29=df2002AA29[,c("a","e","theta","omega")]
+
+df2002AA29=compute_feat(df2002AA29,wdn=10)
+N=dim(df2002AA29)[1]
+
+lambda=c(0,5,10,15,20,30)
+kappa=seq(1,ceiling(sqrt(dim(df2002AA29)[2])),by=1)
+hp=expand.grid(lambda=lambda,kappa=kappa)
+
+true_states=tail(true_states,N)
+
+sat_mod=SJM_sat(df2002AA29)
+Lnsat=sat_mod$Lnsat
+
+start_est2002AA29=Sys.time()
+est2002AA29 <- parallel::mclapply(1:nrow(hp),
+                                  function(x)
+                                    SJM_lambdakappa(lambda=hp[x,]$lambda,
+                                                    kappa=hp[x,]$kappa,
+                                                    df=df2002AA29,
+                                                    Lnsat=Lnsat,
+                                                    true_states=true_states),
+                                  mc.cores = parallel::detectCores()-1)
+
+# cl<-makeCluster(parallel::detectCores(),type="SOCK")
+# parallel::clusterExport(cl,ls())
+# parallel::clusterEvalQ(cl,{
+#   library(reticulate)
+#   library(pdfCluster)
+#   library(ggplot2)
+#   library(xtable)
+#   library(dplyr))
+# est2002AA29 <- clusterApply(cl,
+#                     1:nrow(hp),
+#                     function(x)
+#                       SJM_lambdakappa(lambda=hp[x,]$lambda,
+#                                       kappa=hp[x,]$kappa,
+#                                       df=df2002AA29,
+#                                       Lnsat=Lnsat,
+#                                       true_states=true_states)
+# )
+# stopCluster(cl)
+
+end_est2002AA29=Sys.time()
+elapsed_est2002AA29=end_est2002AA29-start_est2002AA29
+save(est2002AA29,elapsed_est2002AA29,file="est2002AA29.RData")
+
+
+# 2015SO2 --------------------------------------------------------------------
+
+df2015SO2=read.table("propagation_2015SO2_new_v2.txt",header=T)
+true_states=order_states(df2015SO2$type)
+
+df2015SO2=df2015SO2[,c("a","e","theta","omega")]
+
+df2015SO2=compute_feat(df2015SO2,wdn=10)
+N=dim(df2015SO2)[1]
+
+lambda=c(0,5,10,15,20,30)
+kappa=seq(1,ceiling(sqrt(dim(df2015SO2)[2])),by=1)
+hp=expand.grid(lambda=lambda,kappa=kappa)
+
+true_states=tail(true_states,N)
+
+sat_mod=SJM_sat(df2015SO2)
+Lnsat=sat_mod$Lnsat
+
+start_est2015SO2=Sys.time()
+est2015SO2 <- parallel::mclapply(1:nrow(hp),
+                                 function(x)
+                                   SJM_lambdakappa(lambda=hp[x,]$lambda,
+                                                   kappa=hp[x,]$kappa,
+                                                   df=df2015SO2,
+                                                   Lnsat=Lnsat,
+                                                   true_states=true_states),
+                                 mc.cores = parallel::detectCores()-1)
+
+# cl<-makeCluster(parallel::detectCores(),type="SOCK")
+# parallel::clusterExport(cl,ls())
+# parallel::clusterEvalQ(cl,{
+#   library(reticulate)
+#   library(pdfCluster)
+#   library(ggplot2)
+#   library(xtable)
+#   library(dplyr))
+# est2015SO2 <- clusterApply(cl,
+#                     1:nrow(hp),
+#                     function(x)
+#                       SJM_lambdakappa(lambda=hp[x,]$lambda,
+#                                       kappa=hp[x,]$kappa,
+#                                       df=df2015SO2,
+#                                       Lnsat=Lnsat,
+#                                       true_states=true_states)
+# )
+# stopCluster(cl)
+
+end_est2015SO2=Sys.time()
+elapsed_est2015SO2=end_est2015SO2-start_est2015SO2
+save(est2015SO2,elapsed_est2015SO2,file="est2015SO2.RData")
+
+
+# 2016CO246 ---------------------------------------------------------------
+
+
 
 # 2016HO3 -----------------------------------------------------------------
 
