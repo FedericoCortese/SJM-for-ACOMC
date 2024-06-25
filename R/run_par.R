@@ -11,6 +11,49 @@ true_states=order_states(df164207$type)
 
 df164207=df164207[,c("a","e","theta","omega")]
 
+wdn=10
+tsa=ts(df164207$a,frequency = wdn)
+tsa.stl <- stl(tsa, 
+              s.window=wdn,
+              t.window=NULL,
+              na.action = na.approx,
+              robust=T)
+
+plot(tsa.stl)
+
+sdseas_a=rollapply(tsa.stl$time.series[,3], 10, sd, fill=NA)
+plot(sdseas_a,type="l")
+
+tse=ts(df164207$e,frequency = wdn)
+tse.stl <- stl(tse, 
+              s.window=wdn,
+              t.window=NULL,
+              na.action = na.approx,
+              robust=T)
+
+plot(tse.stl)
+
+
+tstheta=ts(df164207$theta,frequency = wdn)
+tstheta.stl <- stl(tstheta, 
+               s.window=wdn,
+               t.window=NULL,
+               na.action = na.approx,
+               robust=T)
+
+plot(tstheta.stl)
+
+
+tsomega=ts(df164207$omega,frequency = wdn)
+tsomega.stl <- stl(tsomega, 
+                   s.window=wdn,
+                   t.window=NULL,
+                   na.action = na.approx,
+                   robust=T)
+
+plot(tsomega.stl)
+
+
 df164207=compute_feat(df164207,wdn=10)
 N=dim(df164207)[1]
 

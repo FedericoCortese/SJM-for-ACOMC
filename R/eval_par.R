@@ -28,7 +28,7 @@ true_states=df164207$type
 
 
 df164207=df164207[,c("a","e","theta","omega")]
-df164207=compute_feat(df164207)
+df164207=compute_feat(df164207,wdn=10)
 
 lambda=c(0,5,10,15,20,30)
 kappa=seq(1,ceiling(sqrt(dim(df164207)[2])),by=1)
@@ -42,7 +42,7 @@ modsel164207=data.frame(hp,FTIC=unlist(lapply(est164207,function(x)x$FTIC)),
                         overlap=unlist(lapply(est164207,function(x)x$overlap)),
                         ARI=unlist(lapply(est164207,function(x)x$ARI))
 )
-sel=8
+sel=2
 modsel164207
 
 estw164207=data.frame(weight=est164207[[sel]]$est_weights,feat=colnames(df164207))
@@ -97,7 +97,7 @@ true_states=df2001GO2$type
 
 
 df2001GO2=df2001GO2[,c("a","e","theta","omega")]
-df2001GO2=compute_feat(df2001GO2)
+df2001GO2=compute_feat(df2001GO2,wdn=10)
 
 lambda=c(0,5,10,15,20,30)
 kappa=seq(1,ceiling(sqrt(dim(df2001GO2)[2])),by=1)
@@ -112,7 +112,7 @@ modsel2001GO2=data.frame(hp,FTIC=unlist(lapply(est2001GO2,function(x)x$FTIC)),
 )
 
 modsel2001GO2
-sel=8
+sel=2
 estw2001GO2=data.frame(weight=est2001GO2[[sel]]$est_weights,feat=colnames(df2001GO2))
 
 # Sort by weight
@@ -171,7 +171,7 @@ true_states=df2016HO3$type
 
 
 df2016HO3=df2016HO3[,c("a","e","theta","omega")]
-df2016HO3=compute_feat(df2016HO3)
+df2016HO3=compute_feat(df2016HO3,wdn=10)
 
 lambda=c(0,5,10,15,20,30)
 kappa=seq(1,ceiling(sqrt(dim(df2016HO3)[2])),by=1)
@@ -187,7 +187,7 @@ modsel2016HO3=data.frame(hp,FTIC=unlist(lapply(est2016HO3,function(x)x$FTIC)),
 )
 
 modsel2016HO3
-sel=14
+sel=2
 estw2016HO3=data.frame(weight=est2016HO3[[sel]]$est_weights,feat=colnames(df2016HO3))
 
 # Sort by weight
@@ -244,7 +244,7 @@ true_states=df2019GM1$type
 
 
 df2019GM1=df2019GM1[,c("a","e","theta","omega")]
-df2019GM1=compute_feat(df2019GM1)
+df2019GM1=compute_feat(df2019GM1,wdn=10)
 
 lambda=c(0,5,10,15,20,30)
 kappa=seq(1,ceiling(sqrt(dim(df2019GM1)[2])),by=1)
@@ -312,7 +312,7 @@ true_states=df2020PP1$type
 
 
 df2020PP1=df2020PP1[,c("a","e","theta","omega")]
-df2020PP1=compute_feat(df2020PP1)
+df2020PP1=compute_feat(df2020PP1,wdn=10)
 
 lambda=c(0,5,10,15,20,30)
 kappa=seq(1,ceiling(sqrt(dim(df2020PP1)[2])),by=1)
@@ -328,8 +328,8 @@ modsel2020PP1=data.frame(hp,FTIC=unlist(lapply(est2020PP1,function(x)x$FTIC)),
 )
 
 modsel2020PP1
-sel=14
-estw2020PP1=data.frame(weight=est2020PP1[[8]]$est_weights,feat=colnames(df2020PP1))
+sel=3
+estw2020PP1=data.frame(weight=est2020PP1[[sel]]$est_weights,feat=colnames(df2020PP1))
 
 # Sort by weight
 estw2020PP1=estw2020PP1[order(estw2020PP1$weight,decreasing = T),]
