@@ -17,10 +17,11 @@ Ptrue164207=ggarrange(p164207$Pa,
                       nrow=4
                       #,main="164207"
 )
-windows()
+
+png("164207TRUE.png",width =1600,height=900)
 annotate_figure(Ptrue164207,
                 top = text_grob("164207 - true", color = "black", face = "bold", size = 14))
-
+dev.off()
 
 true_states=df164207$type
 # TRUE STATES
@@ -35,27 +36,29 @@ hp=expand.grid(lambda=lambda,kappa=kappa)
 # unlist(lapply(est164207,function(x)x$FTIC))
 # unlist(lapply(est164207,function(x)x$overlap))
 
+load("est164207.RData")
+
 modsel164207=data.frame(hp,FTIC=unlist(lapply(est164207,function(x)x$FTIC)),
                         overlap=unlist(lapply(est164207,function(x)x$overlap)),
                         ARI=unlist(lapply(est164207,function(x)x$ARI))
 )
-
+sel=8
 modsel164207
 
-estw164207=data.frame(weight=est164207[[6]]$est_weights,feat=colnames(df164207))
+estw164207=data.frame(weight=est164207[[sel]]$est_weights,feat=colnames(df164207))
 
 # Sort by weight
 estw164207=estw164207[order(estw164207$weight,decreasing = T),]
 estw164207
 
-windows()
-par(mfrow=c(4,1))
-plot(df164207$sddtheta,type='l',main="164207",ylab="sddtheta")
-plot(df164207$sdwdn_omega,type='l',ylab="sdwdn_omega")
-plot(df164207$sdwdn_a,type='l',ylab="sdwdn_a")
-plot(df164207$sdwdn_theta,type='l',ylab="sdwdn_theta")
+# windows()
+# par(mfrow=c(4,1))
+# plot(df164207$sddtheta,type='l',main="164207",ylab="sddtheta")
+# plot(df164207$sdwdn_omega,type='l',ylab="sdwdn_omega")
+# plot(df164207$sdwdn_a,type='l',ylab="sdwdn_a")
+# plot(df164207$sdwdn_theta,type='l',ylab="sdwdn_theta")
 
-df164207_b=data.frame(df164207,type=est164207[[6]]$est_states)
+df164207_b=data.frame(df164207,type=est164207[[sel]]$est_states)
 p164207_b=plot_real(df164207_b,"red")
 
 Pest164207_b=ggarrange(p164207_b$Pa,
@@ -65,10 +68,11 @@ Pest164207_b=ggarrange(p164207_b$Pa,
                       nrow=4
                       #,main="164207"
 )
-windows()
+
+png("164207EST.png",width =1600,height=900)
 annotate_figure(Pest164207_b,
                 top = text_grob("164207 - est", color = "black", face = "bold", size = 14))
-
+dev.off()
 
 # 2001GO2 -----------------------------------------------------------------
 
@@ -83,10 +87,10 @@ Ptrue2001GO2=ggarrange(p2001GO2$Pa,
                        nrow=4
                        #,main="2001GO2"
 )
-windows()
+png("2001GO2TRUE.png",width =1600,height=900)
 annotate_figure(Ptrue2001GO2,
                 top = text_grob("2001GO2 - true", color = "black", face = "bold", size = 14))
-
+dev.off()
 
 true_states=df2001GO2$type
 # TRUE STATES
@@ -101,27 +105,28 @@ hp=expand.grid(lambda=lambda,kappa=kappa)
 # unlist(lapply(est2001GO2,function(x)x$FTIC))
 # unlist(lapply(est2001GO2,function(x)x$overlap))
 
+load("est2001GO2.RData")
 modsel2001GO2=data.frame(hp,FTIC=unlist(lapply(est2001GO2,function(x)x$FTIC)),
                          overlap=unlist(lapply(est2001GO2,function(x)x$overlap)),
                          ARI=unlist(lapply(est2001GO2,function(x)x$ARI))
 )
 
 modsel2001GO2
-
-estw2001GO2=data.frame(weight=est2001GO2[[9]]$est_weights,feat=colnames(df2001GO2))
+sel=8
+estw2001GO2=data.frame(weight=est2001GO2[[sel]]$est_weights,feat=colnames(df2001GO2))
 
 # Sort by weight
 estw2001GO2=estw2001GO2[order(estw2001GO2$weight,decreasing = T),]
 estw2001GO2
 
-windows()
-par(mfrow=c(4,1))
-plot(df2001GO2$a,type='l',main="2001GO2",ylab="a")
-plot(df2001GO2$sddtheta,type='l',ylab="sddtheta")
-plot(df2001GO2$sdwdn_theta,type='l',ylab="sdwdn_theta")
-plot(df2001GO2$sdde,type='l',ylab="sdde")
+# windows()
+# par(mfrow=c(4,1))
+# plot(df2001GO2$a,type='l',main="2001GO2",ylab="a")
+# plot(df2001GO2$sddtheta,type='l',ylab="sddtheta")
+# plot(df2001GO2$sdwdn_theta,type='l',ylab="sdwdn_theta")
+# plot(df2001GO2$sdde,type='l',ylab="sdde")
 
-df2001GO2_b=data.frame(df2001GO2,type=est2001GO2[[9]]$est_states)
+df2001GO2_b=data.frame(df2001GO2,type=est2001GO2[[sel]]$est_states)
 p2001GO2_b=plot_real(df2001GO2_b,"red")
 
 Pest2001GO2_b=ggarrange(p2001GO2_b$Pa,
@@ -131,10 +136,10 @@ Pest2001GO2_b=ggarrange(p2001GO2_b$Pa,
                         nrow=4
                         #,main="2001GO2"
 )
-windows()
+png("2001GO2EST.png",width =1600,height=900)
 annotate_figure(Pest2001GO2_b,
                 top = text_grob("2001GO2 - est", color = "black", face = "bold", size = 14))
-
+dev.off()
 
 # 2002AA29 --------------------------------------------------------------------
 
@@ -156,10 +161,10 @@ Ptrue2016HO3=ggarrange(p2016HO3$Pa,
                        nrow=4
                        #,main="2016HO3"
 )
-windows()
+png("2016HO3TRUE.png",width =1600,height=900)
 annotate_figure(Ptrue2016HO3,
                 top = text_grob("2016HO3 - true", color = "black", face = "bold", size = 14))
-
+dev.off()
 
 true_states=df2016HO3$type
 # TRUE STATES
@@ -174,27 +179,29 @@ hp=expand.grid(lambda=lambda,kappa=kappa)
 # unlist(lapply(est2016HO3,function(x)x$FTIC))
 # unlist(lapply(est2016HO3,function(x)x$overlap))
 
+load("est2016HO3.RData")
+
 modsel2016HO3=data.frame(hp,FTIC=unlist(lapply(est2016HO3,function(x)x$FTIC)),
                          overlap=unlist(lapply(est2016HO3,function(x)x$overlap)),
                          ARI=unlist(lapply(est2016HO3,function(x)x$ARI))
 )
 
 modsel2016HO3
-
-estw2016HO3=data.frame(weight=est2016HO3[[8]]$est_weights,feat=colnames(df2016HO3))
+sel=14
+estw2016HO3=data.frame(weight=est2016HO3[[sel]]$est_weights,feat=colnames(df2016HO3))
 
 # Sort by weight
 estw2016HO3=estw2016HO3[order(estw2016HO3$weight,decreasing = T),]
 estw2016HO3
 
-windows()
-par(mfrow=c(4,1))
-plot(df2016HO3$sddtheta,type='l',main="2016HO3",ylab="sddtheta")
-plot(df2016HO3$sdwdn_omega,type='l',ylab="sdwdn_omega")
-plot(df2016HO3$sdwdn_a,type='l',ylab="sdwdn_a")
-plot(df2016HO3$sdwdn_theta,type='l',ylab="sdwdn_theta")
+# windows()
+# par(mfrow=c(4,1))
+# plot(df2016HO3$sddtheta,type='l',main="2016HO3",ylab="sddtheta")
+# plot(df2016HO3$sdwdn_omega,type='l',ylab="sdwdn_omega")
+# plot(df2016HO3$sdwdn_a,type='l',ylab="sdwdn_a")
+# plot(df2016HO3$sdwdn_theta,type='l',ylab="sdwdn_theta")
 
-df2016HO3_b=data.frame(df2016HO3,type=est2016HO3[[8]]$est_states)
+df2016HO3_b=data.frame(df2016HO3,type=est2016HO3[[sel]]$est_states)
 p2016HO3_b=plot_real(df2016HO3_b,"red")
 
 Pest2016HO3_b=ggarrange(p2016HO3_b$Pa,
@@ -204,10 +211,10 @@ Pest2016HO3_b=ggarrange(p2016HO3_b$Pa,
                         nrow=4
                         #,main="2016HO3"
 )
-windows()
+png("2016HO3EST.png",width =1600,height=900)
 annotate_figure(Pest2016HO3_b,
                 top = text_grob("2016HO3 - est", color = "black", face = "bold", size = 14))
-
+dev.off()
 
 
 # 2019GM1 -----------------------------------------------------------------
@@ -226,10 +233,11 @@ Ptrue2019GM1=ggarrange(p2019GM1$Pa,
                        nrow=4
                        #,main="2019GM1"
 )
-windows()
+
+png("2019GM1TRUE.png",width =1600,height=900)
 annotate_figure(Ptrue2019GM1,
                 top = text_grob("2019GM1 - true", color = "black", face = "bold", size = 14))
-
+dev.off()
 
 true_states=df2019GM1$type
 # TRUE STATES
@@ -244,27 +252,28 @@ hp=expand.grid(lambda=lambda,kappa=kappa)
 # unlist(lapply(est2019GM1,function(x)x$FTIC))
 # unlist(lapply(est2019GM1,function(x)x$overlap))
 
+load("est2019GM1.RData")
 modsel2019GM1=data.frame(hp,FTIC=unlist(lapply(est2019GM1,function(x)x$FTIC)),
                          overlap=unlist(lapply(est2019GM1,function(x)x$overlap)),
                          ARI=unlist(lapply(est2019GM1,function(x)x$ARI))
 )
 
 modsel2019GM1
-
-estw2019GM1=data.frame(weight=est2019GM1[[8]]$est_weights,feat=colnames(df2019GM1))
+sel=38
+estw2019GM1=data.frame(weight=est2019GM1[[sel]]$est_weights,feat=colnames(df2019GM1))
 
 # Sort by weight
 estw2019GM1=estw2019GM1[order(estw2019GM1$weight,decreasing = T),]
 estw2019GM1
 
-windows()
-par(mfrow=c(4,1))
-plot(df2019GM1$sddtheta,type='l',main="2019GM1",ylab="sddtheta")
-plot(df2019GM1$sdwdn_omega,type='l',ylab="sdwdn_omega")
-plot(df2019GM1$sdwdn_a,type='l',ylab="sdwdn_a")
-plot(df2019GM1$sdwdn_theta,type='l',ylab="sdwdn_theta")
+# windows()
+# par(mfrow=c(4,1))
+# plot(df2019GM1$sddtheta,type='l',main="2019GM1",ylab="sddtheta")
+# plot(df2019GM1$sdwdn_omega,type='l',ylab="sdwdn_omega")
+# plot(df2019GM1$sdwdn_a,type='l',ylab="sdwdn_a")
+# plot(df2019GM1$sdwdn_theta,type='l',ylab="sdwdn_theta")
 
-df2019GM1_b=data.frame(df2019GM1,type=est2019GM1[[8]]$est_states)
+df2019GM1_b=data.frame(df2019GM1,type=est2019GM1[[sel]]$est_states)
 p2019GM1_b=plot_real(df2019GM1_b,"red")
 
 Pest2019GM1_b=ggarrange(p2019GM1_b$Pa,
@@ -274,10 +283,10 @@ Pest2019GM1_b=ggarrange(p2019GM1_b$Pa,
                         nrow=4
                         #,main="2019GM1"
 )
-windows()
+png("2019GM1EST.png",width =1600,height=900)
 annotate_figure(Pest2019GM1_b,
                 top = text_grob("2019GM1 - est", color = "black", face = "bold", size = 14))
-
+dev.off()
 
 # 2020PP1 -----------------------------------------------------------------
 
@@ -293,10 +302,10 @@ Ptrue2020PP1=ggarrange(p2020PP1$Pa,
                        nrow=4
                        #,main="2020PP1"
 )
-windows()
+png("2020PP1TRUE.png",width =1600,height=900)
 annotate_figure(Ptrue2020PP1,
                 top = text_grob("2020PP1 - true", color = "black", face = "bold", size = 14))
-
+dev.off()
 
 true_states=df2020PP1$type
 # TRUE STATES
@@ -311,27 +320,29 @@ hp=expand.grid(lambda=lambda,kappa=kappa)
 # unlist(lapply(est2020PP1,function(x)x$FTIC))
 # unlist(lapply(est2020PP1,function(x)x$overlap))
 
+load("est2020PP1.RData")
+
 modsel2020PP1=data.frame(hp,FTIC=unlist(lapply(est2020PP1,function(x)x$FTIC)),
                          overlap=unlist(lapply(est2020PP1,function(x)x$overlap)),
                          ARI=unlist(lapply(est2020PP1,function(x)x$ARI))
 )
 
 modsel2020PP1
-
+sel=14
 estw2020PP1=data.frame(weight=est2020PP1[[8]]$est_weights,feat=colnames(df2020PP1))
 
 # Sort by weight
 estw2020PP1=estw2020PP1[order(estw2020PP1$weight,decreasing = T),]
 estw2020PP1
 
-windows()
-par(mfrow=c(4,1))
-plot(df2020PP1$sddtheta,type='l',main="2020PP1",ylab="sddtheta")
-plot(df2020PP1$sdwdn_omega,type='l',ylab="sdwdn_omega")
-plot(df2020PP1$sdwdn_a,type='l',ylab="sdwdn_a")
-plot(df2020PP1$sdwdn_theta,type='l',ylab="sdwdn_theta")
+# windows()
+# par(mfrow=c(4,1))
+# plot(df2020PP1$sddtheta,type='l',main="2020PP1",ylab="sddtheta")
+# plot(df2020PP1$sdwdn_omega,type='l',ylab="sdwdn_omega")
+# plot(df2020PP1$sdwdn_a,type='l',ylab="sdwdn_a")
+# plot(df2020PP1$sdwdn_theta,type='l',ylab="sdwdn_theta")
 
-df2020PP1_b=data.frame(df2020PP1,type=est2020PP1[[8]]$est_states)
+df2020PP1_b=data.frame(df2020PP1,type=est2020PP1[[sel]]$est_states)
 p2020PP1_b=plot_real(df2020PP1_b,"red")
 
 Pest2020PP1_b=ggarrange(p2020PP1_b$Pa,
@@ -341,6 +352,7 @@ Pest2020PP1_b=ggarrange(p2020PP1_b$Pa,
                         nrow=4
                         #,main="2020PP1"
 )
-windows()
+png("2020PP1EST.png",width =1600,height=900)
 annotate_figure(Pest2020PP1_b,
                 top = text_grob("2020PP1 - est", color = "black", face = "bold", size = 14))
+dev.off()

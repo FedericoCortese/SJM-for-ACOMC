@@ -16,10 +16,10 @@ Ptrue2015XX169=ggarrange(p2015XX169$Pa,
                          nrow=4
                          #,main="164207"
 )
-windows()
+png(filename = "2015XX169TRUE.png",width = 1600, height = 900)
 annotate_figure(Ptrue2015XX169,
                 top = text_grob("2015XX169 - true", color = "black", face = "bold", size = 14))
-
+dev.off()
 true_states=df2015XX169$type
 # TRUE STATES
 
@@ -35,6 +35,8 @@ hp=expand.grid(lambda=lambda,kappa=kappa)
 # unlist(lapply(est2015XX169,function(x)x$FTIC))
 # unlist(lapply(est2015XX169,function(x)x$overlap))
 
+load("est2015XX169.RData")
+
 modsel2015XX169=data.frame(hp,FTIC=unlist(lapply(est2015XX169,function(x)x$FTIC)),
                            overlap=unlist(lapply(est2015XX169,function(x)x$overlap)),
                            ARI=unlist(lapply(est2015XX169,function(x)x$ARI))
@@ -49,12 +51,12 @@ estw2015XX169=data.frame(weight=est2015XX169[[12]]$est_weights,
 estw2015XX169=estw2015XX169[order(estw2015XX169$weight,decreasing = T),]
 estw2015XX169
 
-windows()
-par(mfrow=c(4,1))
-plot(df2015XX169$sddtheta,type='l',main="2015XX169",ylab="sddtheta")
-plot(df2015XX169$sdwdn_omega,type='l',ylab="sdwdn_omega")
-plot(df2015XX169$sdwdn_a,type='l',ylab="sdwdn_a")
-plot(df2015XX169$sdwdn_theta,type='l',ylab="sdwdn_theta")
+# windows()
+# par(mfrow=c(4,1))
+# plot(df2015XX169$sddtheta,type='l',main="2015XX169",ylab="sddtheta")
+# plot(df2015XX169$sdwdn_omega,type='l',ylab="sdwdn_omega")
+# plot(df2015XX169$sdwdn_a,type='l',ylab="sdwdn_a")
+# plot(df2015XX169$sdwdn_theta,type='l',ylab="sdwdn_theta")
 
 df2015XX169_b=data.frame(df2015XX169,type=est2015XX169[[12]]$est_states)
 p2015XX169_b=plot_real4(df2015XX169_b)
@@ -66,10 +68,11 @@ Pest2015XX169_b=ggarrange(p2015XX169_b$Pa,
                           nrow=4
                           #,main="2015XX169"
 )
-windows()
+
+png(filename = "2015XX169EST.png",width = 1600, height = 900)
 annotate_figure(Pest2015XX169_b,
                 top = text_grob("2015XX169 - est", color = "black", face = "bold", size = 14))
-
+dev.off()
 
 
 
@@ -85,10 +88,11 @@ Ptrue2016CA138=ggarrange(p2016CA138$Pa,
                       nrow=4
                       #,main="164207"
 )
-windows()
+
+png(filename = "2016CA138TRUE.png",width = 1600, height = 900)
 annotate_figure(Ptrue2016CA138,
                 top = text_grob("2016CA138 - true", color = "black", face = "bold", size = 14))
-
+dev.off()
 true_states=df2016CA138$type
 # TRUE STATES
 
@@ -101,6 +105,8 @@ kappa=seq(1,ceiling(sqrt(dim(df2016CA138)[2])),by=1)
 hp=expand.grid(lambda=lambda,kappa=kappa)
 # unlist(lapply(est2016CA138,function(x)x$FTIC))
 # unlist(lapply(est2016CA138,function(x)x$overlap))
+
+load("est2016CA138.RData")
 
 modsel2016CA138=data.frame(hp,FTIC=unlist(lapply(est2016CA138,function(x)x$FTIC)),
                            overlap=unlist(lapply(est2016CA138,function(x)x$overlap)),
@@ -151,10 +157,11 @@ Ptrue2016CO246=ggarrange(p2016CO246$Pa,
                       nrow=4
                       #,main="164207"
 )
-windows()
+
+png(filename = "2016CO246TRUE.png",width = 1600, height = 900)
 annotate_figure(Ptrue2016CO246,
                 top = text_grob("2016CO246 - true", color = "black", face = "bold", size = 14))
-
+dev.off()
 true_states=df2016CO246$type
 # TRUE STATES
 
@@ -168,6 +175,8 @@ hp=expand.grid(lambda=lambda,kappa=kappa)
 # unlist(lapply(est2016CO246,function(x)x$FTIC))
 # unlist(lapply(est2016CO246,function(x)x$overlap))
 
+load("est2016CO246.RData")
+
 modsel2016CO246=data.frame(hp,FTIC=unlist(lapply(est2016CO246,function(x)x$FTIC)),
                            overlap=unlist(lapply(est2016CO246,function(x)x$overlap)),
                            ARI=unlist(lapply(est2016CO246,function(x)x$ARI))
@@ -175,21 +184,23 @@ modsel2016CO246=data.frame(hp,FTIC=unlist(lapply(est2016CO246,function(x)x$FTIC)
 
 modsel2016CO246
 
-estw2016CO246=data.frame(weight=est2016CO246[[2]]$est_weights,
+sel=20
+
+estw2016CO246=data.frame(weight=est2016CO246[[sel]]$est_weights,
                          feat=colnames(df2016CO246))
 
 # Sort by weight
 estw2016CO246=estw2016CO246[order(estw2016CO246$weight,decreasing = T),]
 estw2016CO246
 
-windows()
-par(mfrow=c(4,1))
-plot(df2016CO246$sddtheta,type='l',main="2016CO246",ylab="sddtheta")
-plot(df2016CO246$sdwdn_omega,type='l',ylab="sdwdn_omega")
-plot(df2016CO246$sdwdn_a,type='l',ylab="sdwdn_a")
-plot(df2016CO246$sdwdn_theta,type='l',ylab="sdwdn_theta")
+# windows()
+# par(mfrow=c(4,1))
+# plot(df2016CO246$sddtheta,type='l',main="2016CO246",ylab="sddtheta")
+# plot(df2016CO246$sdwdn_omega,type='l',ylab="sdwdn_omega")
+# plot(df2016CO246$sdwdn_a,type='l',ylab="sdwdn_a")
+# plot(df2016CO246$sdwdn_theta,type='l',ylab="sdwdn_theta")
 
-df2016CO246_b=data.frame(df2016CO246,type=est2016CO246[[2]]$est_states)
+df2016CO246_b=data.frame(df2016CO246,type=est2016CO246[[sel]]$est_states)
 p2016CO246_b=plot_real4(df2016CO246_b)
 
 Pest2016CO246_b=ggarrange(p2016CO246_b$Pa,
@@ -199,10 +210,11 @@ Pest2016CO246_b=ggarrange(p2016CO246_b$Pa,
                           nrow=4
                           #,main="2016CO246"
 )
-windows()
+
+png(filename = "2016CO246EST.png",width = 1600, height = 900)
 annotate_figure(Pest2016CO246_b,
                 top = text_grob("2016CO246 - est", color = "black", face = "bold", size = 14))
-
+dev.off()
 
 
 # 2014OL339 ---------------------------------------------------------------
@@ -217,10 +229,11 @@ Ptrue2014OL339=ggarrange(p2014OL339$Pa,
                       nrow=4
                       #,main="164207"
 )
-windows()
+
+png(filename = "2014OL339TRUE.png",width = 1600, height = 900)
 annotate_figure(Ptrue2014OL339,
                 top = text_grob("2014OL339 - true", color = "black", face = "bold", size = 14))
-
+dev.off()
 true_states=df2014OL339$type
 # TRUE STATES
 
@@ -234,14 +247,16 @@ hp=expand.grid(lambda=lambda,kappa=kappa)
 # unlist(lapply(est2014OL339,function(x)x$FTIC))
 # unlist(lapply(est2014OL339,function(x)x$overlap))
 
+load("est2014OL339.RData")
+
 modsel2014OL339=data.frame(hp,FTIC=unlist(lapply(est2014OL339,function(x)x$FTIC)),
                            overlap=unlist(lapply(est2014OL339,function(x)x$overlap)),
                            ARI=unlist(lapply(est2014OL339,function(x)x$ARI))
 )
 
 modsel2014OL339
-
-estw2014OL339=data.frame(weight=est2014OL339[[12]]$est_weights,
+sel=9
+estw2014OL339=data.frame(weight=est2014OL339[[sel]]$est_weights,
                          feat=colnames(df2014OL339))
 
 # Sort by weight
@@ -255,7 +270,7 @@ estw2014OL339
 # plot(df2014OL339$sdwdn_a,type='l',ylab="sdwdn_a")
 # plot(df2014OL339$sdwdn_theta,type='l',ylab="sdwdn_theta")
 
-df2014OL339_b=data.frame(df2014OL339,type=est2014OL339[[12]]$est_states)
+df2014OL339_b=data.frame(df2014OL339,type=est2014OL339[[sel]]$est_states)
 p2014OL339_b=plot_real4(df2014OL339_b)
 
 Pest2014OL339_b=ggarrange(p2014OL339_b$Pa,
@@ -265,10 +280,11 @@ Pest2014OL339_b=ggarrange(p2014OL339_b$Pa,
                           nrow=4
                           #,main="2014OL339"
 )
-windows()
+
+png(filename = "2014OL339EST.png",width = 1600, height = 900)
 annotate_figure(Pest2014OL339_b,
                 top = text_grob("2014OL339 - est", color = "black", face = "bold", size = 14))
-
+dev.off()
 
 
 # 2020PN1 -----------------------------------------------------------------
@@ -284,9 +300,11 @@ Ptrue2020PN1=ggarrange(p2020PN1$Pa,
                       nrow=4
                       #,main="164207"
 )
-windows()
+
+png(filename = "2020PN1TRUE.png",width = 1600, height = 900)
 annotate_figure(Ptrue2020PN1,
                 top = text_grob("2020PN1 - true", color = "black", face = "bold", size = 14))
+dev.off()
 
 true_states=df2020PN1$type
 # TRUE STATES
@@ -301,6 +319,8 @@ hp=expand.grid(lambda=lambda,kappa=kappa)
 # unlist(lapply(est2020PN1,function(x)x$FTIC))
 # unlist(lapply(est2020PN1,function(x)x$overlap))
 
+load("est2020PN1.RData")
+
 modsel2020PN1=data.frame(hp,FTIC=unlist(lapply(est2020PN1,function(x)x$FTIC)),
                          overlap=unlist(lapply(est2020PN1,function(x)x$overlap)),
                          ARI=unlist(lapply(est2020PN1,function(x)x$ARI))
@@ -308,7 +328,8 @@ modsel2020PN1=data.frame(hp,FTIC=unlist(lapply(est2020PN1,function(x)x$FTIC)),
 
 modsel2020PN1
 
-estw2020PN1=data.frame(weight=est2020PN1[[10]]$est_weights,
+sel=12
+estw2020PN1=data.frame(weight=est2020PN1[[sel]]$est_weights,
                        feat=colnames(df2020PN1))
 
 # Sort by weight
@@ -322,7 +343,8 @@ estw2020PN1
 # plot(df2020PN1$sdwdn_a,type='l',ylab="sdwdn_a")
 # plot(df2020PN1$sdwdn_theta,type='l',ylab="sdwdn_theta")
 
-df2020PN1_b=data.frame(df2020PN1,type=est2020PN1[[10]]$est_states)
+
+df2020PN1_b=data.frame(df2020PN1,type=est2020PN1[[sel]]$est_states)
 p2020PN1_b=plot_real4(df2020PN1_b)
 
 Pest2020PN1_b=ggarrange(p2020PN1_b$Pa,
@@ -332,7 +354,7 @@ Pest2020PN1_b=ggarrange(p2020PN1_b$Pa,
                         nrow=4
                         #,main="2020PN1"
 )
-windows()
+png(filename = "2020PN1EST.png",width = 1600, height = 900)
 annotate_figure(Pest2020PN1_b,
                 top = text_grob("2020PN1 - est", color = "black", face = "bold", size = 14))
-
+dev.off()
