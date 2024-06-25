@@ -133,7 +133,7 @@ df2016CO246=df2016CO246[,c("a","e","theta","omega")]
 df2016CO246=compute_feat(df2016CO246,am1=T)
 N=dim(df2016CO246)[1]
 
-wdn=5
+wdn=10
 tsa=ts(df2016CO246$a,frequency = wdn)
 tsa.stl <- stl(tsa, 
                s.window=wdn,
@@ -151,6 +151,9 @@ tstheta.stl <- stl(tstheta,
                robust=T)
 
 plot(tstheta.stl)
+
+plot(scale(diff(tstheta.stl$time.series[,2])),type="l")
+lines(scale(true_states[-1]),col="red")
 
 lambda=c(0,5,10,15,20,30)
 kappa=seq(1,ceiling(sqrt(dim(df2016CO246)[2])),by=1)
