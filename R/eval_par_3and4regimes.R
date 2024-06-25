@@ -25,7 +25,9 @@ true_states=df2015XX169$type
 
 
 df2015XX169=df2015XX169[,c("a","e","theta","omega")]
-df2015XX169=compute_feat(df2015XX169,wdn=10,am1=T)
+#df2015XX169=compute_feat(df2015XX169,wdn=10,am1=T)
+df2015XX169=compute_feat(df2015XX169,am1=T)
+
 
 lambda=c(0,5,10,15,20,30)
 kappa=seq(1,ceiling(sqrt(dim(df2015XX169)[2])),by=1)
@@ -92,7 +94,7 @@ true_states=df2016CA138$type
 
 
 df2016CA138=df2016CA138[,c("a","e","theta","omega")]
-df2016CA138=compute_feat(df2016CA138,wdn=10,am1=T)
+df2016CA138=compute_feat(df2016CA138,am1=T)
 
 lambda=c(0,5,10,15,20,30)
 kappa=seq(1,ceiling(sqrt(dim(df2016CA138)[2])),by=1)
@@ -158,7 +160,7 @@ true_states=df2016CO246$type
 
 
 df2016CO246=df2016CO246[,c("a","e","theta","omega")]
-df2016CO246=compute_feat(df2016CO246,wdn=75,am1=T)
+df2016CO246=compute_feat(df2016CO246,am1=T)
 
 lambda=c(0,5,10,15,20,30)
 kappa=seq(1,ceiling(sqrt(dim(df2016CO246)[2])),by=1)
@@ -224,7 +226,7 @@ true_states=df2014OL339$type
 
 
 df2014OL339=df2014OL339[,c("a","e","theta","omega")]
-df2014OL339=compute_feat(df2014OL339,wdn=10,am1=T)
+df2014OL339=compute_feat(df2014OL339,am1=T)
 
 lambda=c(0,5,10,15,20,30)
 kappa=seq(1,ceiling(sqrt(dim(df2014OL339)[2])),by=1)
@@ -291,7 +293,7 @@ true_states=df2020PN1$type
 
 
 df2020PN1=df2020PN1[,c("a","e","theta","omega")]
-df2020PN1=compute_feat(df2020PN1,wdn=10,am1=T)
+df2020PN1=compute_feat(df2020PN1,am1=T)
 
 lambda=c(0,5,10,15,20,30)
 kappa=seq(1,ceiling(sqrt(dim(df2020PN1)[2])),by=1)
