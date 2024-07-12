@@ -1,3 +1,7 @@
+# RIVEDERE ORDINAMENTO STATI
+# RIVEDERE QUANDO FAI TAIL(TRUE_STATES)
+# MODIFICARE COMP_FEAT IN UTILS AFFINCHE CONSIDERI TUTTE (a,e,theta,omega) O SOLO ALCUNE
+
 source("Utils3_.R")
 library(reticulate)
 library(ggplot2)
@@ -70,6 +74,29 @@ end_est164207=Sys.time()
 elapsed_est164207=end_est164207-start_est164207
 save(df164207,est164207,elapsed_est164207,file="est164207.RData")
 
+modsel164207=data.frame(hp,FTIC=unlist(lapply(est164207,function(x)x$FTIC)),
+                        overlap=unlist(lapply(est164207,function(x)x$overlap)),
+                        ARI=unlist(lapply(est164207,function(x)x$ARI))
+)
+sel=25
+modsel164207
+
+estw164207=data.frame(weight=est164207[[sel]]$est_weights,feat=colnames(df164207))
+
+# Sort by weight
+estw164207=estw164207[order(estw164207$weight,decreasing = T),]
+estw164207
+
+df164207_b=data.frame(df164207,type=est164207[[sel]]$est_states)
+p164207_b=plot_real(df164207_b,"red")
+
+Pest164207_b=ggarrange(p164207_b$Pa,
+                       p164207_b$Pe,
+                       p164207_b$Ptheta,
+                       p164207_b$Pomega,
+                       nrow=4
+                       #,main="164207"
+)
 
 # 2001GO2 -------------------------------------------------------------------------
 
@@ -86,7 +113,7 @@ Ptrue2001GO2=ggarrange(p2001GO2$Pa,
                         #,main="2002AA29"
 )
 Ptrue2001GO2
-true_states=df2001GO2$type
+#true_states=df2001GO2$type
 
 df2001GO2=df2001GO2[,c("a","e","theta","omega")]
 
@@ -134,6 +161,25 @@ est2001GO2 <- parallel::mclapply(1:nrow(hp),
 end_est2001GO2=Sys.time()
 elapsed_est2001GO2=end_est2001GO2-start_est2001GO2
 save(df2001GO2,est2001GO2,elapsed_est2001GO2,file="est2001GO2.RData")
+
+modsel2001GO2=data.frame(hp,FTIC=unlist(lapply(est2001GO2,function(x)x$FTIC)),
+                         BAC=unlist(lapply(est2001GO2,function(x)x$BAC)),
+                         ARI=unlist(lapply(est2001GO2,function(x)x$ARI))
+)
+
+sel=13
+df2001GO2_b=data.frame(df2001GO2,type=est2001GO2[[sel]]$est_states)
+p2001GO2_b=plot_real(df2001GO2_b,"red")
+Pest2001GO2_b=ggarrange(p2001GO2_b$Pa,
+                        p2001GO2_b$Pe,
+                        p2001GO2_b$Ptheta,
+                        p2001GO2_b$Pomega,
+                        nrow=4
+                        #,main="2001GO2"
+)
+gridExtra::grid.arrange(Pest2001GO2_b,
+                        Ptrue2001GO2
+)
 
 # 2002AA29 --------------------------------------------------------------------
 

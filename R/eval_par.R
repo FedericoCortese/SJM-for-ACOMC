@@ -114,7 +114,7 @@ modsel2001GO2=data.frame(hp,FTIC=unlist(lapply(est2001GO2,function(x)x$FTIC)),
 )
 
 #modsel2001GO2
-sel=25
+sel=1
 estw2001GO2=data.frame(weight=est2001GO2[[sel]]$est_weights,feat=colnames(df2001GO2))
 
 # Sort by weight
