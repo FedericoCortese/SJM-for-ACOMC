@@ -6,30 +6,30 @@ library(zoo)
 
 # 164207 ------------------------------------------------------------------
 
-df164207=read.table("propagation_164207_new_v2.txt",header=T)
-
-p164207=plot_real(df164207,"blue")
-
-Ptrue164207=ggarrange(p164207$Pa,
-                      p164207$Pe,
-                      p164207$Ptheta,
-                      p164207$Pomega,
-                      nrow=4
-                      #,main="164207"
-)
-Ptrue164207
-
-png("164207TRUE.png",width =1600,height=900)
-annotate_figure(Ptrue164207,
-                top = text_grob("164207 - true", color = "black", face = "bold", size = 14))
-dev.off()
-
-true_states=df164207$type
-# TRUE STATES
+# df164207=read.table("propagation_164207_new_v2.txt",header=T)
 # 
+# p164207=plot_real(df164207,"blue")
 # 
-# df164207=df164207[,c("a","e","theta","omega")]
-# df164207=compute_feat(df164207)
+# Ptrue164207=ggarrange(p164207$Pa,
+#                       p164207$Pe,
+#                       p164207$Ptheta,
+#                       p164207$Pomega,
+#                       nrow=4
+#                       #,main="164207"
+# )
+# Ptrue164207
+# 
+# png("164207TRUE.png",width =1600,height=900)
+# annotate_figure(Ptrue164207,
+#                 top = text_grob("164207 - true", color = "black", face = "bold", size = 14))
+# dev.off()
+# 
+# true_states=df164207$type
+# # TRUE STATES
+# # 
+# # 
+# # df164207=df164207[,c("a","e","theta","omega")]
+# # df164207=compute_feat(df164207)
 
 lambda=c(0,5,10,15,20,30)
 kappa=seq(1,ceiling(sqrt(dim(df164207)[2])),by=1)
@@ -144,25 +144,25 @@ annotate_figure(Pest2001GO2_b,
 dev.off()
 
 # 2002AA29 --------------------------------------------------------------------
-
-df2002AA29=read.table("propagation_2002AA29_new_v2.txt",header=T)
-
-p2002AA29=plot_real(df2002AA29,"blue")
-
-Ptrue2002AA29=ggarrange(p2002AA29$Pa,
-                        p2002AA29$Pe,
-                        p2002AA29$Ptheta,
-                        p2002AA29$Pomega,
-                        nrow=4
-                        #,main="2002AA29"
-)
-Ptrue2002AA29
-true_states=df2002AA29$type
-# TRUE STATES
 # 
+# df2002AA29=read.table("propagation_2002AA29_new_v2.txt",header=T)
 # 
-# df2002AA29=df2002AA29[,c("a","e","theta","omega")]
-# df2002AA29=compute_feat(df2002AA29)
+# p2002AA29=plot_real(df2002AA29,"blue")
+# 
+# Ptrue2002AA29=ggarrange(p2002AA29$Pa,
+#                         p2002AA29$Pe,
+#                         p2002AA29$Ptheta,
+#                         p2002AA29$Pomega,
+#                         nrow=4
+#                         #,main="2002AA29"
+# )
+# Ptrue2002AA29
+# true_states=df2002AA29$type
+# # TRUE STATES
+# # 
+# # 
+# # df2002AA29=df2002AA29[,c("a","e","theta","omega")]
+# # df2002AA29=compute_feat(df2002AA29)
 
 lambda=c(0,5,10,15,20,30)
 kappa=seq(1,ceiling(sqrt(dim(df2002AA29)[2])),by=1)
@@ -196,33 +196,37 @@ Pest2002AA29_b=ggarrange(p2002AA29_b$Pa,
                         #,main="2001GO2"
 )
 
+# 2015SO2 --------------------------------------------------------------------
+
+
+
 # 2016HO3 -----------------------------------------------------------------
 
-df2016HO3=read.table("propagation_2016HO3_new_v2.txt",header=T)
-unique(df2016HO3$type)
-
-df2016HO3=read.table("propagation_2016HO3_new_v2.txt",header=T)
-
-p2016HO3=plot_real(df2016HO3,"blue")
-
-Ptrue2016HO3=ggarrange(p2016HO3$Pa,
-                       p2016HO3$Pe,
-                       p2016HO3$Ptheta,
-                       p2016HO3$Pomega,
-                       nrow=4
-                       #,main="2016HO3"
-)
-png("2016HO3TRUE.png",width =1600,height=900)
-annotate_figure(Ptrue2016HO3,
-                top = text_grob("2016HO3 - true", color = "black", face = "bold", size = 14))
-dev.off()
-
-true_states=df2016HO3$type
-# TRUE STATES
+# df2016HO3=read.table("propagation_2016HO3_new_v2.txt",header=T)
+# unique(df2016HO3$type)
 # 
+# df2016HO3=read.table("propagation_2016HO3_new_v2.txt",header=T)
 # 
-# df2016HO3=df2016HO3[,c("a","e","theta","omega")]
-# df2016HO3=compute_feat(df2016HO3)
+# p2016HO3=plot_real(df2016HO3,"blue")
+# 
+# Ptrue2016HO3=ggarrange(p2016HO3$Pa,
+#                        p2016HO3$Pe,
+#                        p2016HO3$Ptheta,
+#                        p2016HO3$Pomega,
+#                        nrow=4
+#                        #,main="2016HO3"
+# )
+# png("2016HO3TRUE.png",width =1600,height=900)
+# annotate_figure(Ptrue2016HO3,
+#                 top = text_grob("2016HO3 - true", color = "black", face = "bold", size = 14))
+# dev.off()
+# 
+# true_states=df2016HO3$type
+# # TRUE STATES
+# # 
+# # 
+# # df2016HO3=df2016HO3[,c("a","e","theta","omega")]
+# # df2016HO3=compute_feat(df2016HO3)
 
 lambda=c(0,5,10,15,20,30)
 kappa=seq(1,ceiling(sqrt(dim(df2016HO3)[2])),by=1)
@@ -270,32 +274,32 @@ dev.off()
 
 # 2019GM1 -----------------------------------------------------------------
 
-df2019GM1=read.table("propagation_2019GM1_new_v2.txt",header=T)
-unique(df2019GM1$type)
-
-df2019GM1=read.table("propagation_2019GM1_new_v2.txt",header=T)
-
-p2019GM1=plot_real(df2019GM1,"blue")
-
-Ptrue2019GM1=ggarrange(p2019GM1$Pa,
-                       p2019GM1$Pe,
-                       p2019GM1$Ptheta,
-                       p2019GM1$Pomega,
-                       nrow=4
-                       #,main="2019GM1"
-)
-
-png("2019GM1TRUE.png",width =1600,height=900)
-annotate_figure(Ptrue2019GM1,
-                top = text_grob("2019GM1 - true", color = "black", face = "bold", size = 14))
-dev.off()
-
-true_states=df2019GM1$type
-# TRUE STATES
+# df2019GM1=read.table("propagation_2019GM1_new_v2.txt",header=T)
+# unique(df2019GM1$type)
 # 
+# df2019GM1=read.table("propagation_2019GM1_new_v2.txt",header=T)
 # 
-# df2019GM1=df2019GM1[,c("a","e","theta","omega")]
-# df2019GM1=compute_feat(df2019GM1)
+# p2019GM1=plot_real(df2019GM1,"blue")
+# 
+# Ptrue2019GM1=ggarrange(p2019GM1$Pa,
+#                        p2019GM1$Pe,
+#                        p2019GM1$Ptheta,
+#                        p2019GM1$Pomega,
+#                        nrow=4
+#                        #,main="2019GM1"
+# )
+# 
+# png("2019GM1TRUE.png",width =1600,height=900)
+# annotate_figure(Ptrue2019GM1,
+#                 top = text_grob("2019GM1 - true", color = "black", face = "bold", size = 14))
+# dev.off()
+# 
+# true_states=df2019GM1$type
+# # TRUE STATES
+# # 
+# # 
+# # df2019GM1=df2019GM1[,c("a","e","theta","omega")]
+# # df2019GM1=compute_feat(df2019GM1)
 
 lambda=c(0,5,10,15,20,30)
 kappa=seq(1,ceiling(sqrt(dim(df2019GM1)[2])),by=1)
@@ -341,29 +345,29 @@ dev.off()
 
 # 2020PP1 -----------------------------------------------------------------
 
-df2020PP1=read.table("propagation_2020PP1_new_v2.txt",header=T)
-unique(df2020PP1$type)
-
-p2020PP1=plot_real(df2020PP1,"blue")
-
-Ptrue2020PP1=ggarrange(p2020PP1$Pa,
-                       p2020PP1$Pe,
-                       p2020PP1$Ptheta,
-                       p2020PP1$Pomega,
-                       nrow=4
-                       #,main="2020PP1"
-)
-png("2020PP1TRUE.png",width =1600,height=900)
-annotate_figure(Ptrue2020PP1,
-                top = text_grob("2020PP1 - true", color = "black", face = "bold", size = 14))
-dev.off()
-
-true_states=df2020PP1$type
-# TRUE STATES
+# df2020PP1=read.table("propagation_2020PP1_new_v2.txt",header=T)
+# unique(df2020PP1$type)
 # 
+# p2020PP1=plot_real(df2020PP1,"blue")
 # 
-# df2020PP1=df2020PP1[,c("a","e","theta","omega")]
-# df2020PP1=compute_feat(df2020PP1)
+# Ptrue2020PP1=ggarrange(p2020PP1$Pa,
+#                        p2020PP1$Pe,
+#                        p2020PP1$Ptheta,
+#                        p2020PP1$Pomega,
+#                        nrow=4
+#                        #,main="2020PP1"
+# )
+# png("2020PP1TRUE.png",width =1600,height=900)
+# annotate_figure(Ptrue2020PP1,
+#                 top = text_grob("2020PP1 - true", color = "black", face = "bold", size = 14))
+# dev.off()
+# 
+# true_states=df2020PP1$type
+# # TRUE STATES
+# # 
+# # 
+# # df2020PP1=df2020PP1[,c("a","e","theta","omega")]
+# # df2020PP1=compute_feat(df2020PP1)
 
 lambda=c(0,5,10,15,20,30)
 kappa=seq(1,ceiling(sqrt(dim(df2020PP1)[2])),by=1)

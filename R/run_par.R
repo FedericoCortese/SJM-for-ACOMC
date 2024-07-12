@@ -76,6 +76,18 @@ save(df164207,est164207,elapsed_est164207,file="est164207.RData")
 df2001GO2=read.table("propagation_2001GO2_new_v2.txt",header=T)
 true_states=order_states(df2001GO2$type)
 
+p2002AA29=plot_real(df2002AA29,"blue")
+
+Ptrue2002AA29=ggarrange(p2002AA29$Pa,
+                        p2002AA29$Pe,
+                        p2002AA29$Ptheta,
+                        p2002AA29$Pomega,
+                        nrow=4
+                        #,main="2002AA29"
+)
+Ptrue2002AA29
+true_states=df2002AA29$type
+
 df2001GO2=df2001GO2[,c("a","e","theta","omega")]
 
 df2001GO2=compute_feat(df2001GO2)
@@ -127,6 +139,18 @@ save(df2001GO2,est2001GO2,elapsed_est2001GO2,file="est2001GO2.RData")
 
 df2002AA29=read.table("propagation_2002AA29_new_v2.txt",header=T)
 true_states=order_states(df2002AA29$type)
+
+p2002AA29=plot_real(df2002AA29,"blue")
+
+Ptrue2002AA29=ggarrange(p2002AA29$Pa,
+                        p2002AA29$Pe,
+                        p2002AA29$Ptheta,
+                        p2002AA29$Pomega,
+                        nrow=4
+                        #,main="2002AA29"
+)
+Ptrue2002AA29
+true_states=df2002AA29$type
 
 df2002AA29=df2002AA29[,c("a","e","theta","omega")]
 
@@ -181,6 +205,18 @@ save(df2002AA29,est2002AA29,elapsed_est2002AA29,file="est2002AA29.RData")
 df2015SO2=read.table("propagation_2015SO2_new_v2.txt",header=T)
 true_states=order_states(df2015SO2$type)
 
+p2015SO2=plot_real(df2015SO2,"blue")
+
+Ptrue2015SO2=ggarrange(p2015SO2$Pa,
+                       p2015SO2$Pe,
+                        p2015SO2$Ptheta,
+                        p2015SO2$Pomega,
+                        nrow=4
+                        #,main="2002AA29"
+)
+Ptrue2015SO2
+true_states=df2015SO2$type
+
 df2015SO2=df2015SO2[,c("a","e","theta","omega")]
 
 df2015SO2=compute_feat(df2015SO2)
@@ -233,6 +269,17 @@ save(df2015SO2,est2015SO2,elapsed_est2015SO2,file="est2015SO2.RData")
 
 df2016HO3=read.table("propagation_2016HO3_new_v2.txt",header=T)
 true_states=order_states(df2016HO3$type)
+
+p2016HO3=plot_real(df2016HO3,"blue")
+
+Ptrue2016HO3=ggarrange(p2016HO3$Pa,
+                       p2016HO3$Pe,
+                       p2016HO3$Ptheta,
+                       p2016HO3$Pomega,
+                       nrow=4
+                       #,main="2016HO3"
+)
+Ptrue2016HO3
 
 df2016HO3=df2016HO3[,c("a","e","theta","omega")]
 
@@ -287,6 +334,17 @@ save(df2016HO3,est2016HO3,elapsed_est2016HO3,file="est2016HO3.RData")
 df2019GM1=read.table("propagation_2019GM1_new_v2.txt",header=T)
 true_states=order_states(df2019GM1$type)
 
+p2019GM1=plot_real(df2019GM1,"blue")
+
+Ptrue2019GM1=ggarrange(p2019GM1$Pa,
+                       p2019GM1$Pe,
+                       p2019GM1$Ptheta,
+                       p2019GM1$Pomega,
+                       nrow=4
+                       #,main="2019GM1"
+)
+Ptrue2019GM1
+
 df2019GM1=df2019GM1[,c("a","e","theta","omega")]
 
 df2019GM1=compute_feat(df2019GM1)
@@ -339,6 +397,16 @@ save(df2019GM1,est2019GM1,elapsed_est2019GM1,file="est2019GM1.RData")
 
 df2020PP1=read.table("propagation_2020PP1_new_v2.txt",header=T)
 true_states=order_states(df2020PP1$type)
+
+p2020PP1=plot_real(df2020PP1,"blue")
+
+Ptrue2020PP1=ggarrange(p2020PP1$Pa,
+                       p2020PP1$Pe,
+                       p2020PP1$Ptheta,
+                       p2020PP1$Pomega,
+                       nrow=4
+                       #,main="2020PP1"
+)
 
 df2020PP1=df2020PP1[,c("a","e","theta","omega")]
 
