@@ -11,50 +11,8 @@ true_states=order_states(df164207$type)
 
 df164207=df164207[,c("a","e","theta","omega")]
 
-wdn=10
-tsa=ts(df164207$a,frequency = wdn)
-tsa.stl <- stl(tsa, 
-              s.window=wdn,
-              t.window=NULL,
-              na.action = na.approx,
-              robust=T)
 
-plot(tsa.stl)
-
-sdseas_a=rollapply(tsa.stl$time.series[,3], 10, sd, fill=NA)
-plot(sdseas_a,type="l")
-
-tse=ts(df164207$e,frequency = wdn)
-tse.stl <- stl(tse, 
-              s.window=wdn,
-              t.window=NULL,
-              na.action = na.approx,
-              robust=T)
-
-plot(tse.stl)
-
-
-tstheta=ts(df164207$theta,frequency = wdn)
-tstheta.stl <- stl(tstheta, 
-               s.window=wdn,
-               t.window=NULL,
-               na.action = na.approx,
-               robust=T)
-
-plot(tstheta.stl)
-
-
-tsomega=ts(df164207$omega,frequency = wdn)
-tsomega.stl <- stl(tsomega, 
-                   s.window=wdn,
-                   t.window=NULL,
-                   na.action = na.approx,
-                   robust=T)
-
-plot(tsomega.stl)
-
-
-df164207=compute_feat(df164207,wdn=10)
+df164207=compute_feat(df164207)
 N=dim(df164207)[1]
 
 lambda=c(0,5,10,15,20,30)
@@ -107,7 +65,7 @@ true_states=order_states(df2001GO2$type)
 
 df2001GO2=df2001GO2[,c("a","e","theta","omega")]
 
-df2001GO2=compute_feat(df2001GO2,wdn=10)
+df2001GO2=compute_feat(df2001GO2)
 N=dim(df2001GO2)[1]
 
 lambda=c(0,5,10,15,20,30)
@@ -159,7 +117,7 @@ true_states=order_states(df2002AA29$type)
 
 df2002AA29=df2002AA29[,c("a","e","theta","omega")]
 
-df2002AA29=compute_feat(df2002AA29,wdn=10)
+df2002AA29=compute_feat(df2002AA29)
 N=dim(df2002AA29)[1]
 
 lambda=c(0,5,10,15,20,30)
@@ -212,7 +170,7 @@ true_states=order_states(df2015SO2$type)
 
 df2015SO2=df2015SO2[,c("a","e","theta","omega")]
 
-df2015SO2=compute_feat(df2015SO2,wdn=10)
+df2015SO2=compute_feat(df2015SO2)
 N=dim(df2015SO2)[1]
 
 lambda=c(0,5,10,15,20,30)
@@ -265,7 +223,7 @@ true_states=order_states(df2016HO3$type)
 
 df2016HO3=df2016HO3[,c("a","e","theta","omega")]
 
-df2016HO3=compute_feat(df2016HO3,wdn=10)
+df2016HO3=compute_feat(df2016HO3)
 N=dim(df2016HO3)[1]
 
 lambda=c(0,5,10,15,20,30)
@@ -318,7 +276,7 @@ true_states=order_states(df2019GM1$type)
 
 df2019GM1=df2019GM1[,c("a","e","theta","omega")]
 
-df2019GM1=compute_feat(df2019GM1,wdn=10)
+df2019GM1=compute_feat(df2019GM1)
 N=dim(df2019GM1)[1]
 
 lambda=c(0,5,10,15,20,30)
@@ -371,7 +329,7 @@ true_states=order_states(df2020PP1$type)
 
 df2020PP1=df2020PP1[,c("a","e","theta","omega")]
 
-df2020PP1=compute_feat(df2020PP1,wdn=10)
+df2020PP1=compute_feat(df2020PP1)
 N=dim(df2020PP1)[1]
 
 lambda=c(0,5,10,15,20,30)

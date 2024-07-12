@@ -134,7 +134,7 @@ SJM_lambdakappa=function(lambda,kappa,K=2,df,Lnsat,Ksat=6,alpha0=NULL,K0=NULL,pe
   }
   
 }
-compute_feat=function(dat,wdn=c(10,75),am1=F){
+compute_feat=function(dat,wdn=c(10,75),am1=F,wdn_decomp=10){
   
   # Add first differences for each variable to dat2
   dat$da=c(NA,diff(dat$a))
@@ -186,7 +186,7 @@ compute_feat=function(dat,wdn=c(10,75),am1=F){
   dat$ma_short_theta=rollapply(dat$theta, wdn[1], mean, fill=NA)
   dat$ma_short_omega=rollapply(dat$omega, wdn[1], mean, fill=NA)
   
-  # Add moving standard deviation for each variable to dat2
+  # Add moving standard deviation for each variable to dat
   dat$sd_short_a=rollapply(dat$a, wdn[1], sd, fill=NA)
   dat$sd_short_e=rollapply(dat$e, wdn[1], sd, fill=NA)
   dat$sd_short_theta=rollapply(dat$theta, wdn[1], sd, fill=NA)
@@ -222,6 +222,84 @@ compute_feat=function(dat,wdn=c(10,75),am1=F){
     dat$belowabove1=as.numeric(
       rollapply(dat$a, wdn[2], function(x){all(x<1)|all(x>1)}, fill=NA)
     )
+  }
+  
+  tsa=ts(dat$a,frequency = wdn_decomp)
+  tsa.stl <- stl(tsa, 
+                 s.window=wdn_decomp,
+                 t.window=NULL,
+                 na.action = na.approx,
+                 robust=T)
+  dat$seas_a=tsa.stl$time.series[,1]
+  dat$trend_a=tsa.stl$time.series[,2]
+  dat$remainder_a=tsa.stl$time.series[,3]
+  
+  tse=ts(dat$e,frequency = wdn_decomp)
+  tse.stl <- stl(tse, 
+                 s.window=wdn_decomp,
+                 t.window=NULL,
+                 na.action = na.approx,
+                 robust=T)
+  
+  dat$seas_e=tsa.stl$time.series[,1]
+  dat$trend_e=tsa.stl$time.series[,2]
+  dat$remainder_e=tsa.stl$time.series[,3]
+
+  tstheta=ts(dat$theta,frequency = wdn_decomp)
+  tstheta.stl <- stl(tstheta, 
+                     s.window=wdn_decomp,
+                     t.window=NULL,
+                     na.action = na.approx,
+                     robust=T)
+  
+  dat$seas_theta=tsa.stl$time.series[,1]
+  dat$trend_theta=tsa.stl$time.series[,2]
+  dat$remainder_theta=tsa.stl$time.series[,3]
+  
+  tsomega=ts(dat$omega,frequency = wdn_decomp)
+  tsomega.stl <- stl(tsomega, 
+                     s.window=wdn_decomp,
+                     t.window=NULL,
+                     na.action = na.approx,
+                     robust=T)
+  
+  dat$seas_omega=tsa.stl$time.series[,1]
+  dat$trend_omega=tsa.stl$time.series[,2]
+  dat$remainder_omega=tsa.stl$time.series[,3]
+  
+  # Add moving standard deviation for trend, seas, and reminder of each variable
+  dat$sd_short_seas_a=rollapply(dat$seas_a, wdn[1], sd, fill=NA)
+  dat$sd_short_trend_a=rollapply(dat$trend_a, wdn[1], sd, fill=NA)
+  dat$sd_short_remainder_a=rollapply(dat$remainder_a, wdn[1], sd, fill=NA)
+  
+  dat$sd_short_seas_e=rollapply(dat$seas_e, wdn[1], sd, fill=NA)
+  dat$sd_short_trend_e=rollapply(dat$trend_e, wdn[1], sd, fill=NA)
+  dat$sd_short_remainder_e=rollapply(dat$remainder_e, wdn[1], sd, fill=NA)
+  
+  dat$sd_short_seas_theta=rollapply(dat$seas_theta, wdn[1], sd, fill=NA)
+  dat$sd_short_trend_theta=rollapply(dat$trend_theta, wdn[1], sd, fill=NA)
+  dat$sd_short_remainder_theta=rollapply(dat$remainder_theta, wdn[1], sd, fill=NA)
+
+  dat$sd_short_seas_omega=rollapply(dat$seas_omega, wdn[1], sd, fill=NA)
+  dat$sd_short_trend_omega=rollapply(dat$trend_omega, wdn[1], sd, fill=NA)
+  dat$sd_short_remainder_omega=rollapply(dat$remainder_omega, wdn[1], sd, fill=NA)
+  
+  if(length(wdn)>1){
+    dat$sd_long_seas_a=rollapply(dat$seas_a, wdn[2], sd, fill=NA)
+    dat$sd_long_trend_a=rollapply(dat$trend_a, wdn[2], sd, fill=NA)
+    dat$sd_long_remainder_a=rollapply(dat$remainder_a, wdn[2], sd, fill=NA)
+    
+    dat$sd_long_seas_e=rollapply(dat$seas_e, wdn[2], sd, fill=NA)
+    dat$sd_long_trend_e=rollapply(dat$trend_e, wdn[2], sd, fill=NA)
+    dat$sd_long_remainder_e=rollapply(dat$remainder_e, wdn[2], sd, fill=NA)
+    
+    dat$sd_long_seas_theta=rollapply(dat$seas_theta, wdn[2], sd, fill=NA)
+    dat$sd_long_trend_theta=rollapply(dat$trend_theta, wdn[2], sd, fill=NA)
+    dat$sd_long_remainder_theta=rollapply(dat$remainder_theta, wdn[2], sd, fill=NA)
+    
+    dat$sd_long_seas_omega=rollapply(dat$seas_omega, wdn[2], sd, fill=NA)
+    dat$sd_long_trend_omega=rollapply(dat$trend_omega, wdn[2], sd, fill=NA)
+    dat$sd_long_remainder_omega=rollapply(dat$remainder_omega, wdn[2], sd, fill=NA)
   }
   
   datC=dat[complete.cases(dat),]
