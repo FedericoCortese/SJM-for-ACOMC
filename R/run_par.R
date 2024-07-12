@@ -9,10 +9,20 @@ source_python('SJ.py')
 df164207=read.table("propagation_164207_new_v2.txt",header=T)
 true_states=order_states(df164207$type)
 
+p164207=plot_real(df164207,"blue")
+
+Ptrue164207=ggarrange(p164207$Pa,
+                      p164207$Pe,
+                      p164207$Ptheta,
+                      p164207$Pomega,
+                      nrow=4
+                      #,main="164207"
+)
+Ptrue164207
+
 df164207=df164207[,c("a","e","theta","omega")]
 
-
-df164207=compute_feat(df164207)
+df164207=compute_feat(df164207,wdn = 100)
 N=dim(df164207)[1]
 
 lambda=c(0,5,10,15,20,30)
@@ -55,7 +65,7 @@ est164207 <- parallel::mclapply(1:nrow(hp),
 
 end_est164207=Sys.time()
 elapsed_est164207=end_est164207-start_est164207
-save(est164207,elapsed_est164207,file="est164207.RData")
+save(df164207,est164207,elapsed_est164207,file="est164207.RData")
 
 
 # 2001GO2 -------------------------------------------------------------------------
@@ -108,7 +118,7 @@ est2001GO2 <- parallel::mclapply(1:nrow(hp),
 
 end_est2001GO2=Sys.time()
 elapsed_est2001GO2=end_est2001GO2-start_est2001GO2
-save(est2001GO2,elapsed_est2001GO2,file="est2001GO2.RData")
+save(df2001GO2,est2001GO2,elapsed_est2001GO2,file="est2001GO2.RData")
 
 # 2002AA29 --------------------------------------------------------------------
 
@@ -160,7 +170,7 @@ est2002AA29 <- parallel::mclapply(1:nrow(hp),
 
 end_est2002AA29=Sys.time()
 elapsed_est2002AA29=end_est2002AA29-start_est2002AA29
-save(est2002AA29,elapsed_est2002AA29,file="est2002AA29.RData")
+save(df2002AA29,est2002AA29,elapsed_est2002AA29,file="est2002AA29.RData")
 
 
 # 2015SO2 --------------------------------------------------------------------
@@ -213,7 +223,7 @@ est2015SO2 <- parallel::mclapply(1:nrow(hp),
 
 end_est2015SO2=Sys.time()
 elapsed_est2015SO2=end_est2015SO2-start_est2015SO2
-save(est2015SO2,elapsed_est2015SO2,file="est2015SO2.RData")
+save(df2015SO2,est2015SO2,elapsed_est2015SO2,file="est2015SO2.RData")
 
 
 # 2016HO3 -----------------------------------------------------------------
@@ -266,7 +276,7 @@ est2016HO3 <- parallel::mclapply(1:nrow(hp),
 
 end_est2016HO3=Sys.time()
 elapsed_est2016HO3=end_est2016HO3-start_est2016HO3
-save(est2016HO3,elapsed_est2016HO3,file="est2016HO3.RData")
+save(df2016HO3,est2016HO3,elapsed_est2016HO3,file="est2016HO3.RData")
 
 
 # 2019GM1 -----------------------------------------------------------------
@@ -319,7 +329,7 @@ est2019GM1 <- parallel::mclapply(1:nrow(hp),
 
 end_est2019GM1=Sys.time()
 elapsed_est2019GM1=end_est2019GM1-start_est2019GM1
-save(est2019GM1,elapsed_est2019GM1,file="est2019GM1.RData")
+save(df2019GM1,est2019GM1,elapsed_est2019GM1,file="est2019GM1.RData")
 
 
 # 2020PP1 -----------------------------------------------------------------
@@ -372,4 +382,4 @@ est2020PP1 <- parallel::mclapply(1:nrow(hp),
 
 end_est2020PP1=Sys.time()
 elapsed_est2020PP1=end_est2020PP1-start_est2020PP1
-save(est2020PP1,elapsed_est2020PP1,file="est2020PP1.RData")
+save(df2020PP1,est2020PP1,elapsed_est2020PP1,file="est2020PP1.RData")

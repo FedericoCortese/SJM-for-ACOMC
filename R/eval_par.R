@@ -17,6 +17,7 @@ Ptrue164207=ggarrange(p164207$Pa,
                       nrow=4
                       #,main="164207"
 )
+Ptrue164207
 
 png("164207TRUE.png",width =1600,height=900)
 annotate_figure(Ptrue164207,
@@ -25,10 +26,10 @@ dev.off()
 
 true_states=df164207$type
 # TRUE STATES
-
-
-df164207=df164207[,c("a","e","theta","omega")]
-df164207=compute_feat(df164207,wdn=10)
+# 
+# 
+# df164207=df164207[,c("a","e","theta","omega")]
+# df164207=compute_feat(df164207)
 
 lambda=c(0,5,10,15,20,30)
 kappa=seq(1,ceiling(sqrt(dim(df164207)[2])),by=1)
@@ -42,7 +43,7 @@ modsel164207=data.frame(hp,FTIC=unlist(lapply(est164207,function(x)x$FTIC)),
                         overlap=unlist(lapply(est164207,function(x)x$overlap)),
                         ARI=unlist(lapply(est164207,function(x)x$ARI))
 )
-sel=2
+sel=25
 modsel164207
 
 estw164207=data.frame(weight=est164207[[sel]]$est_weights,feat=colnames(df164207))
@@ -87,6 +88,7 @@ Ptrue2001GO2=ggarrange(p2001GO2$Pa,
                        nrow=4
                        #,main="2001GO2"
 )
+Ptrue2001GO2
 png("2001GO2TRUE.png",width =1600,height=900)
 annotate_figure(Ptrue2001GO2,
                 top = text_grob("2001GO2 - true", color = "black", face = "bold", size = 14))
@@ -94,10 +96,10 @@ dev.off()
 
 true_states=df2001GO2$type
 # TRUE STATES
-
-
-df2001GO2=df2001GO2[,c("a","e","theta","omega")]
-df2001GO2=compute_feat(df2001GO2,wdn=10)
+# 
+# 
+# df2001GO2=df2001GO2[,c("a","e","theta","omega")]
+# df2001GO2=compute_feat(df2001GO2)
 
 lambda=c(0,5,10,15,20,30)
 kappa=seq(1,ceiling(sqrt(dim(df2001GO2)[2])),by=1)
@@ -111,8 +113,8 @@ modsel2001GO2=data.frame(hp,FTIC=unlist(lapply(est2001GO2,function(x)x$FTIC)),
                          ARI=unlist(lapply(est2001GO2,function(x)x$ARI))
 )
 
-modsel2001GO2
-sel=2
+#modsel2001GO2
+sel=25
 estw2001GO2=data.frame(weight=est2001GO2[[sel]]$est_weights,feat=colnames(df2001GO2))
 
 # Sort by weight
@@ -145,6 +147,55 @@ dev.off()
 
 df2002AA29=read.table("propagation_2002AA29_new_v2.txt",header=T)
 
+p2002AA29=plot_real(df2002AA29,"blue")
+
+Ptrue2002AA29=ggarrange(p2002AA29$Pa,
+                        p2002AA29$Pe,
+                        p2002AA29$Ptheta,
+                        p2002AA29$Pomega,
+                        nrow=4
+                        #,main="2002AA29"
+)
+Ptrue2002AA29
+true_states=df2002AA29$type
+# TRUE STATES
+# 
+# 
+# df2002AA29=df2002AA29[,c("a","e","theta","omega")]
+# df2002AA29=compute_feat(df2002AA29)
+
+lambda=c(0,5,10,15,20,30)
+kappa=seq(1,ceiling(sqrt(dim(df2002AA29)[2])),by=1)
+hp=expand.grid(lambda=lambda,kappa=kappa)
+# unlist(lapply(est2001GO2,function(x)x$FTIC))
+# unlist(lapply(est2001GO2,function(x)x$overlap))
+
+load("est2002AA29.RData")
+modsel2002AA29=data.frame(hp,FTIC=unlist(lapply(est2002AA29,function(x)x$FTIC)),
+                         overlap=unlist(lapply(est2002AA29,function(x)x$overlap)),
+                         ARI=unlist(lapply(est2002AA29,function(x)x$ARI))
+)
+
+#modsel2002AA29
+sel=13
+
+estw2002AA29=data.frame(weight=est2002AA29[[sel]]$est_weights,feat=colnames(df2002AA29))
+
+# Sort by weight
+estw2002AA29=estw2002AA29[order(estw2002AA29$weight,decreasing = T),]
+estw2002AA29
+
+df22002AA29_b=data.frame(df2002AA29,type=est2002AA29[[sel]]$est_states)
+p2002AA29_b=plot_real(df2002AA29_b,"red")
+
+Pest2002AA29_b=ggarrange(p2002AA29_b$Pa,
+                        p2002AA29_b$Pe,
+                        p2002AA29_b$Ptheta,
+                        p2002AA29_b$Pomega,
+                        nrow=4
+                        #,main="2001GO2"
+)
+
 # 2016HO3 -----------------------------------------------------------------
 
 df2016HO3=read.table("propagation_2016HO3_new_v2.txt",header=T)
@@ -168,10 +219,10 @@ dev.off()
 
 true_states=df2016HO3$type
 # TRUE STATES
-
-
-df2016HO3=df2016HO3[,c("a","e","theta","omega")]
-df2016HO3=compute_feat(df2016HO3,wdn=10)
+# 
+# 
+# df2016HO3=df2016HO3[,c("a","e","theta","omega")]
+# df2016HO3=compute_feat(df2016HO3)
 
 lambda=c(0,5,10,15,20,30)
 kappa=seq(1,ceiling(sqrt(dim(df2016HO3)[2])),by=1)
@@ -186,8 +237,8 @@ modsel2016HO3=data.frame(hp,FTIC=unlist(lapply(est2016HO3,function(x)x$FTIC)),
                          ARI=unlist(lapply(est2016HO3,function(x)x$ARI))
 )
 
-modsel2016HO3
-sel=2
+#modsel2016HO3
+sel=25
 estw2016HO3=data.frame(weight=est2016HO3[[sel]]$est_weights,feat=colnames(df2016HO3))
 
 # Sort by weight
@@ -241,10 +292,10 @@ dev.off()
 
 true_states=df2019GM1$type
 # TRUE STATES
-
-
-df2019GM1=df2019GM1[,c("a","e","theta","omega")]
-df2019GM1=compute_feat(df2019GM1,wdn=10)
+# 
+# 
+# df2019GM1=df2019GM1[,c("a","e","theta","omega")]
+# df2019GM1=compute_feat(df2019GM1)
 
 lambda=c(0,5,10,15,20,30)
 kappa=seq(1,ceiling(sqrt(dim(df2019GM1)[2])),by=1)
@@ -258,8 +309,8 @@ modsel2019GM1=data.frame(hp,FTIC=unlist(lapply(est2019GM1,function(x)x$FTIC)),
                          ARI=unlist(lapply(est2019GM1,function(x)x$ARI))
 )
 
-modsel2019GM1
-sel=38
+#modsel2019GM1
+sel=19
 estw2019GM1=data.frame(weight=est2019GM1[[sel]]$est_weights,feat=colnames(df2019GM1))
 
 # Sort by weight
@@ -309,10 +360,10 @@ dev.off()
 
 true_states=df2020PP1$type
 # TRUE STATES
-
-
-df2020PP1=df2020PP1[,c("a","e","theta","omega")]
-df2020PP1=compute_feat(df2020PP1,wdn=10)
+# 
+# 
+# df2020PP1=df2020PP1[,c("a","e","theta","omega")]
+# df2020PP1=compute_feat(df2020PP1)
 
 lambda=c(0,5,10,15,20,30)
 kappa=seq(1,ceiling(sqrt(dim(df2020PP1)[2])),by=1)
@@ -327,8 +378,8 @@ modsel2020PP1=data.frame(hp,FTIC=unlist(lapply(est2020PP1,function(x)x$FTIC)),
                          ARI=unlist(lapply(est2020PP1,function(x)x$ARI))
 )
 
-modsel2020PP1
-sel=3
+#modsel2020PP1
+sel=21
 estw2020PP1=data.frame(weight=est2020PP1[[sel]]$est_weights,feat=colnames(df2020PP1))
 
 # Sort by weight

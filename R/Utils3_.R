@@ -146,51 +146,51 @@ compute_feat=function(dat,wdn=c(10,75),am1=F,wdn_decomp=10){
   # Add moving average
   
   if(length(wdn)>1){
-    dat$ma_long_a=rollapply(dat$a, wdn[2], mean, fill=NA)
-    dat$ma_long_e=rollapply(dat$e, wdn[2], mean, fill=NA)
-    dat$ma_long_theta=rollapply(dat$theta, wdn[2], mean, fill=NA)
-    dat$ma_long_omega=rollapply(dat$omega, wdn[2], mean, fill=NA)
+    dat$ma_w2_a=rollapply(dat$a, wdn[2], mean, fill=NA)
+    dat$ma_w2_e=rollapply(dat$e, wdn[2], mean, fill=NA)
+    dat$ma_w2_theta=rollapply(dat$theta, wdn[2], mean, fill=NA)
+    dat$ma_w2_omega=rollapply(dat$omega, wdn[2], mean, fill=NA)
     
-    dat$sd_long_a=rollapply(dat$a, wdn[2], sd, fill=NA)
-    dat$sd_long_e=rollapply(dat$e, wdn[2], sd, fill=NA)
-    dat$sd_long_theta=rollapply(dat$theta, wdn[2], sd, fill=NA)
-    dat$sd_long_omega=rollapply(dat$omega, wdn[2], sd, fill=NA)
+    dat$sd_w2_a=rollapply(dat$a, wdn[2], sd, fill=NA)
+    dat$sd_w2_e=rollapply(dat$e, wdn[2], sd, fill=NA)
+    dat$sd_w2_theta=rollapply(dat$theta, wdn[2], sd, fill=NA)
+    dat$sd_w2_omega=rollapply(dat$omega, wdn[2], sd, fill=NA)
     
-    dat$sd_long_da=rollapply(dat$da, wdn[2], sd, fill=NA)
-    dat$sd_long_de=rollapply(dat$de, wdn[2], sd, fill=NA)
-    dat$sd_long_dtheta=rollapply(dat$dtheta, wdn[2], sd, fill=NA)
-    dat$sd_long_domega=rollapply(dat$domega, wdn[2], sd, fill=NA)
+    dat$sd_w2_da=rollapply(dat$da, wdn[2], sd, fill=NA)
+    dat$sd_w2_de=rollapply(dat$de, wdn[2], sd, fill=NA)
+    dat$sd_w2_dtheta=rollapply(dat$dtheta, wdn[2], sd, fill=NA)
+    dat$sd_w2_domega=rollapply(dat$domega, wdn[2], sd, fill=NA)
     
-    dat$corr_long_da_de=c(rep(NA,wdn[2]-1),rollapply(dat[,c("da","de")],
+    dat$corr_w2_da_de=c(rep(NA,wdn[2]-1),rollapply(dat[,c("da","de")],
                                                      width=wdn[2], function(x) cor(x[,1],x[,2]),
                                                      by.column=FALSE))
-    dat$corr_long_da_dtheta=c(rep(NA,wdn[2]-1),rollapply(dat[,c("da","dtheta")],
+    dat$corr_w2_da_dtheta=c(rep(NA,wdn[2]-1),rollapply(dat[,c("da","dtheta")],
                                                          width=wdn[2], function(x) cor(x[,1],x[,2]),
                                                          by.column=FALSE))
-    dat$corr_long_da_domega=c(rep(NA,wdn[2]-1),rollapply(dat[,c("da","domega")],
+    dat$corr_w2_da_domega=c(rep(NA,wdn[2]-1),rollapply(dat[,c("da","domega")],
                                                          width=wdn[2], function(x) cor(x[,1],x[,2]),
                                                          by.column=FALSE))
-    dat$corr_long_de_dtheta=c(rep(NA,wdn[2]-1),rollapply(dat[,c("de","dtheta")],
+    dat$corr_w2_de_dtheta=c(rep(NA,wdn[2]-1),rollapply(dat[,c("de","dtheta")],
                                                          width=wdn[2], function(x) cor(x[,1],x[,2]), 
                                                          by.column=FALSE))
-    dat$corr_long_de_domega=c(rep(NA,wdn[2]-1),rollapply(dat[,c("de","domega")],
+    dat$corr_w2_de_domega=c(rep(NA,wdn[2]-1),rollapply(dat[,c("de","domega")],
                                                          width=wdn[2], function(x) cor(x[,1],x[,2]), 
                                                          by.column=FALSE))
-    dat$corr_long_dtheta_domega=c(rep(NA,wdn[2]-1),rollapply(dat[,c("dtheta","domega")],
+    dat$corr_w2_dtheta_domega=c(rep(NA,wdn[2]-1),rollapply(dat[,c("dtheta","domega")],
                                                              width=wdn[2], function(x) cor(x[,1],x[,2]), 
                                                              by.column=FALSE))
   }
   
-  dat$ma_short_a=rollapply(dat$a, wdn[1], mean, fill=NA)
-  dat$ma_short_e=rollapply(dat$e, wdn[1], mean, fill=NA)
-  dat$ma_short_theta=rollapply(dat$theta, wdn[1], mean, fill=NA)
-  dat$ma_short_omega=rollapply(dat$omega, wdn[1], mean, fill=NA)
+  dat$ma_w1_a=rollapply(dat$a, wdn[1], mean, fill=NA)
+  dat$ma_w1_e=rollapply(dat$e, wdn[1], mean, fill=NA)
+  dat$ma_w1_theta=rollapply(dat$theta, wdn[1], mean, fill=NA)
+  dat$ma_w1_omega=rollapply(dat$omega, wdn[1], mean, fill=NA)
   
   # Add moving standard deviation for each variable to dat
-  dat$sd_short_a=rollapply(dat$a, wdn[1], sd, fill=NA)
-  dat$sd_short_e=rollapply(dat$e, wdn[1], sd, fill=NA)
-  dat$sd_short_theta=rollapply(dat$theta, wdn[1], sd, fill=NA)
-  dat$sd_short_omega=rollapply(dat$omega, wdn[1], sd, fill=NA)
+  dat$sd_w1_a=rollapply(dat$a, wdn[1], sd, fill=NA)
+  dat$sd_w1_e=rollapply(dat$e, wdn[1], sd, fill=NA)
+  dat$sd_w1_theta=rollapply(dat$theta, wdn[1], sd, fill=NA)
+  dat$sd_w1_omega=rollapply(dat$omega, wdn[1], sd, fill=NA)
   
   # Add moving st. dev. of first differences
   
@@ -198,22 +198,22 @@ compute_feat=function(dat,wdn=c(10,75),am1=F,wdn_decomp=10){
   library(zoo)
   
   # Add moving correlations between first differences
-  dat$corr_short_da_de=c(rep(NA,wdn[1]-1),rollapply(dat[,c("da","de")],
+  dat$corr_w1_da_de=c(rep(NA,wdn[1]-1),rollapply(dat[,c("da","de")],
                                                     width=wdn[1], function(x) cor(x[,1],x[,2]),
                                                     by.column=FALSE))
-  dat$corr_short_da_dtheta=c(rep(NA,wdn[1]-1),rollapply(dat[,c("da","dtheta")],
+  dat$corr_w1_da_dtheta=c(rep(NA,wdn[1]-1),rollapply(dat[,c("da","dtheta")],
                                                         width=wdn[1], function(x) cor(x[,1],x[,2]),
                                                         by.column=FALSE))
-  dat$corr_short_da_domega=c(rep(NA,wdn[1]-1),rollapply(dat[,c("da","domega")],
+  dat$corr_w1_da_domega=c(rep(NA,wdn[1]-1),rollapply(dat[,c("da","domega")],
                                                         width=wdn[1], function(x) cor(x[,1],x[,2]),
                                                         by.column=FALSE))
-  dat$corr_short_de_dtheta=c(rep(NA,wdn[1]-1),rollapply(dat[,c("de","dtheta")],
+  dat$corr_w1_de_dtheta=c(rep(NA,wdn[1]-1),rollapply(dat[,c("de","dtheta")],
                                                         width=wdn[1], function(x) cor(x[,1],x[,2]), 
                                                         by.column=FALSE))
-  dat$corr_short_de_domega=c(rep(NA,wdn[1]-1),rollapply(dat[,c("de","domega")],
+  dat$corr_w1_de_domega=c(rep(NA,wdn[1]-1),rollapply(dat[,c("de","domega")],
                                                         width=wdn[1], function(x) cor(x[,1],x[,2]), 
                                                         by.column=FALSE))
-  dat$corr_short_dtheta_domega=c(rep(NA,wdn[1]-1),rollapply(dat[,c("dtheta","domega")],
+  dat$corr_w1_dtheta_domega=c(rep(NA,wdn[1]-1),rollapply(dat[,c("dtheta","domega")],
                                                             width=wdn[1], function(x) cor(x[,1],x[,2]), 
                                                             by.column=FALSE))
   
@@ -268,38 +268,38 @@ compute_feat=function(dat,wdn=c(10,75),am1=F,wdn_decomp=10){
   dat$remainder_omega=tsa.stl$time.series[,3]
   
   # Add moving standard deviation for trend, seas, and reminder of each variable
-  dat$sd_short_seas_a=rollapply(dat$seas_a, wdn[1], sd, fill=NA)
-  dat$sd_short_trend_a=rollapply(dat$trend_a, wdn[1], sd, fill=NA)
-  dat$sd_short_remainder_a=rollapply(dat$remainder_a, wdn[1], sd, fill=NA)
+  dat$sd_w1_seas_a=rollapply(dat$seas_a, wdn[1], sd, fill=NA)
+  dat$sd_w1_trend_a=rollapply(dat$trend_a, wdn[1], sd, fill=NA)
+  dat$sd_w1_remainder_a=rollapply(dat$remainder_a, wdn[1], sd, fill=NA)
   
-  dat$sd_short_seas_e=rollapply(dat$seas_e, wdn[1], sd, fill=NA)
-  dat$sd_short_trend_e=rollapply(dat$trend_e, wdn[1], sd, fill=NA)
-  dat$sd_short_remainder_e=rollapply(dat$remainder_e, wdn[1], sd, fill=NA)
+  dat$sd_w1_seas_e=rollapply(dat$seas_e, wdn[1], sd, fill=NA)
+  dat$sd_w1_trend_e=rollapply(dat$trend_e, wdn[1], sd, fill=NA)
+  dat$sd_w1_remainder_e=rollapply(dat$remainder_e, wdn[1], sd, fill=NA)
   
-  dat$sd_short_seas_theta=rollapply(dat$seas_theta, wdn[1], sd, fill=NA)
-  dat$sd_short_trend_theta=rollapply(dat$trend_theta, wdn[1], sd, fill=NA)
-  dat$sd_short_remainder_theta=rollapply(dat$remainder_theta, wdn[1], sd, fill=NA)
+  dat$sd_w1_seas_theta=rollapply(dat$seas_theta, wdn[1], sd, fill=NA)
+  dat$sd_w1_trend_theta=rollapply(dat$trend_theta, wdn[1], sd, fill=NA)
+  dat$sd_w1_remainder_theta=rollapply(dat$remainder_theta, wdn[1], sd, fill=NA)
 
-  dat$sd_short_seas_omega=rollapply(dat$seas_omega, wdn[1], sd, fill=NA)
-  dat$sd_short_trend_omega=rollapply(dat$trend_omega, wdn[1], sd, fill=NA)
-  dat$sd_short_remainder_omega=rollapply(dat$remainder_omega, wdn[1], sd, fill=NA)
+  dat$sd_w1_seas_omega=rollapply(dat$seas_omega, wdn[1], sd, fill=NA)
+  dat$sd_w1_trend_omega=rollapply(dat$trend_omega, wdn[1], sd, fill=NA)
+  dat$sd_w1_remainder_omega=rollapply(dat$remainder_omega, wdn[1], sd, fill=NA)
   
   if(length(wdn)>1){
-    dat$sd_long_seas_a=rollapply(dat$seas_a, wdn[2], sd, fill=NA)
-    dat$sd_long_trend_a=rollapply(dat$trend_a, wdn[2], sd, fill=NA)
-    dat$sd_long_remainder_a=rollapply(dat$remainder_a, wdn[2], sd, fill=NA)
+    dat$sd_w2_seas_a=rollapply(dat$seas_a, wdn[2], sd, fill=NA)
+    dat$sd_w2_trend_a=rollapply(dat$trend_a, wdn[2], sd, fill=NA)
+    dat$sd_w2_remainder_a=rollapply(dat$remainder_a, wdn[2], sd, fill=NA)
     
-    dat$sd_long_seas_e=rollapply(dat$seas_e, wdn[2], sd, fill=NA)
-    dat$sd_long_trend_e=rollapply(dat$trend_e, wdn[2], sd, fill=NA)
-    dat$sd_long_remainder_e=rollapply(dat$remainder_e, wdn[2], sd, fill=NA)
+    dat$sd_w2_seas_e=rollapply(dat$seas_e, wdn[2], sd, fill=NA)
+    dat$sd_w2_trend_e=rollapply(dat$trend_e, wdn[2], sd, fill=NA)
+    dat$sd_w2_remainder_e=rollapply(dat$remainder_e, wdn[2], sd, fill=NA)
     
-    dat$sd_long_seas_theta=rollapply(dat$seas_theta, wdn[2], sd, fill=NA)
-    dat$sd_long_trend_theta=rollapply(dat$trend_theta, wdn[2], sd, fill=NA)
-    dat$sd_long_remainder_theta=rollapply(dat$remainder_theta, wdn[2], sd, fill=NA)
+    dat$sd_w2_seas_theta=rollapply(dat$seas_theta, wdn[2], sd, fill=NA)
+    dat$sd_w2_trend_theta=rollapply(dat$trend_theta, wdn[2], sd, fill=NA)
+    dat$sd_w2_remainder_theta=rollapply(dat$remainder_theta, wdn[2], sd, fill=NA)
     
-    dat$sd_long_seas_omega=rollapply(dat$seas_omega, wdn[2], sd, fill=NA)
-    dat$sd_long_trend_omega=rollapply(dat$trend_omega, wdn[2], sd, fill=NA)
-    dat$sd_long_remainder_omega=rollapply(dat$remainder_omega, wdn[2], sd, fill=NA)
+    dat$sd_w2_seas_omega=rollapply(dat$seas_omega, wdn[2], sd, fill=NA)
+    dat$sd_w2_trend_omega=rollapply(dat$trend_omega, wdn[2], sd, fill=NA)
+    dat$sd_w2_remainder_omega=rollapply(dat$remainder_omega, wdn[2], sd, fill=NA)
   }
   
   datC=dat[complete.cases(dat),]

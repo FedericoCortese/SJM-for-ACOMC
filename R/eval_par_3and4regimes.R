@@ -44,7 +44,7 @@ modsel2015XX169=data.frame(hp,FTIC=unlist(lapply(est2015XX169,function(x)x$FTIC)
 
 modsel2015XX169
 
-estw2015XX169=data.frame(weight=est2015XX169[[12]]$est_weights,
+estw2015XX169=data.frame(weight=est2015XX169[[1]]$est_weights,
                          feat=colnames(df2015XX169))
 
 # Sort by weight
@@ -114,22 +114,22 @@ modsel2016CA138=data.frame(hp,FTIC=unlist(lapply(est2016CA138,function(x)x$FTIC)
 )
 
 modsel2016CA138
-
-estw2016CA138=data.frame(weight=est2016CA138[[2]]$est_weights,
+sel=4
+estw2016CA138=data.frame(weight=est2016CA138[[sel]]$est_weights,
                          feat=colnames(df2016CA138))
 
 # Sort by weight
 estw2016CA138=estw2016CA138[order(estw2016CA138$weight,decreasing = T),]
 estw2016CA138
 
-windows()
-par(mfrow=c(4,1))
-plot(df2016CA138$sddtheta,type='l',main="2016CA138",ylab="sddtheta")
-plot(df2016CA138$sdwdn_omega,type='l',ylab="sdwdn_omega")
-plot(df2016CA138$sdwdn_a,type='l',ylab="sdwdn_a")
-plot(df2016CA138$sdwdn_theta,type='l',ylab="sdwdn_theta")
+# windows()
+# par(mfrow=c(4,1))
+# plot(df2016CA138$sddtheta,type='l',main="2016CA138",ylab="sddtheta")
+# plot(df2016CA138$sdwdn_omega,type='l',ylab="sdwdn_omega")
+# plot(df2016CA138$sdwdn_a,type='l',ylab="sdwdn_a")
+# plot(df2016CA138$sdwdn_theta,type='l',ylab="sdwdn_theta")
 
-df2016CA138_b=data.frame(df2016CA138,type=est2016CA138[[2]]$est_states)
+df2016CA138_b=data.frame(df2016CA138,type=est2016CA138[[sel]]$est_states)
 p2016CA138_b=plot_real4(df2016CA138_b)
 
 Pest2016CA138_b=ggarrange(p2016CA138_b$Pa,
@@ -184,7 +184,7 @@ modsel2016CO246=data.frame(hp,FTIC=unlist(lapply(est2016CO246,function(x)x$FTIC)
 
 modsel2016CO246
 
-sel=20
+sel=13
 
 estw2016CO246=data.frame(weight=est2016CO246[[sel]]$est_weights,
                          feat=colnames(df2016CO246))
@@ -255,7 +255,7 @@ modsel2014OL339=data.frame(hp,FTIC=unlist(lapply(est2014OL339,function(x)x$FTIC)
 )
 
 modsel2014OL339
-sel=9
+sel=17
 estw2014OL339=data.frame(weight=est2014OL339[[sel]]$est_weights,
                          feat=colnames(df2014OL339))
 
