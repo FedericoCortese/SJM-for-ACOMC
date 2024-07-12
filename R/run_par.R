@@ -76,17 +76,17 @@ save(df164207,est164207,elapsed_est164207,file="est164207.RData")
 df2001GO2=read.table("propagation_2001GO2_new_v2.txt",header=T)
 true_states=order_states(df2001GO2$type)
 
-p2002AA29=plot_real(df2002AA29,"blue")
+p2001GO2=plot_real(df2001GO2,"blue")
 
-Ptrue2002AA29=ggarrange(p2002AA29$Pa,
-                        p2002AA29$Pe,
-                        p2002AA29$Ptheta,
-                        p2002AA29$Pomega,
+Ptrue2001GO2=ggarrange(p2001GO2$Pa,
+                        p2001GO2$Pe,
+                        p2001GO2$Ptheta,
+                        p2001GO2$Pomega,
                         nrow=4
                         #,main="2002AA29"
 )
-Ptrue2002AA29
-true_states=df2002AA29$type
+Ptrue2001GO2
+true_states=df2001GO2$type
 
 df2001GO2=df2001GO2[,c("a","e","theta","omega")]
 
