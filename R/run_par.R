@@ -41,7 +41,7 @@ est164207 <- parallel::mclapply(1:nrow(hp),
 #   library(pdfCluster)
 #   library(ggplot2)
 #   library(xtable)
-#   library(dplyr))
+#   library(dplyr)})
 # est164207 <- clusterApply(cl,
 #                     1:nrow(hp),
 #                     function(x)
@@ -358,7 +358,7 @@ est2020PP1 <- parallel::mclapply(1:nrow(hp),
 #   library(pdfCluster)
 #   library(ggplot2)
 #   library(xtable)
-#   library(dplyr))
+#   library(dplyr)})
 # est2020PP1 <- clusterApply(cl,
 #                     1:nrow(hp),
 #                     function(x)

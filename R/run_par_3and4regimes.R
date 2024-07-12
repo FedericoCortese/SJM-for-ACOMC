@@ -15,49 +15,6 @@ df2015XX169=df2015XX169[,c("a","e","theta","omega")]
 df2015XX169=compute_feat(df2015XX169,am1=T)
 N=dim(df2015XX169)[1]
 
-wdn=10
-tsa=ts(df2015XX169$a,frequency = wdn)
-tsa.stl <- stl(tsa, 
-               s.window=wdn,
-               t.window=NULL,
-               na.action = na.approx,
-               robust=T)
-
-plot(tsa.stl)
-
-
-tse=ts(df2015XX169$e,frequency = wdn)
-tse.stl <- stl(tse, 
-               s.window=wdn,
-               t.window=NULL,
-               na.action = na.approx,
-               robust=T)
-
-plot(tse.stl)
-
-tstheta=ts(df2015XX169$theta,frequency = wdn)
-tstheta.stl <- stl(tstheta, 
-                   s.window=wdn,
-                   t.window=NULL,
-                   na.action = na.approx,
-                   robust=T)
-
-plot(tstheta.stl)
-
-sdseas_theta=rollapply(tstheta.stl$time.series[,1], 5, sd, fill=NA)
-plot(scale(sdseas_theta),type="l")
-
-plot(scale(tstheta.stl$time.series[,1]),type="l")
-lines(scale(true_states),col="red")
-
-tsomega=ts(df2015XX169$omega,frequency = wdn)
-tsomega.stl <- stl(tsomega, 
-                   s.window=wdn,
-                   t.window=NULL,
-                   na.action = na.approx,
-                   robust=T)
-
-plot(tsomega.stl)
 
 lambda=c(0,5,10,15,20,30)
 kappa=seq(1,ceiling(sqrt(dim(df2015XX169)[2])),by=1)
