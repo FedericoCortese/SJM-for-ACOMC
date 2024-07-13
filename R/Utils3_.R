@@ -361,9 +361,12 @@ compute_feat=function(dat,wdn=c(10,75),wdn_decomp=10,
     
     dat$am1=dat$a-1
     dat$belowabove1=as.numeric(
-      rollapply(dat$a, wdn[2], function(x){all(x<1)|all(x>1)}, fill=NA)
+      rollapply(dat$a, wdn[1], function(x){all(x<1)|all(x>1)}, fill=NA)
     )
     
+  }
+  else{
+    dat=subset(dat,select=-a)
   }
   
   if(e){
@@ -398,6 +401,9 @@ compute_feat=function(dat,wdn=c(10,75),wdn_decomp=10,
       dat$sd_w2_remainder_e=rollapply(dat$remainder_e, wdn[2], sd, fill=NA)
     }
     
+  }
+  else{
+    dat=subset(dat,select=-e)
   }
   
   if(theta){
@@ -434,6 +440,9 @@ compute_feat=function(dat,wdn=c(10,75),wdn_decomp=10,
     }
     
   }
+  else{
+    dat=subset(dat,select=-theta)
+  }
   
   if(omega){
     # omega features
@@ -468,6 +477,9 @@ compute_feat=function(dat,wdn=c(10,75),wdn_decomp=10,
       dat$sd_w2_remainder_omega=rollapply(dat$remainder_omega, wdn[2], sd, fill=NA)
     }
     
+  }
+  else{
+    dat=subset(dat,select=-omega)
   }
   
   # dat$corr_w2_da_de=c(rep(NA,wdn[2]-1),rollapply(dat[,c("da","de")],

@@ -27,7 +27,7 @@ Ptrue164207
 true_states=order_states(df164207$type)
 df164207=df164207[,c("a","e","theta","omega")]
 
-df164207=compute_feat(df164207,wdn = 100)
+df164207=compute_feat(df164207)
 N=dim(df164207)[1]
 
 lambda=c(0,5,10,15,20,30)
@@ -73,8 +73,8 @@ elapsed_est164207=end_est164207-start_est164207
 save(df164207,est164207,elapsed_est164207,file="est164207.RData")
 
 modsel164207=data.frame(hp,FTIC=unlist(lapply(est164207,function(x)x$FTIC)),
-                        overlap=unlist(lapply(est164207,function(x)x$overlap)),
-                        ARI=unlist(lapply(est164207,function(x)x$ARI))
+                        BAC=unlist(lapply(est164207,function(x)x$BAC))
+                        #ARI=unlist(lapply(est164207,function(x)x$ARI))
 )
 sel=25
 modsel164207
@@ -95,6 +95,7 @@ Pest164207_b=ggarrange(p164207_b$Pa,
                        nrow=4
                        #,main="164207"
 )
+Pest164207_b
 
 # 2001GO2 -------------------------------------------------------------------------
 
@@ -115,7 +116,7 @@ Ptrue2001GO2
 
 df2001GO2=df2001GO2[,c("a","e","theta","omega")]
 
-df2001GO2=compute_feat(df2001GO2)
+df2001GO2=compute_feat(df2001GO2,wdn=10,a=F)
 N=dim(df2001GO2)[1]
 
 lambda=c(0,5,10,15,20,30)
@@ -161,11 +162,14 @@ elapsed_est2001GO2=end_est2001GO2-start_est2001GO2
 save(df2001GO2,est2001GO2,elapsed_est2001GO2,file="est2001GO2.RData")
 
 modsel2001GO2=data.frame(hp,FTIC=unlist(lapply(est2001GO2,function(x)x$FTIC)),
-                         BAC=unlist(lapply(est2001GO2,function(x)x$BAC)),
-                         ARI=unlist(lapply(est2001GO2,function(x)x$ARI))
+                         BAC=unlist(lapply(est2001GO2,function(x)x$BAC))
+                         #ARI=unlist(lapply(est2001GO2,function(x)x$ARI))
 )
 
-sel=13
+sel=14
+df2001GO2=read.table("propagation_2001GO2_new_v2.txt",header=T)
+df2001GO2=df2001GO2[,c("a","e","theta","omega")]
+df2001GO2=tail(df2001GO2,N)
 df2001GO2_b=data.frame(df2001GO2,type=est2001GO2[[sel]]$est_states)
 p2001GO2_b=plot_real(df2001GO2_b,"red")
 Pest2001GO2_b=ggarrange(p2001GO2_b$Pa,
@@ -175,6 +179,8 @@ Pest2001GO2_b=ggarrange(p2001GO2_b$Pa,
                         nrow=4
                         #,main="2001GO2"
 )
+Pest2001GO2_b
+
 gridExtra::grid.arrange(Pest2001GO2_b,
                         Ptrue2001GO2
 )
@@ -198,7 +204,7 @@ true_states=df2002AA29$type
 
 df2002AA29=df2002AA29[,c("a","e","theta","omega")]
 
-df2002AA29=compute_feat(df2002AA29)
+df2002AA29=compute_feat(df2002AA29,wdn=10)
 N=dim(df2002AA29)[1]
 
 lambda=c(0,5,10,15,20,30)
@@ -243,6 +249,23 @@ end_est2002AA29=Sys.time()
 elapsed_est2002AA29=end_est2002AA29-start_est2002AA29
 save(df2002AA29,est2002AA29,elapsed_est2002AA29,file="est2002AA29.RData")
 
+
+modsel2002AA29=data.frame(hp,FTIC=unlist(lapply(est2002AA29,function(x)x$FTIC)),
+                         BAC=unlist(lapply(est2002AA29,function(x)x$BAC))
+                         #ARI=unlist(lapply(est2001GO2,function(x)x$ARI))
+)
+
+sel=13
+df2002AA29_b=data.frame(df2002AA29,type=est2002AA29[[sel]]$est_states)
+p2002AA29_b=plot_real(df2002AA29_b,"red")
+Pest2002AA29_b=ggarrange(p2002AA29_b$Pa,
+                        p2002AA29_b$Pe,
+                        p2002AA29_b$Ptheta,
+                        p2002AA29_b$Pomega,
+                        nrow=4
+                        #,main="2001GO2"
+)
+Pest2002AA29_b
 
 # 2015SO2 --------------------------------------------------------------------
 
@@ -308,6 +331,22 @@ end_est2015SO2=Sys.time()
 elapsed_est2015SO2=end_est2015SO2-start_est2015SO2
 save(df2015SO2,est2015SO2,elapsed_est2015SO2,file="est2015SO2.RData")
 
+modsel2015SO2=data.frame(hp,FTIC=unlist(lapply(est2015SO2,function(x)x$FTIC)),
+                         BAC=unlist(lapply(est2015SO2,function(x)x$BAC))
+                         #ARI=unlist(lapply(est2001GO2,function(x)x$ARI))
+)
+
+sel=25
+df2015SO2_b=data.frame(df2015SO2,type=est2015SO2[[sel]]$est_states)
+p2015SO2_b=plot_real(df2015SO2_b,"red")
+Pest2015SO2_b=ggarrange(p2015SO2_b$Pa,
+                        p2015SO2_b$Pe,
+                        p2015SO2_b$Ptheta,
+                        p2015SO2_b$Pomega,
+                        nrow=4
+                        #,main="2001GO2"
+)
+Pest2015SO2_b
 
 # 2016HO3 -----------------------------------------------------------------
 
@@ -372,6 +411,22 @@ end_est2016HO3=Sys.time()
 elapsed_est2016HO3=end_est2016HO3-start_est2016HO3
 save(df2016HO3,est2016HO3,elapsed_est2016HO3,file="est2016HO3.RData")
 
+modseldf2016HO3=data.frame(hp,FTIC=unlist(lapply(est2016HO3,function(x)x$FTIC)),
+                          BAC=unlist(lapply(est2016HO3,function(x)x$BAC))
+                          #ARI=unlist(lapply(est2001GO2,function(x)x$ARI))
+)
+
+sel=25
+df2016HO3_b=data.frame(df2016HO3,type=est2016HO3[[sel]]$est_states)
+p2016HO3_b=plot_real(df2016HO3_b,"red")
+Pest2016HO3_b=ggarrange(p2016HO3_b$Pa,
+                         p2016HO3_b$Pe,
+                         p2016HO3_b$Ptheta,
+                         p2016HO3_b$Pomega,
+                         nrow=4
+                         #,main="2001GO2"
+)
+Pest2016HO3_b
 
 # 2019GM1 -----------------------------------------------------------------
 
@@ -391,7 +446,7 @@ Ptrue2019GM1
 
 df2019GM1=df2019GM1[,c("a","e","theta","omega")]
 
-df2019GM1=compute_feat(df2019GM1)
+df2019GM1=compute_feat(df2019GM1,wdn=10,a=F,e=F)
 N=dim(df2019GM1)[1]
 
 lambda=c(0,5,10,15,20,30)
@@ -436,6 +491,27 @@ end_est2019GM1=Sys.time()
 elapsed_est2019GM1=end_est2019GM1-start_est2019GM1
 save(df2019GM1,est2019GM1,elapsed_est2019GM1,file="est2019GM1.RData")
 
+modsel2019GM1=data.frame(hp,FTIC=unlist(lapply(est2019GM1,function(x)x$FTIC)),
+                           BAC=unlist(lapply(est2019GM1,function(x)x$BAC))
+                           #ARI=unlist(lapply(est2001GO2,function(x)x$ARI))
+)
+
+sel=7
+
+df2019GM1=read.table("propagation_2019GM1_new_v2.txt",header=T)
+df2019GM1=df2019GM1[,c("a","e","theta","omega")]
+
+df2019GM1=tail(df2019GM1,N)
+df2019GM1_b=data.frame(df2019GM1,type=est2019GM1[[sel]]$est_states)
+p2019GM1_b=plot_real(df2019GM1_b,"red")
+Pest2019GM1_b=ggarrange(p2019GM1_b$Pa,
+                        p2019GM1_b$Pe,
+                        p2019GM1_b$Ptheta,
+                        p2019GM1_b$Pomega,
+                        nrow=4
+                        #,main="2001GO2"
+)
+Pest2019GM1_b
 
 # 2020PP1 -----------------------------------------------------------------
 
@@ -451,10 +527,11 @@ Ptrue2020PP1=ggarrange(p2020PP1$Pa,
                        nrow=4
                        #,main="2020PP1"
 )
+Ptrue2020PP1
 
 df2020PP1=df2020PP1[,c("a","e","theta","omega")]
 
-df2020PP1=compute_feat(df2020PP1)
+df2020PP1=compute_feat(df2020PP1,wdn=10,a=F)
 N=dim(df2020PP1)[1]
 
 lambda=c(0,5,10,15,20,30)
@@ -498,3 +575,24 @@ est2020PP1 <- parallel::mclapply(1:nrow(hp),
 end_est2020PP1=Sys.time()
 elapsed_est2020PP1=end_est2020PP1-start_est2020PP1
 save(df2020PP1,est2020PP1,elapsed_est2020PP1,file="est2020PP1.RData")
+
+modsel2020PP1=data.frame(hp,FTIC=unlist(lapply(est2020PP1,function(x)x$FTIC)),
+                           BAC=unlist(lapply(est2020PP1,function(x)x$BAC))
+                           #ARI=unlist(lapply(est2001GO2,function(x)x$ARI))
+)
+
+sel=7
+df2020PP1=read.table("propagation_2020PP1_new_v2.txt",header=T)
+df2020PP1=df2020PP1[,c("a","e","theta","omega")]
+
+df2020PP1=tail(df2020PP1,N)
+df2020PP1_b=data.frame(df2020PP1,type=est2020PP1[[sel]]$est_states)
+p2020PP1_b=plot_real(df2020PP1_b,"red")
+Pest2020PP1_b=ggarrange(p2020PP1_b$Pa,
+                        p2020PP1_b$Pe,
+                        p2020PP1_b$Ptheta,
+                        p2020PP1_b$Pomega,
+                        nrow=4
+                        #,main="2001GO2"
+)
+Pest2020PP1_b
