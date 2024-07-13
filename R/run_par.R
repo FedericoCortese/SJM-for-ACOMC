@@ -14,10 +14,7 @@ source_python('SJ.py')
 # 164207 ------------------------------------------------------------------
 
 df164207=read.table("propagation_164207_new_v2.txt",header=T)
-true_states=order_states(df164207$type)
-
 p164207=plot_real(df164207,"blue")
-
 Ptrue164207=ggarrange(p164207$Pa,
                       p164207$Pe,
                       p164207$Ptheta,
@@ -27,6 +24,7 @@ Ptrue164207=ggarrange(p164207$Pa,
 )
 Ptrue164207
 
+true_states=order_states(df164207$type)
 df164207=df164207[,c("a","e","theta","omega")]
 
 df164207=compute_feat(df164207,wdn = 100)

@@ -20,6 +20,16 @@ order_states=function(states){
   return(states_temp)
 }
 
+order_states_freq=function(states){
+  
+  # This function organizes states by assigning 1 to the mostly observed state and sequentially numbering each new state as 2, 3, etc., incrementing by 1 for each newly observed state.
+  # states is a vector of observed states
+  
+  states_temp=match(states,names(sort(table(states))))
+  
+  return(states_temp)
+}
+
 
 SJM_sat=function(df,Ksat=6){
   
@@ -113,17 +123,17 @@ SJM_lambdakappa=function(lambda,kappa,K=2,df,Lnsat,Ksat=6,alpha0=NULL,K0=NULL,pe
   AIC=2*CKp_diff+(Ln_diff+anAIC*TotalPenalty)/N
   
   if(!is.null(true_states)){
-    true_states=order_states(true_states)
+    true_states=order_states_freq(true_states)
     true_states=factor(true_states,levels=1:K)
-    est_states=order_states(est_states)
+    est_states=order_states_freq(est_states)
     est_states=factor(est_states,levels=1:K)
     BAC=caret::confusionMatrix(true_states,est_states)$overall[1]
     #overlap=sum(true_states==est_states)/N
-    ARI=pdfCluster::adj.rand.index(true_states,est_states)
+    #ARI=pdfCluster::adj.rand.index(true_states,est_states)
     return(list(FTIC=FTIC,
                 BIC=BIC,
                 AIC=AIC,
-                ARI=ARI,
+                #ARI=ARI,
                 #overlap=overlap,
                 BAC=BAC,
                 est_states=est_states,
@@ -138,7 +148,7 @@ SJM_lambdakappa=function(lambda,kappa,K=2,df,Lnsat,Ksat=6,alpha0=NULL,K0=NULL,pe
   }
   
 }
-compute_feat=function(dat,wdn=c(10,75),am1=F,wdn_decomp=10){
+compute_feat_old=function(dat,wdn=c(10,75),am1=F,wdn_decomp=10){
   
   # Add first differences for each variable to dat2
   #dat$da=c(NA,diff(dat$a))
@@ -305,6 +315,199 @@ compute_feat=function(dat,wdn=c(10,75),am1=F,wdn_decomp=10){
     dat$sd_w2_trend_omega=rollapply(dat$trend_omega, wdn[2], sd, fill=NA)
     dat$sd_w2_remainder_omega=rollapply(dat$remainder_omega, wdn[2], sd, fill=NA)
   }
+  
+  datC=dat[complete.cases(dat),]
+  
+  return(datC)
+  
+}
+
+compute_feat=function(dat,wdn=c(10,75),wdn_decomp=10,
+                      a=T,e=T,theta=T,omega=T){
+  
+  library(zoo)
+  if(a){
+    # a features
+    dat$da=c(NA,diff(dat$a))
+    
+    tsa=ts(dat$a,frequency = wdn_decomp)
+    tsa.stl <- stl(tsa,
+                   s.window=wdn_decomp,
+                   t.window=NULL,
+                   na.action = na.approx,
+                   robust=T)
+    dat$seas_a=tsa.stl$time.series[,1]
+    dat$trend_a=tsa.stl$time.series[,2]
+    dat$remainder_a=tsa.stl$time.series[,3]
+    
+    # Add moving standard deviation for trend, seas, and reminder of each variable
+    dat$sd_w1_seas_a=rollapply(dat$seas_a, wdn[1], sd, fill=NA)
+    dat$sd_w1_trend_a=rollapply(dat$trend_a, wdn[1], sd, fill=NA)
+    dat$sd_w1_remainder_a=rollapply(dat$remainder_a, wdn[1], sd, fill=NA)
+    
+    dat$ma_w1_a=rollapply(dat$a, wdn[1], mean, fill=NA)
+    dat$sd_w1_a=rollapply(dat$a, wdn[1], sd, fill=NA)
+    dat$sd_w1_da=rollapply(dat$da, wdn[1], sd, fill=NA)
+    
+    if(length(wdn)>1){
+      dat$ma_w2_a=rollapply(dat$a, wdn[2], mean, fill=NA)
+      dat$sd_w2_a=rollapply(dat$a, wdn[2], sd, fill=NA)
+      dat$sd_w2_da=rollapply(dat$da, wdn[2], sd, fill=NA)
+      
+      dat$sd_w2_seas_a=rollapply(dat$seas_a, wdn[2], sd, fill=NA)
+      dat$sd_w2_trend_a=rollapply(dat$trend_a, wdn[2], sd, fill=NA)
+      dat$sd_w2_remainder_a=rollapply(dat$remainder_a, wdn[2], sd, fill=NA)
+    }
+    
+    dat$am1=dat$a-1
+    dat$belowabove1=as.numeric(
+      rollapply(dat$a, wdn[2], function(x){all(x<1)|all(x>1)}, fill=NA)
+    )
+    
+  }
+  
+  if(e){
+    dat$de=c(NA,diff(dat$e))
+    
+    dat$ma_w1_e=rollapply(dat$e, wdn[1], mean, fill=NA)
+    dat$sd_w1_e=rollapply(dat$e, wdn[1], sd, fill=NA)
+    dat$sd_w1_de=rollapply(dat$de, wdn[1], sd, fill=NA)
+    
+    tse=ts(dat$e,frequency = wdn_decomp)
+    tse.stl <- stl(tse, 
+                   s.window=wdn_decomp,
+                   t.window=NULL,
+                   na.action = na.approx,
+                   robust=T)
+    
+    dat$seas_e=tse.stl$time.series[,1]
+    dat$trend_e=tse.stl$time.series[,2]
+    dat$remainder_e=tse.stl$time.series[,3]
+    
+    dat$sd_w1_seas_e=rollapply(dat$seas_e, wdn[1], sd, fill=NA)
+    dat$sd_w1_trend_e=rollapply(dat$trend_e, wdn[1], sd, fill=NA)
+    dat$sd_w1_remainder_e=rollapply(dat$remainder_e, wdn[1], sd, fill=NA)
+    
+    if(length(wdn)>1){
+      dat$ma_w2_e=rollapply(dat$e, wdn[2], mean, fill=NA)
+      dat$sd_w2_e=rollapply(dat$e, wdn[2], sd, fill=NA)
+      dat$sd_w2_de=rollapply(dat$de, wdn[2], sd, fill=NA)
+      
+      dat$sd_w2_seas_e=rollapply(dat$seas_e, wdn[2], sd, fill=NA)
+      dat$sd_w2_trend_e=rollapply(dat$trend_e, wdn[2], sd, fill=NA)
+      dat$sd_w2_remainder_e=rollapply(dat$remainder_e, wdn[2], sd, fill=NA)
+    }
+    
+  }
+  
+  if(theta){
+    # theta features
+    dat$dtheta=c(NA,diff(dat$theta))
+    
+    tstheta=ts(dat$theta,frequency = wdn_decomp)
+    tstheta.stl <- stl(tstheta, 
+                       s.window=wdn_decomp,
+                       t.window=NULL,
+                       na.action = na.approx,
+                       robust=T)
+    
+    dat$seas_theta=tstheta.stl$time.series[,1]
+    dat$trend_theta=tstheta.stl$time.series[,2]
+    dat$remainder_theta=tstheta.stl$time.series[,3]
+    
+    dat$sd_w1_seas_theta=rollapply(dat$seas_theta, wdn[1], sd, fill=NA)
+    dat$sd_w1_trend_theta=rollapply(dat$trend_theta, wdn[1], sd, fill=NA)
+    dat$sd_w1_remainder_theta=rollapply(dat$remainder_theta, wdn[1], sd, fill=NA)
+    
+    dat$ma_w1_theta=rollapply(dat$theta, wdn[1], mean, fill=NA)
+    dat$sd_w1_theta=rollapply(dat$theta, wdn[1], sd, fill=NA)
+    dat$sd_w1_dtheta=rollapply(dat$dtheta, wdn[1], sd, fill=NA)
+    
+    if(length(wdn)>1){
+      dat$ma_w2_theta=rollapply(dat$theta, wdn[2], mean, fill=NA)
+      dat$sd_w2_theta=rollapply(dat$theta, wdn[2], sd, fill=NA)
+      dat$sd_w2_dtheta=rollapply(dat$dtheta, wdn[2], sd, fill=NA)
+      
+      dat$sd_w2_seas_theta=rollapply(dat$seas_theta, wdn[2], sd, fill=NA)
+      dat$sd_w2_trend_theta=rollapply(dat$trend_theta, wdn[2], sd, fill=NA)
+      dat$sd_w2_remainder_theta=rollapply(dat$remainder_theta, wdn[2], sd, fill=NA)
+    }
+    
+  }
+  
+  if(omega){
+    # omega features
+    dat$domega=c(NA,diff(dat$omega))
+    
+    tsomega=ts(dat$omega,frequency = wdn_decomp)
+    tsomega.stl <- stl(tsomega, 
+                       s.window=wdn_decomp,
+                       t.window=NULL,
+                       na.action = na.approx,
+                       robust=T)
+    
+    dat$seas_omega=tsomega.stl$time.series[,1]
+    dat$trend_omega=tsomega.stl$time.series[,2]
+    dat$remainder_omega=tsomega.stl$time.series[,3]
+    
+    dat$sd_w1_seas_omega=rollapply(dat$seas_omega, wdn[1], sd, fill=NA)
+    dat$sd_w1_trend_omega=rollapply(dat$trend_omega, wdn[1], sd, fill=NA)
+    dat$sd_w1_remainder_omega=rollapply(dat$remainder_omega, wdn[1], sd, fill=NA)
+    
+    dat$ma_w1_omega=rollapply(dat$omega, wdn[1], mean, fill=NA)
+    dat$sd_w1_omega=rollapply(dat$omega, wdn[1], sd, fill=NA)
+    dat$sd_w1_domega=rollapply(dat$domega, wdn[1], sd, fill=NA)
+    
+    if(length(wdn)>1){
+      dat$ma_w2_omega=rollapply(dat$omega, wdn[2], mean, fill=NA)
+      dat$sd_w2_omega=rollapply(dat$omega, wdn[2], sd, fill=NA)
+      dat$sd_w2_domega=rollapply(dat$domega, wdn[2], sd, fill=NA)
+      
+      dat$sd_w2_seas_omega=rollapply(dat$seas_omega, wdn[2], sd, fill=NA)
+      dat$sd_w2_trend_omega=rollapply(dat$trend_omega, wdn[2], sd, fill=NA)
+      dat$sd_w2_remainder_omega=rollapply(dat$remainder_omega, wdn[2], sd, fill=NA)
+    }
+    
+  }
+  
+  # dat$corr_w2_da_de=c(rep(NA,wdn[2]-1),rollapply(dat[,c("da","de")],
+  #                                                  width=wdn[2], function(x) cor(x[,1],x[,2]),
+  #                                                  by.column=FALSE))
+  # dat$corr_w2_da_dtheta=c(rep(NA,wdn[2]-1),rollapply(dat[,c("da","dtheta")],
+  #                                                      width=wdn[2], function(x) cor(x[,1],x[,2]),
+  #                                                      by.column=FALSE))
+  # dat$corr_w2_da_domega=c(rep(NA,wdn[2]-1),rollapply(dat[,c("da","domega")],
+  #                                                      width=wdn[2], function(x) cor(x[,1],x[,2]),
+  #                                                      by.column=FALSE))
+  # dat$corr_w2_de_dtheta=c(rep(NA,wdn[2]-1),rollapply(dat[,c("de","dtheta")],
+  #                                                      width=wdn[2], function(x) cor(x[,1],x[,2]), 
+  #                                                      by.column=FALSE))
+  # dat$corr_w2_de_domega=c(rep(NA,wdn[2]-1),rollapply(dat[,c("de","domega")],
+  #                                                      width=wdn[2], function(x) cor(x[,1],x[,2]), 
+  #                                                      by.column=FALSE))
+  # dat$corr_w2_dtheta_domega=c(rep(NA,wdn[2]-1),rollapply(dat[,c("dtheta","domega")],
+  #                                                          width=wdn[2], function(x) cor(x[,1],x[,2]), 
+  #                                                          by.column=FALSE))
+  
+  # Add moving correlations between first differences
+  # dat$corr_w1_da_de=c(rep(NA,wdn[1]-1),rollapply(dat[,c("da","de")],
+  #                                                   width=wdn[1], function(x) cor(x[,1],x[,2]),
+  #                                                   by.column=FALSE))
+  # dat$corr_w1_da_dtheta=c(rep(NA,wdn[1]-1),rollapply(dat[,c("da","dtheta")],
+  #                                                       width=wdn[1], function(x) cor(x[,1],x[,2]),
+  #                                                       by.column=FALSE))
+  # dat$corr_w1_da_domega=c(rep(NA,wdn[1]-1),rollapply(dat[,c("da","domega")],
+  #                                                       width=wdn[1], function(x) cor(x[,1],x[,2]),
+  #                                                       by.column=FALSE))
+  # dat$corr_w1_de_dtheta=c(rep(NA,wdn[1]-1),rollapply(dat[,c("de","dtheta")],
+  #                                                       width=wdn[1], function(x) cor(x[,1],x[,2]), 
+  #                                                       by.column=FALSE))
+  # dat$corr_w1_de_domega=c(rep(NA,wdn[1]-1),rollapply(dat[,c("de","domega")],
+  #                                                       width=wdn[1], function(x) cor(x[,1],x[,2]), 
+  #                                                       by.column=FALSE))
+  # dat$corr_w1_dtheta_domega=c(rep(NA,wdn[1]-1),rollapply(dat[,c("dtheta","domega")],
+  #                                                           width=wdn[1], function(x) cor(x[,1],x[,2]), 
+  #                                                           by.column=FALSE))
   
   datC=dat[complete.cases(dat),]
   
