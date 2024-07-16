@@ -1,7 +1,3 @@
-# RIVEDERE ORDINAMENTO STATI
-# RIVEDERE QUANDO FAI TAIL(TRUE_STATES)
-# MODIFICARE COMP_FEAT IN UTILS AFFINCHE CONSIDERI TUTTE (a,e,theta,omega) O SOLO ALCUNE
-
 source("Utils3_.R")
 library(reticulate)
 library(ggplot2)
@@ -95,7 +91,11 @@ Pest164207_b=ggarrange(p164207_b$Pa,
                        nrow=4
                        #,main="164207"
 )
-Pest164207_b
+
+png("164207EST.png",width =1600,height=900)
+annotate_figure(Pest164207_b,
+                top = text_grob("164207 - est - 96% acc.", color = "black", face = "bold", size = 14))
+dev.off()
 
 # 2001GO2 -------------------------------------------------------------------------
 
@@ -179,11 +179,12 @@ Pest2001GO2_b=ggarrange(p2001GO2_b$Pa,
                         nrow=4
                         #,main="2001GO2"
 )
-Pest2001GO2_b
 
-gridExtra::grid.arrange(Pest2001GO2_b,
-                        Ptrue2001GO2
-)
+png("2001GO2EST.png",width =1600,height=900)
+annotate_figure(Pest2001GO2_b,
+                top = text_grob("2001GO2 - est - 90% acc.", color = "black", face = "bold", size = 14))
+dev.off()
+
 
 # 2002AA29 --------------------------------------------------------------------
 
@@ -265,7 +266,11 @@ Pest2002AA29_b=ggarrange(p2002AA29_b$Pa,
                         nrow=4
                         #,main="2001GO2"
 )
-Pest2002AA29_b
+
+png("2002AA29EST.png",width =1600,height=900)
+annotate_figure(Pest2002AA29_b,
+                top = text_grob("2002AA29 - est - 98% acc.", color = "black", face = "bold", size = 14))
+dev.off()
 
 # 2015SO2 --------------------------------------------------------------------
 
@@ -346,7 +351,11 @@ Pest2015SO2_b=ggarrange(p2015SO2_b$Pa,
                         nrow=4
                         #,main="2001GO2"
 )
-Pest2015SO2_b
+
+png("2015SO2EST.png",width =1600,height=900)
+annotate_figure(Pest2015SO2_b,
+                top = text_grob("2015SO2 - est - 85% acc.", color = "black", face = "bold", size = 14))
+dev.off()
 
 # 2016HO3 -----------------------------------------------------------------
 
@@ -426,7 +435,11 @@ Pest2016HO3_b=ggarrange(p2016HO3_b$Pa,
                          nrow=4
                          #,main="2001GO2"
 )
-Pest2016HO3_b
+
+png("2016HO3EST.png",width =1600,height=900)
+annotate_figure(Pest2016HO3_b,
+                top = text_grob("2016HO3 - est - 94% acc.", color = "black", face = "bold", size = 14))
+dev.off()
 
 # 2019GM1 -----------------------------------------------------------------
 
@@ -511,7 +524,11 @@ Pest2019GM1_b=ggarrange(p2019GM1_b$Pa,
                         nrow=4
                         #,main="2001GO2"
 )
-Pest2019GM1_b
+
+png("2019GM1EST.png",width =1600,height=900)
+annotate_figure(Pest2019GM1_b,
+                top = text_grob("2019GM1 - est - 95%", color = "black", face = "bold", size = 14))
+dev.off()
 
 # 2020PP1 -----------------------------------------------------------------
 
@@ -595,4 +612,10 @@ Pest2020PP1_b=ggarrange(p2020PP1_b$Pa,
                         nrow=4
                         #,main="2001GO2"
 )
+
+png("2020PP1EST.png",width =1600,height=900)
+annotate_figure(Pest2020PP1_b,
+                top = text_grob("2020PP1 - est - 95% acc.", color = "black", face = "bold", size = 14))
+dev.off()
+
 Pest2020PP1_b
