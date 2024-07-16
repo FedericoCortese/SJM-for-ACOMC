@@ -23,6 +23,16 @@ Ptrue164207
 true_states=order_states(df164207$type)
 df164207=df164207[,c("a","e","theta","omega")]
 
+#STL#
+tsa=ts(df164207$a,frequency = 10)
+tsa.stl <- stl(tsa,
+               s.window=10,
+               t.window=NULL,
+               na.action = na.approx,
+               robust=T)
+plot(tsa.stl)
+##
+
 df164207=compute_feat(df164207)
 N=dim(df164207)[1]
 
