@@ -282,6 +282,10 @@ annotate_figure(Pest2002AA29_b,
                 top = text_grob("2002AA29 - est - 98% acc.", color = "black", face = "bold", size = 14))
 dev.off()
 
+sel_feat=data.frame(feat=colnames(df2002AA29),weight=est2002AA29[[sel]]$est_weights)
+# Sort by weight
+sel_feat=sel_feat[order(sel_feat$weight,decreasing = T),]
+
 # 2015SO2 --------------------------------------------------------------------
 
 df2015SO2=read.table("propagation_2015SO2_new_v2.txt",header=T)
@@ -451,6 +455,10 @@ annotate_figure(Pest2016HO3_b,
                 top = text_grob("2016HO3 - est - 94% acc.", color = "black", face = "bold", size = 14))
 dev.off()
 
+sel_feat=data.frame(feat=colnames(df2016HO3),weight=est2016HO3[[sel]]$est_weights)
+# Sort by weight
+sel_feat=sel_feat[order(sel_feat$weight,decreasing = T),]
+
 # 2019GM1 -----------------------------------------------------------------
 
 df2019GM1=read.table("propagation_2019GM1_new_v2.txt",header=T)
@@ -539,6 +547,11 @@ png("2019GM1EST.png",width =1600,height=900)
 annotate_figure(Pest2019GM1_b,
                 top = text_grob("2019GM1 - est - 95%", color = "black", face = "bold", size = 14))
 dev.off()
+
+
+sel_feat=data.frame(feat=colnames(df2019GM1),weight=est2019GM1[[sel]]$est_weights)
+# Sort by weight
+sel_feat=sel_feat[order(sel_feat$weight,decreasing = T),]
 
 # 2020PP1 -----------------------------------------------------------------
 
