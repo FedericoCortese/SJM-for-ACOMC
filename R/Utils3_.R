@@ -771,3 +771,46 @@ last_min_max <- function(last_min, last_max, TT,x) {
   
   return(df)
 }
+
+
+last_max_value <- function(is_max, values) {
+  # Initialize a vector to store the result
+  result <- numeric(length(values))
+  
+  # Initialize the last observed max
+  last_max <- NA
+  
+  # Iterate through the values
+  for (i in seq_along(values)) {
+    if (is_max[i] == 1) {
+      # If the current position is a max, store the value
+      last_max <- values[i]
+    }
+    # Store the last observed max
+    result[i] <- last_max
+  }
+  
+  return(result)
+}
+
+# Define the function for minima
+last_min_value <- function(is_min, values) {
+  # Initialize a vector to store the result
+  result <- numeric(length(values))
+  
+  # Initialize the last observed min
+  last_min <- NA
+  
+  # Iterate through the values
+  for (i in seq_along(values)) {
+    if (is_min[i] == 1) {
+      # If the current position is a min, store the value
+      last_min <- values[i]
+    }
+    # Store the last observed min
+    result[i] <- last_min
+  }
+  
+  return(result)
+}
+
