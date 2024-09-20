@@ -1,3 +1,5 @@
+library(ggplot2)
+
 order_states=function(states){
   
   # This function organizes states by assigning 1 to the first observed state and sequentially numbering each new state as 2, 3, etc., incrementing by 1 for each newly observed state.
