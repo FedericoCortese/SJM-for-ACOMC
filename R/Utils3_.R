@@ -1,4 +1,5 @@
 library(ggplot2)
+library(zoo)
 
 order_states=function(states){
   
@@ -131,11 +132,11 @@ SJM_lambdakappa=function(lambda,kappa,K=2,df,Lnsat,Ksat=6,alpha0=NULL,K0=NULL,pe
     est_states=factor(est_states,levels=1:K)
     BAC=caret::confusionMatrix(true_states,est_states)$overall[1]
     #overlap=sum(true_states==est_states)/N
-    #ARI=pdfCluster::adj.rand.index(true_states,est_states)
+    ARI=pdfCluster::adj.rand.index(true_states,est_states)
     return(list(FTIC=FTIC,
                 BIC=BIC,
                 AIC=AIC,
-                #ARI=ARI,
+                ARI=ARI,
                 #overlap=overlap,
                 BAC=BAC,
                 est_states=est_states,
@@ -150,6 +151,7 @@ SJM_lambdakappa=function(lambda,kappa,K=2,df,Lnsat,Ksat=6,alpha0=NULL,K0=NULL,pe
   }
   
 }
+
 compute_feat_old=function(dat,wdn=c(10,75),am1=F,wdn_decomp=10){
   
   # Add first differences for each variable to dat2
@@ -813,4 +815,262 @@ last_min_value <- function(is_min, values) {
   
   return(result)
 }
+
+library(ggplot2)
+library(splus2R)
+library(runner)
+
+theta_trans_plot <- function(data, data_name,l=5,l2=50,l3=70) {
+  
+  # Function to get the last observed min and max value
+  
+  # Arguments:
+  # data: dataframe with the data (t theta and type columns are required)
+  # data_name: name of the dataset
+  # l: span for peaks function
+  # l2: span for runner function (most important)
+  # l3: span for I(a<1)
+  
+  t_orig=data$t
+  data$t=seq_along(data$t)
+  data$t_orig=t_orig
+  data$type <- as.factor(data$type)
+  
+  # Unique types and total rows
+  unique_types <- unique(data$type)
+  total_rows <- dim(data)[1]
+  
+  # Custom colors based on unique 'type'
+  custom_colors <- c("-1" = "blue", "0" = "red", "50" = "green", "100" = "gray50")
+  
+  # Theta transformation
+  theta_trans <- data$theta
+  theta_trans[which(theta_trans > pi)] <- theta_trans[which(theta_trans > pi)] - 2 * pi
+  data$theta_trans <- abs(theta_trans)
+  
+  # Plot 0: Scatter plot of theta
+  P0=ggplot(data, aes(x = t, y = theta)) +
+    geom_point(aes(color = type)) +
+    scale_color_manual(values = custom_colors, name = "Type") +
+    theme_classic()+
+    labs(title = data_name)
+  
+  # Plot 1: Scatter plot of theta_trans
+  P1=ggplot(data, aes(x = t, y = theta_trans)) +
+    geom_point(aes(color = type)) +
+    scale_color_manual(values = custom_colors, name = "Type") +
+    theme_classic()+
+    labs(title = data_name)
+  
+  # Detecting peaks and valleys
+  #l <- 5
+  maxs <- as.numeric(peaks(data$theta_trans, span = l))
+  mins <- as.numeric(peaks(-data$theta_trans, span = l))
+  
+  # Smoothing with runner function
+  #l2 <- 50
+  count_min <- runner::runner(mins, k = l2, f = sum, na_pad = TRUE)
+  count_min <- c(count_min[-(1:floor(l2 / 2))], rep(NA, round(l2 / 2)))
+  
+  count_max <- runner::runner(maxs, k = l2, f = sum, na_pad = TRUE)
+  count_max <- c(count_max[-(1:floor(l2 / 2))], rep(NA, round(l2 / 2)))
+
+  # dat_min <- data.frame(t = data$t, count_min = count_min, type = data$type)
+  # dat_max <- data.frame(t = data$t, count_max = count_max, type = data$type)
+  # dat_max_min <- merge(dat_max, dat_min, by = c('t', 'type'))
+  
+  data$count_min <- count_min
+  data$count_max <- count_max
+  
+  # Plot 2: Scatter plot of count_min
+  P2=ggplot(data, aes(x = t, y = count_min, color = type)) +
+    geom_point() +
+    labs(x = "t", y = "count_min") +
+    scale_color_manual(values = custom_colors, name = "Type") +
+    theme_minimal() +
+    theme(legend.position = "top")+
+    labs(title = paste(data_name," lag = ", l2))
+  
+  # Plot 3: Scatter plot of count_max
+  P3=ggplot(data, aes(x = t, y = count_max, color = type)) +
+    geom_point() +
+    labs(x = "t", y = "count_max") +
+    scale_color_manual(values = custom_colors, name = "Type") +
+    theme_minimal() +
+    theme(legend.position = "top")+
+    labs(title = paste(data_name," lag = ", l2))
+  
+  # Add value_min, value_max and diffmaxmin
+  data$value_min <- last_min_value(mins, data$theta_trans)
+  data$value_max <- last_max_value(maxs, data$theta_trans)
+  data$diffmaxmin <- data$value_max - data$value_min
+  
+  # Plot 4: Scatter plot of value_min
+  P4=ggplot(data, aes(x = t, y = value_min, color = type)) +
+    geom_point() +
+    labs(x = "t", y = "value_min") +
+    scale_color_manual(values = custom_colors, name = "Type") +
+    theme_minimal() +
+    theme(legend.position = "top")+
+    labs(title = paste(data_name," lag = ", l2))
+  
+  # Plot 5: Scatter plot of value_max
+  P5=ggplot(data, aes(x = t, y = value_max, color = type)) +
+    geom_point() +
+    labs(x = "t", y = "value_max") +
+    scale_color_manual(values = custom_colors, name = "Type") +
+    theme_minimal() +
+    theme(legend.position = "top")+
+    labs(title = paste(data_name," lag = ", l2))
+  
+  # Plot 6: Scatter plot of diffmaxmin
+  P6=ggplot(data, aes(x = t, y = diffmaxmin, color = type)) +
+    geom_point() +
+    labs(x = "t", y = "diffmaxmin") +
+    scale_color_manual(values = custom_colors, name = "Type") +
+    theme_minimal() +
+    theme(legend.position = "top")+
+    labs(title = paste(data_name," lag = ", l2))
+  
+  
+  cust_fun=function(x){
+    all(x==T)
+  }
+  
+  ind_a=I(data$a<1)
+  ind_a2=I(data$a>1)
+  ind_a_mov <- runner::runner(ind_a, k = l3, f = cust_fun, na_pad = TRUE)
+  ind_a2_mov <- runner::runner(ind_a2, k = l3, f = cust_fun, na_pad = TRUE)
+  data$ind_a=as.factor(as.numeric(ind_a_mov+ind_a2_mov))
+  
+  #plot(data$a,col=ind_a_mov+1)
+  
+  # Plot 7: Scatter plot of a
+  P7=ggplot(data, aes(x = t, y = a)) +
+    geom_point(aes(color = type)) +
+    scale_color_manual(values = custom_colors, name = "Type") +
+    theme_classic()+
+    labs(title = data_name)
+  
+  
+  # Plot 8: Scatter plot of a with moving all(I(a<1))
+  P8=ggplot(data, aes(x = t, y = a)) +
+    geom_point(aes(color = ind_a)) +
+    scale_color_manual(values = c("0" = "black", "1" = "magenta2"), name = "I(a<1)") +
+    theme_classic()+
+    labs(title = paste(data_name," lag = ", l3))
+  
+  # Return the dataset with the new features
+  return(list(P0=P0,
+              P1=P1,
+              P2=P2,
+              P3=P3,
+              P4=P4,
+              P5=P5,
+              P6=P6,
+              P7=P7,
+              P8=P8,
+              data=data))
+}
+
+compute_feat_basic=function(data,wdn){
+  # data is a dataframe with columns t, theta, a
+  # wdn is a vector with the window sizes for the moving sd (two components)
+  
+  # Transform theta
+  theta_trans <- data$theta
+  theta_trans[which(theta_trans > pi)] <- theta_trans[which(theta_trans > pi)] - 2 * pi
+  data$theta_trans <- abs(theta_trans)
+  data$theta=theta_trans
+  
+  # Add the first difference of theta and a
+  data$dtheta=c(NA,diff(data$theta))
+  data$da=c(NA,diff(data$a))
+  
+  # Moving sd
+  data$sd_w1_dtheta=rollapply(data$dtheta, wdn[1], sd, fill=NA)
+  data$sd_w2_dtheta=rollapply(data$dtheta, wdn[2], sd, fill=NA)
+  
+  data$sd_w1_da=rollapply(data$da, wdn[1], sd, fill=NA)
+  data$sd_w2_da=rollapply(data$da, wdn[2], sd, fill=NA)
+  
+  data=data[complete.cases(data),]
+  
+  return(data)
+  
+}
+
+comp_feat_theta=function(data,l2,l=5){
+  
+  # data is a dataframe with columns t and theta_trans
+  
+  # t_orig=data$t
+  # data$t=seq_along(data$t)
+  # data$t_orig=t_orig
+
+  # Theta transformation
+  maxs <- as.numeric(peaks(data$theta_trans, span = l))
+  mins <- as.numeric(peaks(-data$theta_trans, span = l))
+  
+  count_min <- runner::runner(mins, k = l2, f = sum, na_pad = TRUE)
+  count_min <- c(count_min[-(1:floor(l2 / 2))], rep(NA, round(l2 / 2)))
+  
+  count_max <- runner::runner(maxs, k = l2, f = sum, na_pad = TRUE)
+  count_max <- c(count_max[-(1:floor(l2 / 2))], rep(NA, round(l2 / 2)))
+  
+  data$count_min <- count_min
+  data$count_max <- count_max
+  data$value_min <- last_min_value(mins, data$theta_trans)
+  data$value_max <- last_max_value(maxs, data$theta_trans)
+  data$diffmaxmin <- data$value_max - data$value_min
+  
+  data=subset(data,select=-c(theta_trans))
+  
+  #drop NA
+  data=data[complete.cases(data),]
+  
+  colnames(data)[-1]=paste0(colnames(data)[-1],l2)
+  
+  return(data)
+  
+}
+
+cust_fun=function(x){
+  all(x==T)
+}
+
+comp_feat_a=function(data,l3){
+  
+  # data is a dataframe with columns t and a
+  
+  ind_a=I(data$a<1)
+  ind_a2=I(data$a>1)
+  ind_a_mov <- runner::runner(ind_a, k = l3, f = cust_fun, na_pad = TRUE)
+  ind_a2_mov <- runner::runner(ind_a2, k = l3, f = cust_fun, na_pad = TRUE)
+  data$ind_a=as.numeric(ind_a_mov+ind_a2_mov)
+  
+  data=subset(data,select=-a)
+  
+  colnames(data)[-1]=paste0(colnames(data)[-1],l3)
+  data=data[complete.cases(data),]
+  
+  return(data)
+}
+
+comp_feat_theta_a=function(dat,wdn){
+  dat=compute_feat_basic(dat[,c("t","a","theta")],wdn)
+  dat_theta_short=comp_feat_theta(dat[,c("t","theta_trans")],wdn[1])
+  dat_theta_long=comp_feat_theta(dat[,c("t","theta_trans")],wdn[2])
+  #dat_a_short=comp_feat_a(dat[,c("t","a")],wdn[1])
+  dat_a_long=comp_feat_a(dat[,c("t","a")],wdn[2])
+  data=merge(dat,dat_theta_short,by="t")
+  data=merge(data,dat_theta_long,by="t")
+  #data=merge(data,dat_a_short,by="t")
+  data=merge(data,dat_a_long,by="t")
+  
+  return(data)
+  
+}
+
+
 
