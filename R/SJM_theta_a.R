@@ -39,13 +39,22 @@ plot(df2016CA138$t,df2016CA138$a,type="p",col=prova$est_states)
 # 2015XX169 ---------------------------------------------------------------
 
 df2015XX169_true=read.table("propagation_2015XX169_new_v2.txt",header=T)
-wdn=c(10,50)
+summary(df2015XX169_true)
+wdn=c(20,20)
 df2015XX169=comp_feat_theta_a(df2015XX169_true,wdn)
+true_st=merge(df2015XX169_true[,c("t","type")],df2015XX169[,c("t","theta")],by="t")
+
+df2015XX169=subset(df2015XX169[,-1],select=-c(ind_a20))
 sat_mod=SJM_sat(df2015XX169)
 Lnsat=sat_mod$Lnsat
-lambda=0
+lambda=0.1
 kappa=2
-prova=SJM_lambdakappa(lambda,kappa,K=3,df2015XX169,Lnsat,Ksat=6,
+prova=SJM_lambdakappa(lambda,kappa,K=3,df2015XX169[,-1],Lnsat,Ksat=6,
                       alpha0=NULL,K0=NULL,pers0=.95,
-                      true_states=tail(df2015XX169_true$type,dim(df2015XX169)[1]))
-plot(df2015XX169$t,df2015XX169$theta,type="p",col=prova$est_states)
+                      true_states=NULL)
+windows()
+par(mfrow=c(2,1))
+plot(df2015XX169$t,df2015XX169$theta_trans,type="p",col=prova$est_states,main="est")
+plot(df2015XX169$t,df2015XX169$theta_trans,type='p',col=true_st$type+2,main="true")
+prova$ARI
+prova$BAC

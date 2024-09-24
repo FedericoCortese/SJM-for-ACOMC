@@ -35,8 +35,20 @@ tt_2002AA29[[4]]
 tt_2002AA29[[5]]
 tt_2002AA29[[6]]
 
-# Il seguente ha una riga in meno
+# Il seguente ha una riga in meno (no ground truth)
 df2005UH6=read.table("propagation_2005UH6_new_v2.txt",header=T)
+df2005UH6$type=0
+length(unique(df2005UH6$type))
+tt_2005UH6=theta_trans_plot(df2005UH6,'2005UH6',l2=50,l3=50)
+tt_2005UH6[[1]]
+tt_2005UH6[[2]]
+tt_2005UH6[[3]]
+tt_2005UH6[[4]]
+tt_2005UH6[[5]]
+tt_2005UH6[[6]]
+tt_2005UH6[[7]]
+tt_2005UH6[[8]]
+tt_2005UH6[[9]]
 
 df2014OL339=read.table("propagation_2014OL339_new_v2.txt",header=T)
 length(unique(df2014OL339$type))
@@ -62,12 +74,13 @@ tt_2015SO2[[6]]
 
 df2015XX169=read.table("propagation_2015XX169_new_v2.txt",header=T)
 length(unique(df2015XX169$type))
-tt_2015XX169=theta_trans_plot(df2015XX169,'2015XX169',l2=20)
+tt_2015XX169=theta_trans_plot(df2015XX169,'2015XX169',l2=20,l3=1000)
 tt_2015XX169[[1]]
 tt_2015XX169[[2]]
 tt_2015XX169[[3]]
 tt_2015XX169[[4]]
 tt_2015XX169[[7]]
+tt_2015XX169[[9]]
 
 # MOST DIFFICULT
 df2016CA138=read.table("propagation_2016CA138_new_v2.txt",header=T)
