@@ -74,15 +74,36 @@ hp=expand.grid(lambda=lambda,kappa=kappa)
 sat_mod=SJM_sat(df100001634_1)
 Lnsat=sat_mod$Lnsat
 
-start_est164207=Sys.time()
+start_est100001634=Sys.time()
 est100001634 <- parallel::mclapply(1:nrow(hp),
                                 function(x)
                                   SJM_lambdakappa(lambda=hp[x,]$lambda,
                                                   kappa=hp[x,]$kappa,
-                                                  df=df100001634_1,
+                                                  df=df100001634_1[,-1],
                                                   Lnsat=Lnsat),
                                 mc.cores = parallel::detectCores()-1)
 
 end_est100001634=Sys.time()
 elapsed_est100001634=end_est100001634-start_est100001634
-save(df100001634,est100001634,elapsed_est100001634,file="est100001634.RData")
+save(est100001634,file="est100001634.RData")
+
+modsel100001634=data.frame(hp,FTIC=unlist(lapply(est100001634,function(x)x$FTIC))
+)
+sel=13
+
+estw100001634=data.frame(var=colnames(df100001634_1),
+           weight=est100001634[[sel]]$est_weights)
+
+estw100001634=estw100001634[order(estw100001634$weight,decreasing = T),]
+
+
+plot(df100001634_1$theta,type='l')
+lines(est100001634[[sel]]$est_states,col='red')
+
+sjm100001634=data.frame(df100001634_1,
+                        State=est100001634[[sel]]$est_states)
+
+ggplotly(ggplot(sjm100001634,aes(x=t))+
+  geom_line(aes(y=theta),col='grey40')+
+  geom_line(aes(y=State),col='red')
+)
