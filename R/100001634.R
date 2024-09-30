@@ -80,8 +80,7 @@ est100001634 <- parallel::mclapply(1:nrow(hp),
                                   SJM_lambdakappa(lambda=hp[x,]$lambda,
                                                   kappa=hp[x,]$kappa,
                                                   df=df100001634_1,
-                                                  Lnsat=Lnsat,
-                                                  true_states=true_states),
+                                                  Lnsat=Lnsat),
                                 mc.cores = parallel::detectCores()-1)
 
 end_est100001634=Sys.time()
