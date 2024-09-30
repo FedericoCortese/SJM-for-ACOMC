@@ -872,8 +872,8 @@ theta_trans_plot <- function(data, data_name,l=5,l2=50,l3=70,tt_thres_maxmin=2.0
   mins <- as.numeric(peaks(-data$theta_trans, span = l))
   
   # Above 2.5 and below -2.5 are not considered as max and min
-  maxs[which(data$theta_trans>(-tt_thres_maxmin))] <- 0
-  mins[which(data$theta_trans<(tt_thres_maxmin))] <- 0
+  maxs[which(data$theta_trans>(tt_thres_maxmin))] <- 0
+  mins[which(data$theta_trans<(-tt_thres_maxmin))] <- 0
   
   # Smoothing with runner function
   #l2 <- 50

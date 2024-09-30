@@ -89,13 +89,13 @@ save(est100001634,file="est100001634.RData")
 
 modsel100001634=data.frame(hp,FTIC=unlist(lapply(est100001634,function(x)x$FTIC))
 )
-sel=13
+sel=14
 
-estw100001634=data.frame(var=colnames(df100001634_1),
+estw100001634=data.frame(var=colnames(df100001634_1)[-1],
            weight=est100001634[[sel]]$est_weights)
 
 estw100001634=estw100001634[order(estw100001634$weight,decreasing = T),]
-
+head(estw100001634)
 
 plot(df100001634_1$theta,type='l')
 lines(est100001634[[sel]]$est_states,col='red')
