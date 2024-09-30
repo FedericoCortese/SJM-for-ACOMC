@@ -62,17 +62,19 @@ SJM_sat=function(df,Ksat=6){
   
 }
 
-SJM_lambdakappa=function(lambda,kappa,K=2,df,Lnsat,Ksat=6,alpha0=NULL,K0=NULL,pers0=.95,true_states=NULL){
+
+library(reticulate)
+import("scipy")
+source_python('SJ.py')
+
+SJM_lambdakappa=function(lambda,kappa,K=2,df,Lnsat,Ksat=6,alpha0=NULL,K0=NULL,pers0=.95,
+                         true_states=NULL){
   
   #  df is a data.frame WITHOUT time column
   
   if(is.null(K0)){
     K0=K
   }
-  
-  # library(reticulate)
-  # import("scipy")
-  # source_python('SJ.py')
   
   #Y=df[,-1]
   
@@ -820,7 +822,8 @@ library(ggplot2)
 library(splus2R)
 library(runner)
 
-theta_trans_plot <- function(data, data_name,l=5,l2=50,l3=70) {
+theta_trans_plot <- function(data, data_name,l=5,l2=50,l3=70,tt_thres_maxmin=2.01,
+                             tt_thres_diffmaxmin=0.5) {
   
   # Function to get the last observed min and max value
   
@@ -829,7 +832,8 @@ theta_trans_plot <- function(data, data_name,l=5,l2=50,l3=70) {
   # data_name: name of the dataset
   # l: span for peaks function
   # l2: span for runner function (most important)
-  # l3: span for I(a<1)
+  # l3: span for I(a<1|a>1)
+  # tt_thres: threshold for theta (peaks (and valleys) above (below) this value are not considered as peaks (valleys))
   
   t_orig=data$t
   data$t=seq_along(data$t)
@@ -846,7 +850,7 @@ theta_trans_plot <- function(data, data_name,l=5,l2=50,l3=70) {
   # Theta transformation
   theta_trans <- data$theta
   theta_trans[which(theta_trans > pi)] <- theta_trans[which(theta_trans > pi)] - 2 * pi
-  data$theta_trans <- abs(theta_trans)
+  data$theta_trans <- theta_trans
   
   # Plot 0: Scatter plot of theta
   P0=ggplot(data, aes(x = t, y = theta)) +
@@ -866,6 +870,10 @@ theta_trans_plot <- function(data, data_name,l=5,l2=50,l3=70) {
   #l <- 5
   maxs <- as.numeric(peaks(data$theta_trans, span = l))
   mins <- as.numeric(peaks(-data$theta_trans, span = l))
+  
+  # Above 2.5 and below -2.5 are not considered as max and min
+  maxs[which(data$theta_trans>tt_thres_maxmin)] <- 0
+  mins[which(data$theta_trans<(-tt_thres_maxmin))] <- 0
   
   # Smoothing with runner function
   #l2 <- 50
@@ -905,6 +913,8 @@ theta_trans_plot <- function(data, data_name,l=5,l2=50,l3=70) {
   data$value_max <- last_max_value(maxs, data$theta_trans)
   data$diffmaxmin <- data$value_max - data$value_min
   
+  data$I_diffmaxmin = as.numeric(data$diffmaxmin>tt_thres_diffmaxmin)
+  
   # Plot 4: Scatter plot of value_min
   P4=ggplot(data, aes(x = t, y = value_min, color = type)) +
     geom_point() +
@@ -927,6 +937,14 @@ theta_trans_plot <- function(data, data_name,l=5,l2=50,l3=70) {
   P6=ggplot(data, aes(x = t, y = diffmaxmin, color = type)) +
     geom_point() +
     labs(x = "t", y = "diffmaxmin") +
+    scale_color_manual(values = custom_colors, name = "Type") +
+    theme_minimal() +
+    theme(legend.position = "top")+
+    labs(title = paste(data_name," lag = ", l2))
+  
+  P6.1=ggplot(data, aes(x = t, y = I_diffmaxmin, color = type)) +
+    geom_point() +
+    labs(x = "t", y = paste("I(diffmaxmin>", tt_thres_diffmaxmin, ")")) +
     scale_color_manual(values = custom_colors, name = "Type") +
     theme_minimal() +
     theme(legend.position = "top")+
@@ -956,20 +974,21 @@ theta_trans_plot <- function(data, data_name,l=5,l2=50,l3=70) {
   # Plot 8: Scatter plot of a with moving all(I(a<1))
   P8=ggplot(data, aes(x = t, y = a)) +
     geom_point(aes(color = ind_a)) +
-    scale_color_manual(values = c("0" = "black", "1" = "magenta2"), name = "I(a<1)") +
+    scale_color_manual(values = c("0" = "black", "1" = "magenta2"), name = "I(a<1|a>1)") +
     theme_classic()+
     labs(title = paste(data_name," lag = ", l3))
   
   # Return the dataset with the new features
-  return(list(P0=P0,
-              P1=P1,
-              P2=P2,
-              P3=P3,
-              P4=P4,
-              P5=P5,
-              P6=P6,
-              P7=P7,
-              P8=P8,
+  return(list(P_theta=P0,
+              P_thetatrans=P1,
+              P_count_min=P2,
+              P_count_max=P3,
+              P_value_min=P4,
+              P_value_max=P5,
+              P_diff_maxmin=P6,
+              P_I_diff_maxmin=P6.1,
+              P_a=P7,
+              P_Ia=P8,
               data=data))
 }
 
