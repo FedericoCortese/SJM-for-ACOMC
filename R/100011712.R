@@ -52,7 +52,7 @@ est100011712 <- parallel::mclapply(1:nrow(hp),
                                    function(x)
                                      SJM_lambdakappa(K=hp[x,]$K,lambda=hp[x,]$lambda,
                                                      kappa=hp[x,]$kappa,
-                                                     df=df100001634_1[,-1],
+                                                     df=df100011712_1[,-1],
                                                      Lnsat=Lnsat),
                                    mc.cores = parallel::detectCores()-1)
 
