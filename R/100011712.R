@@ -40,8 +40,9 @@ df100011712_1=compute_feat(df100011712)
 N=dim(df100011712)[1]
 
 lambda=c(0,5,10,15,20,30)
+K=c(2,3,4)
 kappa=seq(1,ceiling(sqrt(dim(df100011712_1)[2])),by=1)
-hp=expand.grid(lambda=lambda,kappa=kappa)
+hp=expand.grid(K=K,lambda=lambda,kappa=kappa)
 
 sat_mod=SJM_sat(df100011712_1[,-1])
 Lnsat=sat_mod$Lnsat
@@ -49,7 +50,7 @@ Lnsat=sat_mod$Lnsat
 start_est100011712=Sys.time()
 est100011712 <- parallel::mclapply(1:nrow(hp),
                                    function(x)
-                                     SJM_lambdakappa(lambda=hp[x,]$lambda,
+                                     SJM_lambdakappa(K=hp[x,]$K,lambda=hp[x,]$lambda,
                                                      kappa=hp[x,]$kappa,
                                                      df=df100001634_1[,-1],
                                                      Lnsat=Lnsat),
