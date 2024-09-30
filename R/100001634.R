@@ -71,7 +71,7 @@ lambda=c(0,5,10,15,20,30)
 kappa=seq(1,ceiling(sqrt(dim(df100001634_1)[2])),by=1)
 hp=expand.grid(lambda=lambda,kappa=kappa)
 
-sat_mod=SJM_sat(df100001634_1)
+sat_mod=SJM_sat(df100001634_1[,-1])
 Lnsat=sat_mod$Lnsat
 
 start_est100001634=Sys.time()
