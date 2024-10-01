@@ -78,11 +78,59 @@ lines(est100011712[[sel]]$est_states,col='red')
 # Second approach ---------------------------------------------------------
 
 
-df100011712_2=theta_trans_plot(df100011712, "100011712",l=5,l2=50,
-                               l3=70,tt_thres_maxmin=2.01,
-                             tt_thres_diffmaxmin=0.5)
+df100011712_2=theta_trans_plot(df100011712, "100011712",l=5,l2=100,
+                               l3=70,tt_thres_maxmin=2.5,
+                             tt_thres_diffmaxmin=0.25)
 library(plotly)
 ggplotly(df100011712_2[[1]])
 
-plot(df100011712_2$data$theta_trans[9000:10000],type="l")
+pp=ggplot(df100011712_2$data[1:25000,],aes(x=t))+
+  geom_line(aes(y=theta_trans),col='blue')+
+  geom_line(aes(y=count_max),col="red")+
+  theme_classic()
+ggplotly(pp)
 
+Y_100011712_2=select(df100011712_2$data,subset=-c(t,t_orig,type,ind_a))
+Y_100011712_2=Y_100011712_2[complete.cases(Y_100011712_2),]
+
+sat_mod=SJM_sat(Y_100011712_2)
+Lnsat=sat_mod$Lnsat
+
+
+lambda=c(0,5,10,15,20,30)
+K=3
+kappa=seq(1,ceiling(sqrt(dim(Y_100011712_2)[2])),by=1)
+hp=expand.grid(K=K,lambda=lambda,kappa=kappa)
+
+start_est100011712=Sys.time()
+est100011712_2 <- parallel::mclapply(1:nrow(hp),
+                                   function(x)
+                                     SJM_lambdakappa(K=hp[x,]$K,lambda=hp[x,]$lambda,
+                                                     kappa=hp[x,]$kappa,
+                                                     df=Y_100011712_2,
+                                                     Lnsat=Lnsat),
+                                   mc.cores = parallel::detectCores()-1)
+
+end_est100011712=Sys.time()
+elapsed_est100011712=end_est100011712-start_est100011712
+save(df100011712_2,est100011712_2,file="est100011712_2.RData")
+
+modsel100011712_2=data.frame(hp,FTIC=unlist(lapply(est100011712_2,function(x)x$FTIC))
+)
+sel=12
+
+estw100011712=data.frame(var=colnames(Y_100011712_2),
+                         weight=est100011712_2[[sel]]$est_weights)
+
+estw100011712=estw100011712[order(estw100011712$weight,decreasing = T),]
+head(estw100011712)
+
+df100011712_3=select(df100011712_2$data,subset=-c(t,t_orig,type,ind_a))
+df100011712_3=df100011712_3[complete.cases(df100011712_3),]
+df100011712_3$t=1:dim(df100011712_3)[1]
+df100011712_3$state=est100011712_2[[sel]]$est_states
+
+pp=ggplot(data=df100011712_3,aes(x=t))+
+  geom_line(aes(y=theta_trans),col='grey40')+
+  geom_line(aes(y=state),col='red')
+ggplotly(pp)
