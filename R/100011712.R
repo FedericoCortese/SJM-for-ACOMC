@@ -45,7 +45,7 @@ K=3
 kappa=seq(1,ceiling(sqrt(dim(df100011712_1)[2])),by=1)
 hp=expand.grid(K=K,lambda=lambda,kappa=kappa)
 
-sat_mod=SJM_sat(df100011712_1[,-1])
+sat_mod=SJM_sat(df100011712_1)
 Lnsat=sat_mod$Lnsat
 
 start_est100011712=Sys.time()
@@ -53,7 +53,7 @@ est100011712 <- parallel::mclapply(1:nrow(hp),
                                    function(x)
                                      SJM_lambdakappa(K=hp[x,]$K,lambda=hp[x,]$lambda,
                                                      kappa=hp[x,]$kappa,
-                                                     df=df100011712_1[,-1],
+                                                     df=df100011712_1,
                                                      Lnsat=Lnsat),
                                    mc.cores = parallel::detectCores()-1)
 
@@ -65,7 +65,7 @@ modsel100011712=data.frame(hp,FTIC=unlist(lapply(est100011712,function(x)x$FTIC)
 )
 sel=77
 
-estw100011712=data.frame(var=colnames(df100011712_1)[-1],
+estw100011712=data.frame(var=colnames(df100011712_1),
                          weight=est100011712[[sel]]$est_weights)
 
 estw100011712=estw100011712[order(estw100011712$weight,decreasing = T),]
