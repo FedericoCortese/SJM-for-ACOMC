@@ -36,7 +36,7 @@ p <- ggplot(d_temp, aes(x = seq_along(theta_trans))) +
 ggplotly(p)
 
 # First approach (Berlin) -------------------------------------------------
-df100011712_1=select(df100011712,select=-c(t,type))
+df100011712_1=subset(df100011712,select=-c(t,type))
 df100011712_1=compute_feat(df100011712)
 N=dim(df100011712)[1]
 
