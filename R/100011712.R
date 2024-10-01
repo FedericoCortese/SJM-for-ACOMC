@@ -40,7 +40,7 @@ df100011712_1=compute_feat(df100011712)
 N=dim(df100011712)[1]
 
 lambda=c(0,5,10,15,20,30)
-K=c(2,3,4)
+K=3
 kappa=seq(1,ceiling(sqrt(dim(df100011712_1)[2])),by=1)
 hp=expand.grid(K=K,lambda=lambda,kappa=kappa)
 
@@ -59,3 +59,16 @@ est100011712 <- parallel::mclapply(1:nrow(hp),
 end_est100011712=Sys.time()
 elapsed_est100011712=end_est100011712-start_est100011712
 save(df100011712_1,est100011712,file="est100011712.RData")
+
+modsel100011712=data.frame(hp,FTIC=unlist(lapply(est100011712,function(x)x$FTIC))
+)
+sel=77
+
+estw100011712=data.frame(var=colnames(df100011712_1)[-1],
+                         weight=est100011712[[sel]]$est_weights)
+
+estw100011712=estw100011712[order(estw100011712$weight,decreasing = T),]
+head(estw100011712)
+
+plot(df100011712_1$theta,type='l')
+lines(est100011712[[sel]]$est_states,col='red')
