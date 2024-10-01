@@ -36,6 +36,7 @@ p <- ggplot(d_temp, aes(x = seq_along(theta_trans))) +
 ggplotly(p)
 
 # First approach (Berlin) -------------------------------------------------
+df100011712_1=select(df100011712,select=-c(t,type))
 df100011712_1=compute_feat(df100011712)
 N=dim(df100011712)[1]
 
@@ -72,3 +73,16 @@ head(estw100011712)
 
 plot(df100011712_1$theta,type='l')
 lines(est100011712[[sel]]$est_states,col='red')
+
+
+# Second approach ---------------------------------------------------------
+
+
+df100011712_2=theta_trans_plot(df100011712, "100011712",l=5,l2=50,
+                               l3=70,tt_thres_maxmin=2.01,
+                             tt_thres_diffmaxmin=0.5)
+library(plotly)
+ggplotly(df100011712_2[[1]])
+
+plot(df100011712_2$data$theta_trans[9000:10000],type="l")
+
