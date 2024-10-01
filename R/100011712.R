@@ -37,7 +37,7 @@ ggplotly(p)
 
 # First approach (Berlin) -------------------------------------------------
 df100011712_1=subset(df100011712,select=-c(t,type))
-df100011712_1=compute_feat(df100011712)
+df100011712_1=compute_feat(df100011712_1)
 N=dim(df100011712)[1]
 
 lambda=c(0,5,10,15,20,30)
