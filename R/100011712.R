@@ -63,7 +63,7 @@ save(df100011712_1,est100011712,file="est100011712.RData")
 
 modsel100011712=data.frame(hp,FTIC=unlist(lapply(est100011712,function(x)x$FTIC))
 )
-sel=77
+sel=24
 
 estw100011712=data.frame(var=colnames(df100011712_1),
                          weight=est100011712[[sel]]$est_weights)
@@ -71,7 +71,7 @@ estw100011712=data.frame(var=colnames(df100011712_1),
 estw100011712=estw100011712[order(estw100011712$weight,decreasing = T),]
 head(estw100011712)
 
-plot(df100011712_1$theta,type='l')
+plot(df100011712_1$omega,type='l')
 lines(est100011712[[sel]]$est_states,col='red')
 
 
