@@ -40,7 +40,7 @@ df100011743_2.2$ind_a=as.numeric(df100011743_2.2$ind_a)
 df100011743_1=subset(df100011743,select=-c(t,type))
 df100011743_1=compute_feat(df100011743_1)
 df100011743_1.2=subset(df100011743_1,
-                       select=c(dtheta,sd_w1_dtheta,sd_w2_dtheta,domega,sd_w1_domega,sd_w2_domega))
+                       select=-c(a, e, i, Omega, omega, theta))
 
 # merge by rownames with by=0
 
@@ -90,11 +90,49 @@ df_res_100011743=data.frame(t=time_100011743,
                             Y100011743_final,
                             State=est100011743[[sel]]$est_states)
 
+df_res_100011743 <- df_res_100011743 %>%
+  mutate(xmax = dplyr::lead(t, default = max(t) + 1))  # Define xmax as the next t value or the max t + 1
+
+# Create the plot with geom_tile
 p_a_res <- ggplot(df_res_100011743, aes(x = t)) + 
   geom_line(aes(y = a), color = 'blue', size = 1) + 
-  geom_line(aes(y = State), color = 'violet', size = 1)+
+  geom_tile(aes(x = (t + xmax) / 2, width = xmax - t, 
+                y = mean(a), 
+                height = max(a), fill = as.factor(State)), 
+            alpha = 0.2) +
+  scale_fill_manual(values = c("#FF9900", "#00FF00", "#CCFF00", "#FF0033")) +
   labs(title = "Line Plot of a and states", 
        x = "Index", 
        y = "Values") +
   theme_minimal()
+p_a_res
+
+df_res_100011743 <- df_res_100011743 %>%
+  mutate(Segment = cumsum(State != lag(State, default = first(State))))
+
+# Step 2: Create a new dataframe with start and end points for each line segment
+df_segments <- df_res_100011743 %>%
+  group_by(Segment) %>%
+  mutate(next_t = dplyr::lead(t), next_a = dplyr::lead(a)) %>%
+  filter(!is.na(next_t))  # Remove rows where the next point is missing
+
+p_a_res <- ggplot() + 
+  geom_segment(data = df_segments, aes(x = t, y = a, xend = next_t, yend = next_a, color = as.factor(State)), size = 1) +
+  scale_color_manual(values = c("#FF9900", "#00FF00", "#CCFF00", "#FF0033")) +
+  labs(title = "Line Plot of a with State-based Colors", 
+       x = "Time (t)", 
+       y = "Values (a)") +
+  theme_minimal()
 ggplotly(p_a_res)
+
+p_inda_res=ggplot(df_res_100011743, aes(x = t)) + 
+  geom_line(aes(y = a,color = ind_a+1), size = 1) + 
+  geom_tile(aes(x = (t + xmax) / 2, width = xmax - t, 
+                y = mean(ind_a), 
+                height = max(ind_a), fill = as.factor(State)), 
+            alpha = 0.2) +
+  scale_fill_manual(values = c("#FF9900", "#00FF00", "#CCFF00", "#FF0033")) +
+  labs(title = "Line Plot of ind_a and states", 
+       x = "Index", 
+       y = "Values") +
+  theme_minimal()
