@@ -834,6 +834,7 @@ theta_trans_plot <- function(data, data_name,l=5,l2=50,l3=70,tt_thres_maxmin=2.0
   # l2: span for runner function (most important)
   # l3: span for I(a<1|a>1)
   # tt_thres: threshold for theta (peaks (and valleys) above (below) this value are not considered as peaks (valleys))
+  # tt_thres_diffmaxmin: threshold for the difference between max and min
   
   t_orig=data$t
   data$t=seq_along(data$t)
