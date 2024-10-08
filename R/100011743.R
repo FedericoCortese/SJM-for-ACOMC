@@ -77,3 +77,24 @@ end_100011743=Sys.time()
 elapsed_100011743=end_100011743-start_100011743
 save(time_100011743,Y100011743_final,est100011743,file="100011743.RData")
 
+modsel100011743=data.frame(hp,FTIC=unlist(lapply(est100011743,function(x)x$FTIC))
+)
+sel=32
+estw100011743=data.frame(var=colnames(Y100011743_final),
+                         weight=est100011743[[sel]]$est_weights)
+
+estw100011743=estw100011743[order(estw100011743$weight,decreasing = T),]
+head(estw100011743)
+
+df_res_100011743=data.frame(t=time_100011743,
+                            Y100011743_final,
+                            State=est100011743[[sel]]$est_states)
+
+p_a_res <- ggplot(df_res_100011743, aes(x = t)) + 
+  geom_line(aes(y = a), color = 'blue', size = 1) + 
+  geom_line(aes(y = State), color = 'violet', size = 1)+
+  labs(title = "Line Plot of a and states", 
+       x = "Index", 
+       y = "Values") +
+  theme_minimal()
+ggplotly(p_a_res)
