@@ -117,6 +117,8 @@ df_res_100006174=data.frame(t=time_100006174,
 df_res_100006174 <- df_res_100006174 %>%
   mutate(Segment = cumsum(State != lag(State, default = first(State))))
 
+
+# Plot a ------------------------------------------------------------------
 # Step 2: Create a new dataframe with start and end points for each line segment
 df_segments_a <- df_res_100006174 %>%
   group_by(Segment) %>%
@@ -133,7 +135,9 @@ p_a_res <- ggplot() +
   theme_minimal()
 ggplotly(p_a_res)
 
-# Theta
+
+# Plot Theta --------------------------------------------------------------
+
 df_res_100006174 <- df_res_100006174 %>%
   mutate(Segment = cumsum(State != lag(State, default = first(State))))
 
@@ -175,3 +179,19 @@ ggplotly(p_theta_res)
 #        y = "Values (omega)") +
 #   theme_minimal()
 # ggplotly(p_omega_res)
+
+
+#
+head(estw100006174,15)
+windows()
+plot(df_res_100006174$sd_w1_dtheta,col=df_res_100006174$State)
+attach(df_res_100006174)
+tapply(ind_a,State,mean)
+tapply(sd_w1_theta,State,mean)
+tapply(sd_w1_dtheta,State,mean)
+tapply(sd_w2_seas_theta,State,mean)
+tapply(sd_w1_remainder_theta,State,mean)
+
+# Togliere time series decomposition?
+plot(sd_w2_seas_theta,col=State)
+plot(sd_w1_remainder_theta,col=State)
