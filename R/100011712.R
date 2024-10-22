@@ -82,7 +82,7 @@ df100011712_2=theta_trans_plot(df100011712, "100011712",l=5,l2=100,
                                l3=70,tt_thres_maxmin=2.5,
                              tt_thres_diffmaxmin=0.25)
 library(plotly)
-ggplotly(df100011712_2[[1]])
+ggplotly(df100011712_2[[2]])
 
 pp=ggplot(df100011712_2$data[1:25000,],aes(x=t))+
   geom_line(aes(y=theta_trans),col='blue')+
