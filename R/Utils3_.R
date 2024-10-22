@@ -1093,4 +1093,212 @@ comp_feat_theta_a=function(dat,wdn){
 }
 
 
-
+feat_comput_theta_a <- function(data, data_name,
+                                wdn=c(10,30),
+                                l=5,
+                                l2=c(10,30),
+                                l3=c(10,30),
+                                tt_thres_maxmin=2.7,
+                                tt_thres_diffmaxmin=0.5) {
+  
+  # LAST UPDATE: 2024-10-22
+  
+  # Function to get the last observed min and max value, MA and SD of theta and dtheta, and moving indicator 
+  # feature I(a<1|a>1)
+  
+  # Arguments:
+  # data: dataframe with the data (t theta and type columns are required)
+  # data_name: name of the dataset
+  # wdn: window sizes for moving average and standard deviation of theta and dtheta (default 10,30)
+  # l: span for peaks function (default 5)
+  # l2: window sizes for runner function (default 10 and 30)
+  # l3: window sizes for I(a<1|a>1) (default 10 and 30)
+  # tt_thres: threshold for theta (peaks (and valleys) above (below) this value are not considered as peaks (valleys))
+  # tt_thres_diffmaxmin: threshold for the difference between max and min
+  
+  # t_orig=data$t
+  # data$t=seq_along(data$t)
+  # data$t_orig=t_orig
+  #data$type <- as.factor(data$type)
+  
+  # Unique types and total rows
+  # unique_types <- unique(data$type)
+  # total_rows <- dim(data)[1]
+  # 
+  # # Custom colors based on unique 'type'
+  # custom_colors <- c("-1" = "blue", "0" = "red", "50" = "green", "100" = "gray50")
+  
+  # Theta transformation
+  theta_trans <- data$theta
+  theta_trans[which(theta_trans > pi)] <- theta_trans[which(theta_trans > pi)] - 2 * pi
+  data$theta <- theta_trans
+  
+  # # Plot 0: Scatter plot of theta
+  # P0=ggplot(data, aes(x = t, y = theta)) +
+  #   geom_point(aes(color = type)) +
+  #   scale_color_manual(values = custom_colors, name = "Type") +
+  #   theme_classic()+
+  #   labs(title = data_name)
+  # 
+  # # Plot 1: Scatter plot of theta_trans
+  # P1=ggplot(data, aes(x = t, y = theta_trans)) +
+  #   geom_point(aes(color = type)) +
+  #   scale_color_manual(values = custom_colors, name = "Type") +
+  #   theme_classic()+
+  #   labs(title = data_name)
+  
+  # Detecting peaks and valleys
+  #l <- 5
+  maxs <- as.numeric(peaks(data$theta, span = l))
+  mins <- as.numeric(peaks(-data$theta, span = l))
+  
+  # Values above tt_thres_maxmin and below -tt_thres_maxmin are not considered as max and min
+  maxs[which(data$theta>(tt_thres_maxmin))] <- 0
+  mins[which(data$theta<(-tt_thres_maxmin))] <- 0
+  
+  # Smoothing with runner function
+  #l2 <- 50
+  count_min_short <- runner::runner(mins, k = l2[1], f = sum, na_pad = TRUE)
+  count_min_short <- c(count_min_short[-(1:floor(l2[1] / 2))], rep(NA, round(l2[1] / 2)))
+  
+  count_min_long <- runner::runner(mins, k = l2[2], f = sum, na_pad = TRUE)
+  count_min_long <- c(count_min_long[-(1:floor(l2[2] / 2))], rep(NA, round(l2[2] / 2)))
+  
+  count_max_short <- runner::runner(maxs, k = l2[1], f = sum, na_pad = TRUE)
+  count_max_short <- c(count_max_short[-(1:floor(l2[1] / 2))], rep(NA, round(l2[1] / 2)))
+  
+  count_max_long <- runner::runner(maxs, k = l2[2], f = sum, na_pad = TRUE)
+  count_max_long <- c(count_max_long[-(1:floor(l2[2] / 2))], rep(NA, round(l2[2] / 2)))
+  
+  
+  data$count_min_short <- count_min_short
+  data$count_max_short <- count_max_short
+  
+  data$count_min_long <- count_min_long
+  data$count_max_long <- count_max_long
+  
+  # Plot 2: Scatter plot of count_min
+  # P2=ggplot(data, aes(x = t, y = count_min, color = type)) +
+  #   geom_point() +
+  #   labs(x = "t", y = "count_min") +
+  #   scale_color_manual(values = custom_colors, name = "Type") +
+  #   theme_minimal() +
+  #   theme(legend.position = "top")+
+  #   labs(title = paste(data_name," lag = ", l2))
+  # 
+  # # Plot 3: Scatter plot of count_max
+  # P3=ggplot(data, aes(x = t, y = count_max, color = type)) +
+  #   geom_point() +
+  #   labs(x = "t", y = "count_max") +
+  #   scale_color_manual(values = custom_colors, name = "Type") +
+  #   theme_minimal() +
+  #   theme(legend.position = "top")+
+  #   labs(title = paste(data_name," lag = ", l2))
+  
+  # Add value_min, value_max and diffmaxmin
+  data$value_min <- last_min_value(mins, data$theta)
+  data$value_max <- last_max_value(maxs, data$theta)
+  data$diffmaxmin <- data$value_max - data$value_min
+  
+  data$I_diffmaxmin = as.numeric(data$diffmaxmin>tt_thres_diffmaxmin)
+  
+  data$dtheta=c(NA,diff(data$theta))
+  
+  data$ma_w1_theta=rollapply(data$theta, wdn[1], mean, fill=NA)
+  data$sd_w1_theta=rollapply(data$theta, wdn[1], sd, fill=NA)
+  data$sd_w1_dtheta=rollapply(data$dtheta, wdn[1], sd, fill=NA)
+  
+  if(length(wdn)>1){
+    data$ma_w2_theta=rollapply(data$theta, wdn[2], mean, fill=NA)
+    data$sd_w2_theta=rollapply(data$theta, wdn[2], sd, fill=NA)
+    data$sd_w2_dtheta=rollapply(data$dtheta, wdn[2], sd, fill=NA)
+  }
+  
+  # # Plot 4: Scatter plot of value_min
+  # P4=ggplot(data, aes(x = t, y = value_min, color = type)) +
+  #   geom_point() +
+  #   labs(x = "t", y = "value_min") +
+  #   scale_color_manual(values = custom_colors, name = "Type") +
+  #   theme_minimal() +
+  #   theme(legend.position = "top")+
+  #   labs(title = paste(data_name," lag = ", l2))
+  # 
+  # # Plot 5: Scatter plot of value_max
+  # P5=ggplot(data, aes(x = t, y = value_max, color = type)) +
+  #   geom_point() +
+  #   labs(x = "t", y = "value_max") +
+  #   scale_color_manual(values = custom_colors, name = "Type") +
+  #   theme_minimal() +
+  #   theme(legend.position = "top")+
+  #   labs(title = paste(data_name," lag = ", l2))
+  # 
+  # # Plot 6: Scatter plot of diffmaxmin
+  # P6=ggplot(data, aes(x = t, y = diffmaxmin, color = type)) +
+  #   geom_point() +
+  #   labs(x = "t", y = "diffmaxmin") +
+  #   scale_color_manual(values = custom_colors, name = "Type") +
+  #   theme_minimal() +
+  #   theme(legend.position = "top")+
+  #   labs(title = paste(data_name," lag = ", l2))
+  # 
+  # P6.1=ggplot(data, aes(x = t, y = I_diffmaxmin, color = type)) +
+  #   geom_point() +
+  #   labs(x = "t", y = paste("I(diffmaxmin>", tt_thres_diffmaxmin, ")")) +
+  #   scale_color_manual(values = custom_colors, name = "Type") +
+  #   theme_minimal() +
+  #   theme(legend.position = "top")+
+  #   labs(title = paste(data_name," lag = ", l2))
+  
+  
+  cust_fun=function(x){
+    all(x==T)
+  }
+  
+  ind_a=I(data$a<1)
+  ind_a2=I(data$a>1)
+  
+  # Short
+  ind_a_mov <- runner::runner(ind_a, k = l3[1], f = cust_fun, na_pad = TRUE)
+  ind_a2_mov <- runner::runner(ind_a2, k = l3[1], f = cust_fun, na_pad = TRUE)
+  #data$ind_a_short=as.factor(as.numeric(ind_a_mov+ind_a2_mov))
+  data$ind_a_short=as.numeric(ind_a_mov+ind_a2_mov)
+  
+  # Long
+  ind_a_mov <- runner::runner(ind_a, k = l3[2], f = cust_fun, na_pad = TRUE)
+  ind_a2_mov <- runner::runner(ind_a2, k = l3[2], f = cust_fun, na_pad = TRUE)
+  #data$ind_a_long=as.factor(as.numeric(ind_a_mov+ind_a2_mov))
+  data$ind_a_long=as.numeric(ind_a_mov+ind_a2_mov)
+  
+  #plot(data$a,col=ind_a_mov+1)
+  
+  # Plot 7: Scatter plot of a
+  # P7=ggplot(data, aes(x = t, y = a)) +
+  #   geom_point(aes(color = type)) +
+  #   scale_color_manual(values = custom_colors, name = "Type") +
+  #   theme_classic()+
+  #   labs(title = data_name)
+  # 
+  # 
+  # # Plot 8: Scatter plot of a with moving all(I(a<1))
+  # P8=ggplot(data, aes(x = t, y = a)) +
+  #   geom_point(aes(color = ind_a)) +
+  #   scale_color_manual(values = c("0" = "black", "1" = "magenta2"), name = "I(a<1|a>1)") +
+  #   theme_classic()+
+  #   labs(title = paste(data_name," lag = ", l3))
+  
+  # Return the dataset with the new features
+  return(
+    # list(P_theta=P0,
+    #           P_thetatrans=P1,
+    #           P_count_min=P2,
+    #           P_count_max=P3,
+    #           P_value_min=P4,
+    #           P_value_max=P5,
+    #           P_diff_maxmin=P6,
+    #           P_I_diff_maxmin=P6.1,
+    #           P_a=P7,
+    #           P_Ia=P8,
+    data=data
+    #)
+  )
+}
