@@ -1269,6 +1269,9 @@ feat_comput_theta_a <- function(data, data_name,
   #data$ind_a_long=as.factor(as.numeric(ind_a_mov+ind_a2_mov))
   data$ind_a_long=as.numeric(ind_a_mov+ind_a2_mov)
   
+  # TD indicator
+  data$I_TD=as.numeric(data$value_max*data$value_min<0)
+  
   #plot(data$a,col=ind_a_mov+1)
   
   # Plot 7: Scatter plot of a
