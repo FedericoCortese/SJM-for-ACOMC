@@ -1099,7 +1099,8 @@ feat_comput_theta_a <- function(data, data_name,
                                 l2=c(10,30),
                                 l3=c(10,30),
                                 tt_thres_maxmin=2.7,
-                                tt_thres_diffmaxmin=0.5) {
+                                tt_thres_diffmaxmin=0.5,
+                                vol_feat=T) {
   
   # LAST UPDATE: 2024-10-22
   
@@ -1158,24 +1159,23 @@ feat_comput_theta_a <- function(data, data_name,
   
   # Smoothing with runner function
   #l2 <- 50
-  count_min_short <- runner::runner(mins, k = l2[1], f = sum, na_pad = TRUE)
-  count_min_short <- c(count_min_short[-(1:floor(l2[1] / 2))], rep(NA, round(l2[1] / 2)))
-  
-  count_min_long <- runner::runner(mins, k = l2[2], f = sum, na_pad = TRUE)
-  count_min_long <- c(count_min_long[-(1:floor(l2[2] / 2))], rep(NA, round(l2[2] / 2)))
-  
-  count_max_short <- runner::runner(maxs, k = l2[1], f = sum, na_pad = TRUE)
-  count_max_short <- c(count_max_short[-(1:floor(l2[1] / 2))], rep(NA, round(l2[1] / 2)))
-  
-  count_max_long <- runner::runner(maxs, k = l2[2], f = sum, na_pad = TRUE)
-  count_max_long <- c(count_max_long[-(1:floor(l2[2] / 2))], rep(NA, round(l2[2] / 2)))
-  
-  
-  data$count_min_short <- count_min_short
-  data$count_max_short <- count_max_short
-  
-  data$count_min_long <- count_min_long
-  data$count_max_long <- count_max_long
+  # count_min_short <- runner::runner(mins, k = l2[1], f = sum, na_pad = TRUE)
+  # count_min_short <- c(count_min_short[-(1:floor(l2[1] / 2))], rep(NA, round(l2[1] / 2)))
+  # count_max_short <- runner::runner(maxs, k = l2[1], f = sum, na_pad = TRUE)
+  # count_max_short <- c(count_max_short[-(1:floor(l2[1] / 2))], rep(NA, round(l2[1] / 2)))
+  # data$count_min_short <- count_min_short
+  # data$count_max_short <- count_max_short
+  # 
+  # if(length(l2)>1){
+  #   count_min_long <- runner::runner(mins, k = l2[2], f = sum, na_pad = TRUE)
+  #   count_min_long <- c(count_min_long[-(1:floor(l2[2] / 2))], rep(NA, round(l2[2] / 2)))
+  #   
+  #   count_max_long <- runner::runner(maxs, k = l2[2], f = sum, na_pad = TRUE)
+  #   count_max_long <- c(count_max_long[-(1:floor(l2[2] / 2))], rep(NA, round(l2[2] / 2)))
+  #   
+  #   data$count_min_long <- count_min_long
+  #   data$count_max_long <- count_max_long
+  # }
   
   # Plot 2: Scatter plot of count_min
   # P2=ggplot(data, aes(x = t, y = count_min, color = type)) +
@@ -1204,14 +1204,17 @@ feat_comput_theta_a <- function(data, data_name,
   
   data$dtheta=c(NA,diff(data$theta))
   
-  data$ma_w1_theta=rollapply(data$theta, wdn[1], mean, fill=NA)
-  data$sd_w1_theta=rollapply(data$theta, wdn[1], sd, fill=NA)
-  data$sd_w1_dtheta=rollapply(data$dtheta, wdn[1], sd, fill=NA)
-  
-  if(length(wdn)>1){
-    data$ma_w2_theta=rollapply(data$theta, wdn[2], mean, fill=NA)
-    data$sd_w2_theta=rollapply(data$theta, wdn[2], sd, fill=NA)
-    data$sd_w2_dtheta=rollapply(data$dtheta, wdn[2], sd, fill=NA)
+  if(vol_feat==T){
+    data$ma_theta_short=rollapply(data$theta, wdn[1], mean, fill=NA)
+    data$sd_theta_short=rollapply(data$theta, wdn[1], sd, fill=NA)
+    data$sd_dtheta_short=rollapply(data$dtheta, wdn[1], sd, fill=NA)
+    
+    if(length(wdn)>1){
+      data$ma_theta_long=rollapply(data$theta, wdn[2], mean, fill=NA)
+      data$sd_theta_long=rollapply(data$theta, wdn[2], sd, fill=NA)
+      data$sd_dtheta_long=rollapply(data$dtheta, wdn[2], sd, fill=NA)
+    }
+    
   }
   
   # # Plot 4: Scatter plot of value_min
@@ -1264,10 +1267,12 @@ feat_comput_theta_a <- function(data, data_name,
   data$ind_a_short=as.numeric(ind_a_mov+ind_a2_mov)
   
   # Long
-  ind_a_mov <- runner::runner(ind_a, k = l3[2], f = cust_fun, na_pad = TRUE)
-  ind_a2_mov <- runner::runner(ind_a2, k = l3[2], f = cust_fun, na_pad = TRUE)
-  #data$ind_a_long=as.factor(as.numeric(ind_a_mov+ind_a2_mov))
-  data$ind_a_long=as.numeric(ind_a_mov+ind_a2_mov)
+  if(length(l3)>1){
+    ind_a_mov <- runner::runner(ind_a, k = l3[2], f = cust_fun, na_pad = TRUE)
+    ind_a2_mov <- runner::runner(ind_a2, k = l3[2], f = cust_fun, na_pad = TRUE)
+    #data$ind_a_long=as.factor(as.numeric(ind_a_mov+ind_a2_mov))
+    data$ind_a_long=as.numeric(ind_a_mov+ind_a2_mov)
+  }
   
   # TD indicator
   data$I_TD=as.numeric(data$value_max*data$value_min<0)
