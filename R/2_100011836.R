@@ -112,7 +112,7 @@ ggplotly(p_theta_res)
 head(estw100011836,15)
 
 pp <- ggplot(data=df_res_100011836,aes(x=t)) + 
-  geom_point(aes(y = sd_w1_dtheta, 
+  geom_point(aes(y = I_TD, 
                  color = as.factor(State)), 
                size = 1) +
   scale_color_manual(values = 1:max(df_res_100011836$State)) +
@@ -120,6 +120,8 @@ pp <- ggplot(data=df_res_100011836,aes(x=t)) +
        x = "Time (t)", 
        y = " ") +
   theme_minimal()
+
+pp
 
 library(ggpubr)
 ggarrange(pp,p_theta_res,nrow=2)
