@@ -132,7 +132,7 @@ ggplotly(p_theta_res)
 
 # Check feat by feat
 pp <- ggplot(data=df_res_100011836,aes(x=t)) + 
-  geom_point(aes(y = mean_osc, 
+  geom_point(aes(y = sd_dtheta_long, 
                  color = as.factor(State)), 
              size = 1) +
   scale_color_manual(values = 1:max(df_res_100011836$State)) +
