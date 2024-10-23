@@ -122,3 +122,74 @@ pp <- ggplot(data=df_res_100011836,aes(x=t)) +
 
 library(ggpubr)
 ggarrange(pp,p_theta_res,nrow=2)
+
+
+# max min -----------------------------------------------------------------
+
+data=df100011836
+l=5
+tt_thres_maxmin=2.7
+
+maxs <- as.numeric(peaks(data$theta, span = l))
+mins <- as.numeric(peaks(-data$theta, span = l))
+
+# Values above tt_thres_maxmin and below -tt_thres_maxmin are not considered as max and min
+maxs[which(data$theta>(tt_thres_maxmin))] <- 0
+mins[which(data$theta<(-tt_thres_maxmin))] <- 0
+
+data2=data.frame(data,maxs,mins)
+
+df_res_100011836 <- df_res_100011836 %>%
+  mutate(Segment = cumsum(State != lag(State, default = first(State))))
+
+# Step 2: Create a new dataframe with start and end points for each line segment
+data2 <- data2  %>%
+  mutate(Segment = cumsum(maxs != lag(maxs, default = first(maxs))))
+
+data2 <- data2 %>%
+  group_by(Segment) %>%
+  mutate(next_t = dplyr::lead(t), next_theta = dplyr::lead(theta)) %>%
+  filter(!is.na(next_t))  # Remove rows where the next point is missing
+
+p_maxs <- ggplot() + 
+  geom_segment(data = data2, aes(x = t, y = theta,
+                                 xend = next_t, yend = next_theta, color = as.factor(maxs)), 
+               size = 1) +
+  #scale_color_manual(values = 1:max(df_res_100011836$State)) +
+  labs(title = "100011836", 
+       x = "Time (t)", 
+       y = "Values (theta)") +
+  theme_minimal()
+ggplotly(p_maxs)
+
+
+p_maxs <- ggplot() + 
+  geom_point(data = data2, aes(x = t, y = theta, color = as.factor(maxs)), 
+             size = 1) +
+  #scale_color_manual(values = 1:max(df_res_100011836$State)) +
+  labs(title = "100011836", 
+       x = "Time (t)", 
+       y = "Values (theta)") +
+  theme_minimal()
+ggplotly(p_maxs)
+
+p_mins <- ggplot() + 
+  geom_point(data = data2, aes(x = t, y = theta, color = as.factor(mins)), 
+             size = 1) +
+  #scale_color_manual(values = 1:max(df_res_100011836$State)) +
+  labs(title = "100011836", 
+       x = "Time (t)", 
+       y = "Values (theta)") +
+  theme_minimal()
+ggplotly(p_mins)
+
+
+# signal processing -------------------------------------------------------
+
+library(signal)
+
+temp=unwrap(data$theta,tol=.5)
+par(mfrow=c(1,1))
+plot(scale(data$theta),type='l')
+lines(scale(temp),col='red')
+
