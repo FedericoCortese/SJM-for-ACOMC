@@ -25,7 +25,7 @@ tt_100011836=feat_comput_theta_a(df100011836, "100011836",
                                  wdn=WW,
                               l2=WW,
                               l3=WW,
-                              tt_thres_maxmin=2,
+                              tt_thres_maxmin=2.7,
                               tt_thres_diffmaxmin=0.25)
 
 Y100011836_final=tt_100011836[complete.cases(tt_100011836),]
@@ -59,6 +59,7 @@ best_mod=modsel100011836[which.min(modsel100011836$FTIC),]
 best_mod
 
 sel=55
+#sel=68
 estw100011836=data.frame(var=colnames(Y100011836_final),
                          weight=est100011836[[sel]]$est_weights)
 
