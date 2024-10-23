@@ -189,8 +189,22 @@ ggplotly(p_mins)
 
 library(signal)
 
-temp=unwrap(data$theta,tol=.5)
+example=c(.9*pi,pi,-.9*pi)
+plot(example,type='l',ylim=c(-2,5))
+example_unwrap=unwrap(example)
+lines(example_unwrap,col='red')
+
+data$temp=unwrap(data$theta,tol=.5)
 par(mfrow=c(1,1))
 plot(scale(data$theta),type='l')
 lines(scale(temp),col='red')
 
+data$dtemp=c(NA,diff(temp))
+
+p1=ggplot(data=data,aes(x=t))+
+  geom_line(aes(y=dtemp),col='red')
+p2=ggplot(data=data,aes(x=t))+
+  geom_line(aes(y=theta),col='grey40')
+library(ggpubr)
+ggarrange(p1,p2,nrow=2)
+  

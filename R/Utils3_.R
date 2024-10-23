@@ -1275,7 +1275,7 @@ feat_comput_theta_a <- function(data, data_name,
   }
   
   # TD indicator
-  data$I_TD=as.numeric(data$value_max*data$value_min<0)
+  data$I_TD=as.numeric(data$value_max*data$value_min>0)
   
   #plot(data$a,col=ind_a_mov+1)
   
