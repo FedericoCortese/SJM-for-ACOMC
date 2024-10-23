@@ -6,7 +6,7 @@ end=which.min(abs(df100011836$t-8.4e8))
 df100011836=df100011836[start:end,]
 
 summary(diff(df100011836$t))
-plot(diff(df100011836$t),type='p')
+#plot(diff(df100011836$t),type='p')
 
 #df100011836$type=-1
 data=df100011836
@@ -22,7 +22,8 @@ data_thetavol=thetavol_feat(data)
 data_a=a_feat(data,l3=c(5,30))
 data_maxmin=max_min_feat(data,tt_thres_maxmin = 2.4)
 names(data_maxmin)
-data_maxmin=data_maxmin[,c("t","I_TD","I_HS","I_QS","mean_osc")]
+#data_maxmin=data_maxmin[,c("t","I_TD","I_HS","I_QS","mean_osc")]
+data_maxmin=data_maxmin[,c("t","mean_osc")]
 
 data_fin=merge(data_thetavol,data_a,by="t")
 data_fin=merge(data_fin,data_maxmin,by="t")
@@ -47,7 +48,7 @@ est100011836 <- parallel::mclapply(1:nrow(hp),
                                    function(x)
                                      SJM_lambdakappa(K=hp[x,]$K,lambda=hp[x,]$lambda,
                                                      kappa=hp[x,]$kappa,
-                                                     df=Y100011836_final,
+                                                     df=Y,
                                                      Lnsat=Lnsat),
                                    mc.cores = parallel::detectCores()-1)
 
