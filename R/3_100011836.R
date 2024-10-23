@@ -22,12 +22,8 @@ data_thetavol=thetavol_feat(data)
 data_a=a_feat(data,l3=c(5,30))
 data_maxmin=max_min_feat(data,tt_thres_maxmin = 2.4)
 names(data_maxmin)
-<<<<<<< HEAD
-#data_maxmin=data_maxmin[,c("t","I_TD","I_HS","I_QS","mean_osc")]
-=======
 # Togli le indicatrici perche confonde non risonante
 # data_maxmin=data_maxmin[,c("t","I_TD","I_HS","I_QS","mean_osc")]
->>>>>>> 17b3939acdd768d76124ab3766007153465de090
 data_maxmin=data_maxmin[,c("t","mean_osc")]
 
 data_fin=merge(data_thetavol,data_a,by="t")
