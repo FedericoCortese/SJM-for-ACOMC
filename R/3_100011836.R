@@ -22,7 +22,12 @@ data_thetavol=thetavol_feat(data)
 data_a=a_feat(data,l3=c(5,30))
 data_maxmin=max_min_feat(data,tt_thres_maxmin = 2.4)
 names(data_maxmin)
+<<<<<<< HEAD
 #data_maxmin=data_maxmin[,c("t","I_TD","I_HS","I_QS","mean_osc")]
+=======
+# Togli le indicatrici perche confonde non risonante
+# data_maxmin=data_maxmin[,c("t","I_TD","I_HS","I_QS","mean_osc")]
+>>>>>>> 17b3939acdd768d76124ab3766007153465de090
 data_maxmin=data_maxmin[,c("t","mean_osc")]
 
 data_fin=merge(data_thetavol,data_a,by="t")
@@ -33,15 +38,14 @@ names(data_fin)
 Y=data_fin[complete.cases(data_fin),]
 Y=Y[,-1]
 
-
 # fit ---------------------------------------------------------------------
 
 lambda=c(0,5,10,15,20,30)
-K=2:5
-kappa=seq(1,ceiling(sqrt(dim(Y100011836_final)[2])),by=1.5)
+K=2:6
+kappa=seq(1,ceiling(sqrt(dim(Y)[2])),by=1.5)
 hp=expand.grid(K=K,lambda=lambda,kappa=kappa)
 
-sat_mod=SJM_sat(Y100011836_final)
+sat_mod=SJM_sat(Y)
 Lnsat=sat_mod$Lnsat
 start_100011836=Sys.time()
 est100011836 <- parallel::mclapply(1:nrow(hp),
@@ -54,8 +58,66 @@ est100011836 <- parallel::mclapply(1:nrow(hp),
 
 end_100011836=Sys.time()
 elapsed_100011836=end_100011836-start_100011836
-save(time_100011836,Y100011836_final,est100011836,file="2_100011836.RData")
+save(data_fin,Y,est100011836,file="3_100011836.RData")
 
+modsel100011836=data.frame(hp,
+                           FTIC=unlist(lapply(est100011836,function(x)x$FTIC))
+)
+best_mod=modsel100011836[which.min(modsel100011836$FTIC),]
+best_mod
+
+sel=32
+#sel=68
+estw100011836=data.frame(var=colnames(Y),
+                         weight=est100011836[[sel]]$est_weights)
+
+estw100011836=estw100011836[order(estw100011836$weight,decreasing = T),]
+head(estw100011836,15)
+
+# Merge with a theta and t for plotting
+data_a_theta=tail(data[,c("t","a","theta")],dim(Y)[1])
+
+df_res_100011836=data.frame(data_a_theta,
+                            State=est100011836[[sel]]$est_states
+                            )
+
+df_res_100011836 <- df_res_100011836 %>%
+  mutate(Segment = cumsum(State != lag(State, default = first(State))))
+
+# Step 2: Create a new dataframe with start and end points for each line segment
+df_segments_a <- df_res_100011836 %>%
+  group_by(Segment) %>%
+  mutate(next_t = dplyr::lead(t), next_a = dplyr::lead(a))
+
+p_a_res <- ggplot(data = df_segments_a) + 
+  geom_segment(aes(x = t, y = a, 
+                                         xend = next_t, yend = next_a), 
+               size = 1,color='grey80') +
+  geom_point(aes(x=t,y=a,
+                 color=as.factor(State)))+
+  scale_color_manual(values = 1:max(df_res_100011836$State)) +
+  labs(title = "100011836", 
+       x = "Time (t)", 
+       y = "Values (a)") +
+  theme_minimal()
+ggplotly(p_a_res)
+
+df_segments_theta <- df_res_100011836 %>%
+  group_by(Segment) %>%
+  mutate(next_t = dplyr::lead(t), next_theta = dplyr::lead(theta))
+
+p_theta_res <- ggplot(data = df_segments_theta) + 
+  geom_segment(aes(x = t, y = theta, 
+                   xend = next_t, yend = next_theta), 
+               size = 1,color='grey80') +
+  geom_point(aes(x=t,y=theta,
+                 color=as.factor(State)))+
+  scale_color_manual(values = 1:max(df_res_100011836$State)) +
+  labs(title = "100011836", 
+       x = "Time (t)", 
+       y = "Values (theta)") +
+  theme_minimal()
+ggplotly(p_theta_res)
 
 # results -----------------------------------------------------------------
 
