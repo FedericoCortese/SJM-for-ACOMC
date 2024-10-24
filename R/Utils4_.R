@@ -2,7 +2,7 @@
 library(ggplot2)
 library(zoo)
 max_min_feat=function(data,tt_thres_maxmin=2.4,
-                      tt_thres_diffmaxmin=0.25,
+                      tt_thres_diffmaxmin=pi/4,
                       l=5
                       ,l2=c(5,30)
                       ){
@@ -27,6 +27,30 @@ max_min_feat=function(data,tt_thres_maxmin=2.4,
   data$value_min <- last_min_value(mins, data$theta)
   data$value_max <- last_max_value(maxs, data$theta)
   
+  data$value_min <- last_min_value(mins, data$theta)
+  data$value_max <- last_max_value(maxs, data$theta)
+  data$diffmaxmin <- abs(data$value_max - data$value_min)
+  data$I_diffmaxmin = as.numeric(data$diffmaxmin<tt_thres_diffmaxmin)
+  
+  count_min_short <- runner::runner(mins, k = l2[1], f = sum, na_pad = TRUE)
+  count_min_short <- c(count_min_short[-(1:floor(l2[1] / 2))], rep(NA, round(l2[1] / 2)))
+  count_max_short <- runner::runner(maxs, k = l2[1], f = sum, na_pad = TRUE)
+  count_max_short <- c(count_max_short[-(1:floor(l2[1] / 2))], rep(NA, round(l2[1] / 2)))
+  data$count_min_short <- count_min_short
+  data$count_max_short <- count_max_short
+  
+  if(length(l2)>1){
+    count_min_long <- runner::runner(mins, k = l2[2], f = sum, na_pad = TRUE)
+    count_min_long <- c(count_min_long[-(1:floor(l2[2] / 2))], rep(NA, round(l2[2] / 2)))
+    
+    count_max_long <- runner::runner(maxs, k = l2[2], f = sum, na_pad = TRUE)
+    count_max_long <- c(count_max_long[-(1:floor(l2[2] / 2))], rep(NA, round(l2[2] / 2)))
+    
+    data$count_min_long <- count_min_long
+    data$count_max_long <- count_max_long
+  }
+
+  
   # TD indicator
   data$I_TD=as.numeric(data$value_max*data$value_min>0)
   
@@ -36,39 +60,20 @@ max_min_feat=function(data,tt_thres_maxmin=2.4,
   # QS indicator
   data$I_QS=as.numeric(data$value_max*data$value_min<0&data$value_max>0)
   
+  # Check if distance between max and min is small to distinguish between NR and QS
+  data$I_QS=data$I_QS*data$I_diffmaxmin
+  
   data$mean_osc=data$I_HS*(data$value_min+data$value_max+2*pi)/2+
     data$I_QS*(data$value_min+data$value_max)/2+
     data$I_TD*(data$value_min+data$value_max)/2
   
-  data$value_min <- last_min_value(mins, data$theta)
-  data$value_max <- last_max_value(maxs, data$theta)
-  data$diffmaxmin <- data$value_max - data$value_min
-  data$I_diffmaxmin = as.numeric(data$diffmaxmin>tt_thres_diffmaxmin)
-  
-  count_min_short <- runner::runner(mins, k = l2[1], f = sum, na_pad = TRUE)
-  count_min_short <- c(count_min_short[-(1:floor(l2[1] / 2))], rep(NA, round(l2[1] / 2)))
-  count_max_short <- runner::runner(maxs, k = l2[1], f = sum, na_pad = TRUE)
-  count_max_short <- c(count_max_short[-(1:floor(l2[1] / 2))], rep(NA, round(l2[1] / 2)))
-  data$count_min_short <- count_min_short
-  data$count_max_short <- count_max_short
-
-  if(length(l2)>1){
-    count_min_long <- runner::runner(mins, k = l2[2], f = sum, na_pad = TRUE)
-    count_min_long <- c(count_min_long[-(1:floor(l2[2] / 2))], rep(NA, round(l2[2] / 2)))
-
-    count_max_long <- runner::runner(maxs, k = l2[2], f = sum, na_pad = TRUE)
-    count_max_long <- c(count_max_long[-(1:floor(l2[2] / 2))], rep(NA, round(l2[2] / 2)))
-
-    data$count_min_long <- count_min_long
-    data$count_max_long <- count_max_long
-  }
-
   data=data[,c("t","maxs","mins",
                "value_min","value_max",
                "diffmaxmin",
                "I_diffmaxmin",
                "I_TD","I_HS","I_QS",
                "mean_osc")]
+  
   return(data)
 }
 
