@@ -1,6 +1,7 @@
 
 library(ggplot2)
 library(zoo)
+library(splus2R)
 max_min_feat=function(data,tt_thres_maxmin=2.4,
                       tt_thres_diffmaxmin=pi/4,
                       l=5
@@ -29,7 +30,7 @@ max_min_feat=function(data,tt_thres_maxmin=2.4,
   
   data$value_min <- last_min_value(mins, data$theta)
   data$value_max <- last_max_value(maxs, data$theta)
-  data$diffmaxmin <- abs(data$value_max - data$value_min)
+  data$diffmaxmin <- data$value_max - data$value_min
   data$I_diffmaxmin = as.numeric(data$diffmaxmin<tt_thres_diffmaxmin)
   
   count_min_short <- runner::runner(mins, k = l2[1], f = sum, na_pad = TRUE)
@@ -61,7 +62,9 @@ max_min_feat=function(data,tt_thres_maxmin=2.4,
   data$I_QS=as.numeric(data$value_max*data$value_min<0&data$value_max>0)
   
   # Check if distance between max and min is small to distinguish between NR and QS
-  data$I_QS=data$I_QS*data$I_diffmaxmin
+  # data$I_QS=data$I_QS*data$I_diffmaxmin
+  
+  
   
   data$mean_osc=data$I_HS*(data$value_min+data$value_max+2*pi)/2+
     data$I_QS*(data$value_min+data$value_max)/2+
