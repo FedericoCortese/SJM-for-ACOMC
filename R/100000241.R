@@ -83,3 +83,37 @@ p_I <- ggplot(data2) +
 #p_I
 # Convert the ggplot object to a plotly interactive plot
 ggplotly(p_I)
+
+# fit ---------------------------------------------------------------------
+
+lambda=c(0,5,10,15,20,30)
+K=2:7
+# %FC Con K da 2 a 6 seleziona K=3
+# K=5
+# %FC Provato a fissare K=5 ma non vede compound
+# K=4
+
+kappa=seq(1,ceiling(sqrt(dim(Y)[2])),by=1)
+hp=expand.grid(K=K,lambda=lambda,kappa=kappa)
+
+sat_mod=SJM_sat(Y)
+Lnsat=sat_mod$Lnsat
+start_100000241=Sys.time()
+est100000241 <- parallel::mclapply(1:nrow(hp),
+                                   function(x)
+                                     SJM_lambdakappa(K=hp[x,]$K,lambda=hp[x,]$lambda,
+                                                     kappa=hp[x,]$kappa,
+                                                     df=Y,
+                                                     Lnsat=Lnsat),
+                                   mc.cores = parallel::detectCores()-1)
+
+end_100000241=Sys.time()
+elapsed_100000241=end_100000241-start_100000241
+save(data_fin,Y,est100000241,file="100000241.RData")
+
+modsel100000241=data.frame(hp,
+                           FTIC=unlist(lapply(est100000241,function(x)x$FTIC))
+)
+
+best_mod=modsel100000241[which.min(modsel100000241$FTIC),]
+best_mod
