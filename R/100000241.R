@@ -24,7 +24,7 @@ library(plotly)
 
 source("Utils4_.R")
 
-max_lag=10
+max_lag=30
 min_lag=5
 # %FC importante che questa soglia sia abbastanza grande da distinguere QS dal resto
 tt_thres_diffmaxmin=0.07
@@ -117,3 +117,71 @@ modsel100000241=data.frame(hp,
 
 best_mod=modsel100000241[which.min(modsel100000241$FTIC),]
 best_mod
+
+sel=100
+#sel=68
+estw100000241=data.frame(var=colnames(Y),
+                         weight=est100000241[[sel]]$est_weights)
+
+estw100000241=estw100000241[order(estw100000241$weight,decreasing = T),]
+head(estw100000241,15)
+
+# Merge with a theta and t for plotting
+data_a_theta=tail(data[,c("t","a","theta")],dim(Y)[1])
+
+df_res_100000241=data.frame(data_a_theta,
+                            Y,
+                            State=est100000241[[sel]]$est_states
+)
+
+df_res_100000241 <- df_res_100000241 %>%
+  mutate(Segment = cumsum(State != lag(State, default = first(State))))
+
+# Step 2: Create a new dataframe with start and end points for each line segment
+df_segments_a <- df_res_100000241 %>%
+  group_by(Segment) %>%
+  mutate(next_t = dplyr::lead(t), next_a = dplyr::lead(a))
+
+p_a_res <- ggplot(data = df_segments_a) + 
+  geom_segment(aes(x = t, y = a, 
+                   xend = next_t, yend = next_a), 
+               size = 1,color='grey80') +
+  geom_point(aes(x=t,y=a,
+                 color=as.factor(State)))+
+  scale_color_manual(values = 1:max(df_res_100000241$State)) +
+  labs(title = "100000241", 
+       x = "Time (t)", 
+       y = "Values (a)") +
+  theme_minimal()
+ggplotly(p_a_res)
+
+df_segments_theta <- df_res_100000241 %>%
+  group_by(Segment) %>%
+  mutate(next_t = dplyr::lead(t), next_theta = dplyr::lead(theta))
+
+p_theta_res <- ggplot(data = df_segments_theta) + 
+  geom_segment(aes(x = t, y = theta, 
+                   xend = next_t, yend = next_theta), 
+               size = 1,color='grey80') +
+  geom_point(aes(x=t,y=theta,
+                 color=as.factor(State)))+
+  scale_color_manual(values = 1:max(df_res_100000241$State)) +
+  labs(title = "100000241", 
+       x = "Time (t)", 
+       y = "Values (theta)") +
+  theme_minimal()
+ggplotly(p_theta_res)
+
+# Check feat by feat
+pp <- ggplot(data=df_res_100000241,aes(x=t)) + 
+  geom_point(aes(y = sd_dtheta_long, 
+                 color = as.factor(State)), 
+             size = 1) +
+  scale_color_manual(values = 1:max(df_res_100000241$State)) +
+  labs(title = "100000241", 
+       x = "Time (t)", 
+       y = " ") +
+  theme_minimal()
+
+pp
+

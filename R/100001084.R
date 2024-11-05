@@ -1,5 +1,7 @@
 df100001084=read.table("100001084.txt",header = T)
 
+# TP, QS and HS
+
 start=which.min(abs(df100001084$t-69770790))
 end=which.min(abs(df100001084$t-86694783.10))
 
@@ -18,6 +20,7 @@ library(plotly)
 
 source("Utils4_.R")
 
+# Meglio lag contenuti
 max_lag=10
 min_lag=5
 # %FC importante che questa soglia sia abbastanza grande da distinguere QS dal resto
@@ -77,3 +80,110 @@ p_I <- ggplot(data2) +
 #p_I
 # Convert the ggplot object to a plotly interactive plot
 ggplotly(p_I)
+
+# fit ---------------------------------------------------------------------
+
+# Tolgo I_TD perche a volte succede che ho un massimo in HS e un minimo in QS che hanno stesso segno e vengono intepretati come TP
+# Y=subset(Y,select=-I_TD) 
+# Purtroppo cosi seleziona solo due regimi
+
+Y=subset(Y,select=-c(diffmaxmin,I_diffmaxmin,value_min,value_max,mins,maxs)) 
+
+lambda=c(0,5,10,15,20,30)
+K=2:6
+# %FC Con K da 2 a 6 seleziona K=3
+# K=5
+# %FC Provato a fissare K=5 ma non vede compound
+# K=4
+
+kappa=seq(1,ceiling(sqrt(dim(Y)[2])),by=1)
+hp=expand.grid(K=K,lambda=lambda,kappa=kappa)
+
+sat_mod=SJM_sat(Y)
+Lnsat=sat_mod$Lnsat
+start_100001084=Sys.time()
+est100001084 <- parallel::mclapply(1:nrow(hp),
+                                   function(x)
+                                     SJM_lambdakappa(K=hp[x,]$K,lambda=hp[x,]$lambda,
+                                                     kappa=hp[x,]$kappa,
+                                                     df=Y,
+                                                     Lnsat=Lnsat),
+                                   mc.cores = parallel::detectCores()-1)
+
+end_100001084=Sys.time()
+elapsed_100001084=end_100001084-start_100001084
+save(data_fin,Y,est100001084,file="100001084.RData")
+
+modsel100001084=data.frame(hp,
+                           FTIC=unlist(lapply(est100001084,function(x)x$FTIC))
+)
+
+best_mod=modsel100001084[which.min(modsel100001084$FTIC),]
+best_mod
+
+sel=57
+#sel=68
+estw100001084=data.frame(var=colnames(Y),
+                         weight=est100001084[[sel]]$est_weights)
+
+estw100001084=estw100001084[order(estw100001084$weight,decreasing = T),]
+head(estw100001084,15)
+
+# Merge with a theta and t for plotting
+data_a_theta=tail(data[,c("t","a","theta")],dim(Y)[1])
+
+df_res_100001084=data.frame(data_a_theta,
+                            Y,
+                            State=est100001084[[sel]]$est_states
+)
+
+df_res_100001084 <- df_res_100001084 %>%
+  mutate(Segment = cumsum(State != lag(State, default = first(State))))
+
+# Step 2: Create a new dataframe with start and end points for each line segment
+df_segments_a <- df_res_100001084 %>%
+  group_by(Segment) %>%
+  mutate(next_t = dplyr::lead(t), next_a = dplyr::lead(a))
+
+p_a_res <- ggplot(data = df_segments_a) + 
+  geom_segment(aes(x = t, y = a, 
+                   xend = next_t, yend = next_a), 
+               size = 1,color='grey80') +
+  geom_point(aes(x=t,y=a,
+                 color=as.factor(State)))+
+  scale_color_manual(values = 1:max(df_res_100001084$State)) +
+  labs(title = "100001084", 
+       x = "Time (t)", 
+       y = "Values (a)") +
+  theme_minimal()
+ggplotly(p_a_res)
+
+df_segments_theta <- df_res_100001084 %>%
+  group_by(Segment) %>%
+  mutate(next_t = dplyr::lead(t), next_theta = dplyr::lead(theta))
+
+p_theta_res <- ggplot(data = df_segments_theta) + 
+  geom_segment(aes(x = t, y = theta, 
+                   xend = next_t, yend = next_theta), 
+               size = 1,color='grey80') +
+  geom_point(aes(x=t,y=theta,
+                 color=as.factor(State)))+
+  scale_color_manual(values = 1:max(df_res_100001084$State)) +
+  labs(title = "100001084", 
+       x = "Time (t)", 
+       y = "Values (theta)") +
+  theme_minimal()
+ggplotly(p_theta_res)
+
+# Check feat by feat
+pp <- ggplot(data=df_res_100001084,aes(x=t)) + 
+  geom_point(aes(y = sd_dtheta_long, 
+                 color = as.factor(State)), 
+             size = 1) +
+  scale_color_manual(values = 1:max(df_res_100001084$State)) +
+  labs(title = "100001084", 
+       x = "Time (t)", 
+       y = " ") +
+  theme_minimal()
+
+pp

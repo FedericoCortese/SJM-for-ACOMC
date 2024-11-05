@@ -20,7 +20,7 @@ library(plotly)
 
 source("Utils4_.R")
 
-max_lag=10
+max_lag=30
 min_lag=5
 # %FC importante che questa soglia sia abbastanza grande da distinguere QS dal resto
 tt_thres_diffmaxmin=0.07
@@ -79,3 +79,4 @@ p_I <- ggplot(data2) +
 #p_I
 # Convert the ggplot object to a plotly interactive plot
 ggplotly(p_I)
+
