@@ -70,10 +70,10 @@ p_I <- ggplot(data2) +
   geom_point(aes(x=t,y=theta),col='grey40',size=1)+
   geom_point(aes(x = t, y = theta, color = factor(maxs_mins)), size = 1) +
   scale_color_manual(values = c("0" = "grey50", "1"='blue' ,"2" = "red")) +
-  geom_line(aes(x=t,y=I_TD),col='green4')+
-  geom_line(aes(x=t,y=I_HS),col='cyan3')+
-  geom_line(aes(x=t,y=I_QS),col="violet")+
-  #geom_line(aes(x=t,y=I_diffmaxmin*2),col='black')+
+  # geom_line(aes(x=t,y=I_TD),col='green4')+
+  # geom_line(aes(x=t,y=I_HS),col='cyan3')+
+  # geom_line(aes(x=t,y=I_QS),col="violet")+
+  geom_line(aes(x=t,y=mean_osc),col='black')+
   theme_minimal() +
   theme(legend.position = "none") 
 #p_I
@@ -83,7 +83,8 @@ ggplotly(p_I)
 
 # fit ---------------------------------------------------------------------
 
-Y=subset(Y,select=-c(diffmaxmin,I_diffmaxmin,I_TD,value_max,value_min,maxs,mins))
+Y=subset(Y,select=-c(diffmaxmin,
+                     I_diffmaxmin,I_TD,I_QS,I_HS,value_max,value_min,maxs,mins,mean_osc,ind_a_short,ind_a_long))
 
 lambda=c(0,5,10,15,20,30)
 K=2:6
@@ -116,3 +117,58 @@ modsel100000915=data.frame(hp,
 
 best_mod=modsel100000915[which.min(modsel100000915$FTIC),]
 best_mod
+
+sel=16
+#sel=68
+estw100000915=data.frame(var=colnames(Y),
+                         weight=est100000915[[sel]]$est_weights)
+
+estw100000915=estw100000915[order(estw100000915$weight,decreasing = T),]
+head(estw100000915,15)
+
+# Merge with a theta and t for plotting
+data_a_theta=tail(data[,c("t","a","theta")],dim(Y)[1])
+
+df_res_100000915=data.frame(data_a_theta,
+                            Y,
+                            State=est100000915[[sel]]$est_states
+)
+
+df_res_100000915 <- df_res_100000915 %>%
+  mutate(Segment = cumsum(State != lag(State, default = first(State))))
+
+# Step 2: Create a new dataframe with start and end points for each line segment
+df_segments_a <- df_res_100000915 %>%
+  group_by(Segment) %>%
+  mutate(next_t = dplyr::lead(t), next_a = dplyr::lead(a))
+
+p_a_res <- ggplot(data = df_segments_a) + 
+  geom_segment(aes(x = t, y = a, 
+                   xend = next_t, yend = next_a), 
+               size = 1,color='grey80') +
+  geom_point(aes(x=t,y=a,
+                 color=as.factor(State)))+
+  scale_color_manual(values = 1:max(df_res_100000915$State)) +
+  labs(title = "100000915", 
+       x = "Time (t)", 
+       y = "Values (a)") +
+  theme_minimal()
+ggplotly(p_a_res)
+
+df_segments_theta <- df_res_100000915 %>%
+  group_by(Segment) %>%
+  mutate(next_t = dplyr::lead(t), next_theta = dplyr::lead(theta))
+
+p_theta_res <- ggplot(data = df_segments_theta) + 
+  geom_segment(aes(x = t, y = theta, 
+                   xend = next_t, yend = next_theta), 
+               size = 1,color='grey80') +
+  geom_point(aes(x=t,y=theta,
+                 color=as.factor(State)))+
+  scale_color_manual(values = 1:max(df_res_100000915$State)) +
+  labs(title = "100000915", 
+       x = "Time (t)", 
+       y = "Values (theta)") +
+  theme_minimal()
+ggplotly(p_theta_res)
+

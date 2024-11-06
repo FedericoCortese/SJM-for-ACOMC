@@ -86,7 +86,7 @@ modsel100011743=data.frame(hp,
 best_mod=modsel100011743[which.min(modsel100011743$FTIC),]
 best_mod
 
-sel=11
+sel=38
 #sel=68
 estw100011743=data.frame(var=colnames(Y),
                          weight=est100011743[[sel]]$est_weights)
