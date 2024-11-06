@@ -2,7 +2,7 @@
 library(ggplot2)
 library(zoo)
 library(splus2R)
-max_min_feat=function(data,tt_thres_maxmin=2.4,
+max_min_feat=function(data,tt_thres_maxmin=3,
                       tt_thres_diffmaxmin=pi/4,
                       l=5
                       ,l2=c(5,30)

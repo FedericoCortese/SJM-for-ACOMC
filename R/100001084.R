@@ -46,11 +46,13 @@ data_fin=merge(data_thetavol,data_a,by="t")
 data_fin=merge(data_fin,data_maxmin,by="t")
 
 names(data_fin)
-
-Y=data_fin[complete.cases(data_fin),]
-Y=Y[,-1]
+# 
+# Y=data_fin[complete.cases(data_fin),]
+# Y=Y[,-1]
 
 data2=merge(data_fin,df100001084,by="t")
+
+data2$tt=1:dim(data2)[1]
 data2 <- data2 %>%
   mutate(Segment_max = cumsum(maxs != lag(maxs, default = first(maxs))),
          Segment_min = cumsum(mins != lag(mins, default = first(mins))),
@@ -65,21 +67,44 @@ data2 <- data2 %>%
   mutate(next_t_min = dplyr::lead(t), next_theta_min = dplyr::lead(theta))
 
 
+
+########
+# Adjust TP, say set TP=0 whenever it comes after a QS
+
+# temp=data2$I_TD+2*data2$I_HS+3*data2$I_QS
+# for(i in (tail(which(is.na(temp)),1)+2):length(temp)){
+#   if(temp[i]==1&temp[i-1]==3){
+#     temp[i]=0
+#   }
+#   else if(temp[i]==1&temp[i-1]==0){
+#     temp[i]=0
+#   }
+# }
+# 
+# data2$I_TD=as.numeric(temp==1)
+########
+
 p_I <- ggplot(data2) + 
-  labs(title = "100001084", x = "t", y = "Theta") +
-  geom_line(aes(x=t,y=theta),col='grey')+
-  geom_point(aes(x=t,y=theta),col='grey40',size=1)+
-  geom_point(aes(x = t, y = theta, color = factor(maxs_mins)), size = 1) +
+  labs(title = "100001084", x = "tt", y = "Theta") +
+  geom_line(aes(x=tt,y=theta),col='grey')+
+  geom_point(aes(x=tt,y=theta),col='grey40',size=1)+
+  geom_point(aes(x = tt, y = theta, color = factor(maxs_mins)), size = 1) +
   scale_color_manual(values = c("0" = "grey50", "1"='blue' ,"2" = "red")) +
-  geom_line(aes(x=t,y=I_TD),col='green4')+
-  geom_line(aes(x=t,y=I_HS),col='cyan3')+
-  geom_line(aes(x=t,y=I_QS),col="violet")+
-  #geom_line(aes(x=t,y=I_diffmaxmin*2),col='black')+
+  geom_line(aes(x=tt,y=I_TD),col='green4')+
+  geom_line(aes(x=tt,y=I_HS),col='cyan3')+
+  geom_line(aes(x=tt,y=I_QS),col="violet")+
+  geom_line(aes(x=tt,y=mean_osc),col='black')+
   theme_minimal() +
   theme(legend.position = "none") 
 #p_I
 # Convert the ggplot object to a plotly interactive plot
 ggplotly(p_I)
+
+
+data2=data.frame(data2)
+Y=data2[complete.cases(data2),]
+Y=Y[,colnames(data_fin)[-1]]
+
 
 # fit ---------------------------------------------------------------------
 
@@ -87,7 +112,7 @@ ggplotly(p_I)
 # Y=subset(Y,select=-I_TD) 
 # Purtroppo cosi seleziona solo due regimi
 
-Y=subset(Y,select=-c(diffmaxmin,I_diffmaxmin,value_min,value_max,mins,maxs)) 
+Y=subset(Y,select=-c(I_diffmaxmin,diffmaxmin,maxs,mins,value_max,value_min)) 
 
 lambda=c(0,5,10,15,20,30)
 K=2:6

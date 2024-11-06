@@ -24,7 +24,7 @@ library(plotly)
 
 source("Utils4_.R")
 
-max_lag=30
+max_lag=10
 min_lag=5
 # %FC importante che questa soglia sia abbastanza grande da distinguere QS dal resto
 tt_thres_diffmaxmin=0.07
@@ -33,8 +33,9 @@ data_thetavol=thetavol_feat(data,
                             wdn=c(min_lag,max_lag))
 data_a=a_feat(data,l3=c(min_lag,max_lag))
 
+# Soglia per max min a 3 dato che abbiamo un campionamento piu fine
 data_maxmin=max_min_feat(data,
-                         tt_thres_maxmin = 2.4,
+                         tt_thres_maxmin = 3,
                          l2=c(min_lag,max_lag),
                          tt_thres_diffmaxmin=tt_thres_diffmaxmin)
 names(data_maxmin)
@@ -77,7 +78,7 @@ p_I <- ggplot(data2) +
   geom_line(aes(x=t,y=I_TD),col='green4')+
   geom_line(aes(x=t,y=I_HS),col='cyan3')+
   geom_line(aes(x=t,y=I_QS),col="violet")+
-  #geom_line(aes(x=t,y=I_diffmaxmin*2),col='black')+
+  geom_line(aes(x=t,y=mean_osc),col='black')+
   theme_minimal() +
   theme(legend.position = "none") 
 #p_I
@@ -87,7 +88,7 @@ ggplotly(p_I)
 # fit ---------------------------------------------------------------------
 
 lambda=c(0,5,10,15,20,30)
-K=2:7
+K=2:6
 # %FC Con K da 2 a 6 seleziona K=3
 # K=5
 # %FC Provato a fissare K=5 ma non vede compound
@@ -118,7 +119,7 @@ modsel100000241=data.frame(hp,
 best_mod=modsel100000241[which.min(modsel100000241$FTIC),]
 best_mod
 
-sel=100
+sel=73
 #sel=68
 estw100000241=data.frame(var=colnames(Y),
                          weight=est100000241[[sel]]$est_weights)
