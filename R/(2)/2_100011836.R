@@ -33,7 +33,7 @@ time_100011836=Y100011836_final$t
 Y100011836_final=subset(Y100011836_final,select=-t)
 
 lambda=c(0,5,10,15,20,30)
-K=2:5
+K=2:6
 kappa=seq(1,ceiling(sqrt(dim(Y100011836_final)[2])),by=1.5)
 hp=expand.grid(K=K,lambda=lambda,kappa=kappa)
 
@@ -58,7 +58,7 @@ modsel100011836=data.frame(hp,
 best_mod=modsel100011836[which.min(modsel100011836$FTIC),]
 best_mod
 
-sel=54
+sel=67
 #sel=68
 estw100011836=data.frame(var=colnames(Y100011836_final),
                          weight=est100011836[[sel]]$est_weights)
