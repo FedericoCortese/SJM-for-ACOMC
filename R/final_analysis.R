@@ -66,32 +66,69 @@ BAC(est_states2002AA29,ground_truth)
 
 # mclust::adjustedRandIndex(ground_truth,est_states2002AA29)
 
-dfres_2002AA29=data.frame(t=tail(timesY,N),
+dfresINV_2002AA29=data.frame(t=tail(timesY,N),
                           Y,
                           State=est_states2002AA29)
 
-ggplot(trans_theta(dfres_2002AA29), aes(x = t, y = theta)) +
-  geom_rect(aes(xmin = t, xmax = lead(t, default = t[length(t)]), 
-                ymin = -Inf, ymax = Inf, fill = factor(State)), 
-            alpha = 0.2, color = NA) +
-  scale_fill_manual(values = c("blue", "red"),
-                    labels = c("HS", "QS")) +
-  geom_line(color = "grey50",linewidth=1) +
-  #geom_point(color = "grey50") +# Personalizza i colori degli stati
-  labs(title = "2002AA29",
-       x = "t (years)",
-       y = bquote(theta ~ "(deg)"),
-       fill = "Regime") +
+dfres_2002AA29=data.frame(t=tail(timesY,N),
+                          trans_theta(Y),
+                          State=est_states2002AA29)
+
+
+dfres_2002AA29 <-  dfres_2002AA29 %>%
+  mutate(Segment = cumsum(State != lag(State, default = first(State))))
+
+df_segments_theta_2002AA29 <- dfres_2002AA29 %>%
+  group_by(Segment) %>%
+  mutate(next_t = dplyr::lead(t), next_theta = dplyr::lead(theta))
+
+p_theta_res_2002AA29 <- ggplot(data = df_segments_theta_2002AA29) + 
+  geom_segment(aes(x = t, y = theta, 
+                   xend = next_t, yend = next_theta), 
+               size = 1,color='grey80') +
+  geom_point(aes(x=t,y=theta,
+                 color=as.factor(State)))+
+  scale_color_manual(values = 1:max(dfres_2002AA29$State),
+                     labels = c("HS", "QS"),
+                     name="Orbital regime") +
+  labs(title = " ", 
+       x = "t (year)", 
+       y = bquote(theta ~ "(rad)")) +
   theme_minimal()+
   theme(
-    axis.text = element_text(size = 14),       # Tick degli assi
-    axis.title = element_text(size = 16),      # Titoli degli assi
-    plot.title = element_text(size = 18),      # Titolo del grafico
-    legend.text = element_text(size = 12),     # Testo delle etichette nella legenda
-    legend.title = element_text(size = 14),    # Titolo della legenda
-    legend.key.size = unit(1.5, "cm"),         # Dimensione delle chiavi della legenda
-    legend.position = "right"                  # Posizione della legenda (es. "right", "bottom")
+    axis.text = element_text(size = 14),        
+    axis.title = element_text(size = 16),       
+    plot.title = element_text(size = 18),      
+    legend.text = element_text(size = 12),      
+    legend.title = element_text(size = 14),    
+    legend.key.size = unit(1.5, "cm"),          
+    legend.position = "right"                  
   )
+
+p_theta_res_2002AA29
+
+# State conditional summ stat
+tapply(dfres_2002AA29$theta,dfres_2002AA29$State,mean)
+tapply(dfres_2002AA29$theta,dfres_2002AA29$State,sd)
+
+tapply(c(NA,diff(dfres_2002AA29$theta)),dfres_2002AA29$State,mean,na.rm=T)
+tapply(c(NA,diff(dfres_2002AA29$theta)),dfres_2002AA29$State,sd,na.rm=T)
+
+tapply(dfres_2002AA29$omega,dfres_2002AA29$State,mean)
+tapply(dfres_2002AA29$omega,dfres_2002AA29$State,sd)
+
+tapply(dfres_2002AA29$e,dfres_2002AA29$State,mean)
+tapply(dfres_2002AA29$e,dfres_2002AA29$State,sd)
+
+table(est_states2002AA29)/length(est_states2002AA29)*100
+# Identify transitions
+sequence=est_states2002AA29
+transitions <- table(sequence[-length(sequence)], sequence[-1])
+transition_probs <- prop.table(transitions, 1)
+print(transition_probs)
+run_lengths <- rle(sequence)
+avg_duration <- tapply(run_lengths$lengths, run_lengths$values, mean)
+print(avg_duration)
 
 
 # 2016HO3 -----------------------------------------------------------------
@@ -158,6 +195,85 @@ ground_truth=order_states(ground_truth)
 est_states2016HO3=order_states(est_states2016HO3)
 
 BAC(est_states2016HO3,ground_truth)
+
+dfresINV_2016HO3=data.frame(t=tail(timesY,N),
+                            Y,
+                            State=est_states2016HO3)
+
+dfres_2016HO3=data.frame(t=tail(timesY,N),
+                         trans_theta(Y),
+                         State=est_states2016HO3)
+
+
+dfres_2016HO3 <-  dfres_2016HO3 %>%
+  mutate(Segment = cumsum(State != lag(State, default = first(State))))
+
+df_segments_theta_2016HO3 <- dfres_2016HO3 %>%
+  group_by(Segment) %>%
+  mutate(next_t = dplyr::lead(t), next_theta = dplyr::lead(theta))
+
+p_theta_res_2016HO3 <- ggplot(data = df_segments_theta_2016HO3) + 
+  geom_segment(aes(x = t, y = theta, 
+                   xend = next_t, yend = next_theta), 
+               size = 1,color='grey80') +
+  geom_point(aes(x=t,y=theta,
+                 color=as.factor(State)))+
+  scale_color_manual(values = 1:max(dfres_2016HO3$State),
+                     labels = c("HS", "QS"),
+                     name="Orbital regime") +
+  labs(title = " ", 
+       x = "t (year)", 
+       y = bquote(theta ~ "(rad)")) +
+  theme_minimal()+
+  theme(
+    axis.text = element_text(size = 14),        
+    axis.title = element_text(size = 16),       
+    plot.title = element_text(size = 18),      
+    legend.text = element_text(size = 12),      
+    legend.title = element_text(size = 14),    
+    legend.key.size = unit(1.5, "cm"),          
+    legend.position = "right"                  
+  )
+
+p_theta_res_2016HO3
+
+# State conditional summ stat
+tapply(dfres_2016HO3$theta,dfres_2016HO3$State,mean)
+tapply(dfres_2016HO3$theta,dfres_2016HO3$State,sd)
+
+tapply(c(NA,diff(dfres_2016HO3$theta)),dfres_2016HO3$State,mean,na.rm=T)
+tapply(c(NA,diff(dfres_2016HO3$theta)),dfres_2016HO3$State,sd,na.rm=T)
+
+tapply(dfres_2016HO3$omega,dfres_2016HO3$State,mean)
+tapply(dfres_2016HO3$omega,dfres_2016HO3$State,sd)
+
+tapply(dfres_2016HO3$e,dfres_2016HO3$State,mean)
+tapply(dfres_2016HO3$e,dfres_2016HO3$State,sd)
+
+table(est_states2016HO3)/length(est_states2016HO3)*100
+# Identify transitions
+sequence=est_states2016HO3
+transitions <- table(sequence[-length(sequence)], sequence[-1])
+transition_probs <- prop.table(transitions, 1)
+print(transition_probs)
+run_lengths <- rle(sequence)
+avg_duration <- tapply(run_lengths$lengths, run_lengths$values, mean)
+print(avg_duration)
+
+
+library(ggpubr)
+ggarrange(p_theta_res_2002AA29,p_theta_res_2016HO3,
+          ncol=1,nrow=2,common.legend = T)
+
+table(est_states2016HO3)/length(est_states2016HO3)*100
+# Identify transitions
+sequence=est_states2016HO3
+transitions <- table(sequence[-length(sequence)], sequence[-1])
+transition_probs <- prop.table(transitions, 1)
+print(transition_probs)
+run_lengths <- rle(sequence)
+avg_duration <- tapply(run_lengths$lengths, run_lengths$values, mean)
+print(avg_duration)
 
 
 # 2015XX169 ---------------------------------------------------------------
