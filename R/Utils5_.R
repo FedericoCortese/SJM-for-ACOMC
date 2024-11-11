@@ -1,6 +1,7 @@
 library(ggplot2)
 library(zoo)
 library(splus2R)
+library(dplyr)
 
 trans_theta=function(data){
   theta_trans <- data$theta
