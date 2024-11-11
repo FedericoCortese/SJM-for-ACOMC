@@ -64,7 +64,34 @@ est_states2002AA29=order_states(est_states2002AA29)
 
 BAC(est_states2002AA29,ground_truth)
 
-mclust::adjustedRandIndex(ground_truth,est_states2002AA29)
+# mclust::adjustedRandIndex(ground_truth,est_states2002AA29)
+
+dfres_2002AA29=data.frame(t=tail(timesY,N),
+                          Y,
+                          State=est_states2002AA29)
+
+ggplot(trans_theta(dfres_2002AA29), aes(x = t, y = theta)) +
+  geom_rect(aes(xmin = t, xmax = lead(t, default = t[length(t)]), 
+                ymin = -Inf, ymax = Inf, fill = factor(State)), 
+            alpha = 0.2, color = NA) +
+  scale_fill_manual(values = c("blue", "red"),
+                    labels = c("HS", "QS")) +
+  geom_line(color = "grey50",linewidth=1) +
+  #geom_point(color = "grey50") +# Personalizza i colori degli stati
+  labs(title = "2002AA29",
+       x = "t (years)",
+       y = bquote(theta ~ "(deg)"),
+       fill = "Regime") +
+  theme_minimal()+
+  theme(
+    axis.text = element_text(size = 14),       # Tick degli assi
+    axis.title = element_text(size = 16),      # Titoli degli assi
+    plot.title = element_text(size = 18),      # Titolo del grafico
+    legend.text = element_text(size = 12),     # Testo delle etichette nella legenda
+    legend.title = element_text(size = 14),    # Titolo della legenda
+    legend.key.size = unit(1.5, "cm"),         # Dimensione delle chiavi della legenda
+    legend.position = "right"                  # Posizione della legenda (es. "right", "bottom")
+  )
 
 
 # 2016HO3 -----------------------------------------------------------------
@@ -137,6 +164,8 @@ BAC(est_states2016HO3,ground_truth)
 
 df2015XX169=read.table("propagation_2015XX169_new_v2.txt",header=T)
 summary(diff(df2015XX169$t))
+unique(df2015XX169$type)
+
 # Step 1000
 
 df2015XX169=trans_theta(df2015XX169)
@@ -178,7 +207,7 @@ N=dim(Y)[1]
 plot(Y$mean_osc,type='l')
 
 lambda=c(0,5,10,15,20,30)
-K=2:6
+K=3
 kappa=seq(1,ceiling(sqrt(dim(Y)[2])),by=1)
 hp=expand.grid(K=K,lambda=lambda,kappa=kappa)
 
@@ -307,6 +336,13 @@ BAC(ground_truth_2020PN1,est_states_2020PN1)
 plot(Y$theta,type='l')
 plot(ground_truth_2020PN1,type='l')
 lines(est_states_2020PN1,col='red')
+
+
+# 2015SO2 -----------------------------------------------------------------
+
+df2015SO2=read.table("propagation_2015SO2_new_v2.txt",header=T)
+unique(df2015SO2$type)
+
 # 1000006174 --------------------------------------------------------------
 
 source("Utils5_.R")
