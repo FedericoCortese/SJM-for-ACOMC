@@ -459,7 +459,7 @@ lines(est_states_2020PN1,col='red')
 df2015SO2=read.table("propagation_2015SO2_new_v2.txt",header=T)
 unique(df2015SO2$type)
 
-# 1000006174 --------------------------------------------------------------
+# 100006174 --------------------------------------------------------------
 
 source("Utils5_.R")
 df100006174=read.table("100006174.txt",header = T)
@@ -480,19 +480,29 @@ names(df100006174)
 
 #max_lag=30
 max_lag=10
-min_lag=5
+# min_lag=5
 # %FC importante che questa soglia sia abbastanza grande da distinguere QS dal resto
 tt_thres_diffmaxmin=pi/4
 
+# data_thetavol=thetavol_feat(inv_trans_theta(data),
+#                             wdn=c(min_lag,max_lag))
+# 
+# data_a=a_feat(data,l3=c(min_lag,max_lag))
+
 data_thetavol=thetavol_feat(inv_trans_theta(data),
-                            wdn=c(min_lag,max_lag))
+                            wdn=max_lag)
 
-data_a=a_feat(data,l3=c(min_lag,max_lag))
+data_a=a_feat(data,l3=max_lag)
 
+# data_maxmin=max_min_feat(data,
+#                          l=3,
+#                          tt_thres_maxmin = 2.4,
+#                          l2=c(min_lag,max_lag),
+#                          tt_thres_diffmaxmin=tt_thres_diffmaxmin)
 data_maxmin=max_min_feat(data,
                          l=3,
                          tt_thres_maxmin = 2.4,
-                         l2=c(min_lag,max_lag),
+                         l2=max_lag,
                          tt_thres_diffmaxmin=tt_thres_diffmaxmin)
 names(data_maxmin)
 
@@ -510,11 +520,12 @@ Y=data_fin[complete.cases(data_fin),]
 Y=Y[,-1]
 
 lambda=c(0,5,10,15,20,30)
-K=2:6
+# K=2:6
 # %FC Con K da 2 a 6 seleziona K=3
 # K=5
 # %FC Provato a fissare K=5 ma non vede compound
 # K=4
+K=4
 
 kappa=seq(1,ceiling(sqrt(dim(Y)[2])),by=1)
 hp=expand.grid(K=K,lambda=lambda,kappa=kappa)
@@ -541,7 +552,7 @@ modsel100006174=data.frame(hp,
 best_mod=modsel100006174[which.min(modsel100006174$FTIC),]
 best_mod
 
-sel=42
+sel=10
 #sel=68
 estw100006174=data.frame(var=colnames(Y),
                          weight=est100006174[[sel]]$est_weights)
@@ -616,19 +627,19 @@ names(df100011836)
 
 #max_lag=30
 max_lag=10
-min_lag=5
+#min_lag=5
 # %FC importante che questa soglia sia abbastanza grande da distinguere QS dal resto
 tt_thres_diffmaxmin=pi/4
 
 data_thetavol=thetavol_feat(inv_trans_theta(data),
-                            wdn=c(min_lag,max_lag))
+                            wdn=max_lag)
 
-data_a=a_feat(data,l3=c(min_lag,max_lag))
+data_a=a_feat(data,l3=max_lag)
 
 data_maxmin=max_min_feat(data,
                          l=3,
                          tt_thres_maxmin = 2.4,
-                         l2=c(min_lag,max_lag),
+                         l2=max_lag,
                          tt_thres_diffmaxmin=tt_thres_diffmaxmin)
 names(data_maxmin)
 
@@ -642,15 +653,19 @@ data_fin=merge(data_fin,inv_trans_theta(data[,c("t","a","theta")]),by="t")
 names(data_fin)
 summary(data_fin)
 
+ggplotly(ggplot(data_fin)+
+           geom_line(aes(x=t,y=theta)))
+
 Y=data_fin[complete.cases(data_fin),]
 Y=Y[,-1]
 
 lambda=c(0,5,10,15,20,30)
-K=2:6
+#K=2:6
 # %FC Con K da 2 a 6 seleziona K=3
 # K=5
 # %FC Provato a fissare K=5 ma non vede compound
 # K=4
+K=5
 
 kappa=seq(1,ceiling(sqrt(dim(Y)[2])),by=1)
 hp=expand.grid(K=K,lambda=lambda,kappa=kappa)
@@ -677,7 +692,7 @@ modsel100011836=data.frame(hp,
 best_mod=modsel100011836[which.min(modsel100011836$FTIC),]
 best_mod
 
-sel=42
+sel=15
 #sel=68
 estw100011836=data.frame(var=colnames(Y),
                          weight=est100011836[[sel]]$est_weights)
