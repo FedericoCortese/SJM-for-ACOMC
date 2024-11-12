@@ -575,35 +575,101 @@ df_segments_a <- df_res_100006174 %>%
   group_by(Segment) %>%
   mutate(next_t = dplyr::lead(t), next_a = dplyr::lead(a))
 
-p_a_res <- ggplot(data = df_segments_a) + 
+#df_segments_a$zoom_group <- ifelse(df_segments_a$t < df_segments_a$t[dim(Y)[1] / 2], "First Half", "Second Half")
+
+zoom=1:1600
+
+p_a_100006174=ggplot(data = df_segments_a[zoom,]) + 
   geom_segment(aes(x = t, y = a, 
                    xend = next_t, yend = next_a), 
-               size = 1,color='grey80') +
-  geom_point(aes(x=t,y=a,
-                 color=as.factor(State)))+
-  scale_color_manual(values = 1:max(df_res_100006174$State)) +
-  labs(title = "100006174", 
-       x = "Time (t)", 
-       y = "Values (a)") +
-  theme_minimal()
-ggplotly(p_a_res)
+               size = 1, color = 'grey80') +
+  geom_point(aes(x = t, y = a, color = as.factor(State))) +
+  scale_color_manual(values = c(4, 1, 2, 3),
+                     labels = c("NR", "HS", "QS", "CP"),
+                     name = "Orbital regime") +
+  labs(title = " ", 
+       x = "t (year)", 
+       y = bquote(a ~ "(AU)")) +
+  theme_minimal() +
+  theme(
+    axis.text = element_text(size = 14),        
+    axis.title = element_text(size = 16),       
+    plot.title = element_text(size = 18),      
+    legend.text = element_text(size = 12),      
+    legend.title = element_text(size = 14),    
+    legend.key.size = unit(1.5, "cm"),          
+    legend.position = "top"                  
+  ) 
+# +
+#   facet_zoom(x = t < df_segments_a$t[dim(Y)[1] / 2], zoom.size = 1) +
+#   facet_zoom(x = t >= df_segments_a$t[dim(Y)[1] / 2], zoom.size = 1)
+
+#ggplotly(p_a_res)
+
+
 
 df_segments_theta <- df_res_100006174 %>%
   group_by(Segment) %>%
   mutate(next_t = dplyr::lead(t), next_theta = dplyr::lead(theta))
 
-p_theta_res <- ggplot(data = df_segments_theta) + 
+#df_segments_theta$zoom_group <- ifelse(df_segments_theta$t < df_segments_theta$t[dim(Y)[1] / 2], "First Half", "Second Half")
+
+# Plot con facet_zoom
+p_theta_100006174=ggplot(data = df_segments_theta[zoom,]) + 
   geom_segment(aes(x = t, y = theta, 
                    xend = next_t, yend = next_theta), 
-               size = 1,color='grey80') +
-  geom_point(aes(x=t,y=theta,
-                 color=as.factor(State)))+
-  scale_color_manual(values = 1:max(df_res_100006174$State)) +
-  labs(title = "100006174", 
-       x = "Time (t)", 
-       y = "Values (theta)") +
-  theme_minimal()
-ggplotly(p_theta_res)
+               size = 1, color = 'grey80') +
+  geom_point(aes(x = t, y = theta, color = as.factor(State))) +
+  scale_color_manual(values = c(4, 1, 2, 3),
+                     labels = c("NR", "HS", "QS", "CP"),
+                     name = "Orbital regime") +
+  labs(title = " ", 
+       x = "t (year)", 
+       y = bquote(theta ~ "(rad)")) +
+  theme_minimal() +
+  theme(
+    axis.text = element_text(size = 14),        
+    axis.title = element_text(size = 16),       
+    plot.title = element_text(size = 18),      
+    legend.text = element_text(size = 12),      
+    legend.title = element_text(size = 14),    
+    legend.key.size = unit(1.5, "cm"),          
+    legend.position = "top"                  
+  ) 
+# +
+#   facet_zoom(x = t < df_segments_theta$t[dim(Y)[1] / 2], zoom.size = 1) +
+#   facet_zoom(x = t >= df_segments_theta$t[dim(Y)[1] / 2], zoom.size = 1)
+
+ggarrange(p_a_100006174,p_theta_100006174,nrow=2,common.legend = T)
+
+#1:NR 2:HS 3:QS 4:CP
+
+tapply(df_res_100006174$theta,df_res_100006174$State,mean)
+tapply(df_res_100006174$theta,df_res_100006174$State,sd)
+
+tapply(c(NA,diff(df_res_100006174$theta)),df_res_100006174$State,mean,na.rm=T)
+tapply(c(NA,diff(df_res_100006174$theta)),df_res_100006174$State,sd,na.rm=T)
+
+tapply(df_res_100006174$a,df_res_100006174$State,mean)
+tapply(df_res_100006174$a,df_res_100006174$State,sd)
+
+# tapply(df_res_100006174$omega,df_res_100006174$State,mean)
+# tapply(df_res_100006174$omega,df_res_100006174$State,sd)
+# 
+# tapply(df_res_100006174$e,df_res_100006174$State,mean)
+# tapply(df_res_100006174$e,df_res_100006174$State,sd)
+
+est_states100006174=est100006174[[sel]]$est_states
+
+round(table(est_states100006174)/length(est_states100006174)*100,2)
+# Identify transitions
+sequence=est_states100006174
+transitions <- table(sequence[-length(sequence)], sequence[-1])
+transition_probs <- prop.table(transitions, 1)
+print(transition_probs)
+run_lengths <- rle(sequence)
+avg_duration <- tapply(run_lengths$lengths, run_lengths$values, mean)
+print(avg_duration)
 
 # 100011836 ---------------------------------------------------------------
 
@@ -698,7 +764,7 @@ estw100011836=data.frame(var=colnames(Y),
                          weight=est100011836[[sel]]$est_weights)
 
 estw100011836=estw100011836[order(estw100011836$weight,decreasing = T),]
-head(estw100011836,15)
+estw100011836
 
 data_a_theta=tail(data[,c("t","a","theta")],dim(Y)[1])
 
@@ -715,35 +781,106 @@ df_segments_a <- df_res_100011836 %>%
   group_by(Segment) %>%
   mutate(next_t = dplyr::lead(t), next_a = dplyr::lead(a))
 
-p_a_res <- ggplot(data = df_segments_a) + 
+#df_segments_a$zoom_group <- ifelse(df_segments_a$t < df_segments_a$t[dim(Y)[1] / 2], "First Half", "Second Half")
+
+N=dim(Y)[1]
+zoom=1:(N/3)
+
+p_a_100011836=ggplot(data = df_segments_a[zoom,]) + 
   geom_segment(aes(x = t, y = a, 
                    xend = next_t, yend = next_a), 
-               size = 1,color='grey80') +
-  geom_point(aes(x=t,y=a,
-                 color=as.factor(State)))+
-  scale_color_manual(values = 1:max(df_res_100011836$State)) +
-  labs(title = "100011836", 
-       x = "Time (t)", 
-       y = "Values (a)") +
-  theme_minimal()
-ggplotly(p_a_res)
+               size = 1, color = 'grey80') +
+  geom_point(aes(x = t, y = a, color = as.factor(State))) +
+  scale_color_manual(values = c(4, 2, 3, 1,6),
+                     labels = c("NR", "QS", "CP", "HS","TP"),
+                     name = "Orbital regime") +
+  labs(title = " ", 
+       x = "t (year)", 
+       y = bquote(a ~ "(AU)")) +
+  theme_minimal() +
+  theme(
+    axis.text = element_text(size = 14),        
+    axis.title = element_text(size = 16),       
+    plot.title = element_text(size = 18),      
+    legend.text = element_text(size = 12),      
+    legend.title = element_text(size = 14),    
+    legend.key.size = unit(1.5, "cm"),          
+    legend.position = "top"                  
+  ) 
+# +
+#   facet_zoom(x = t < df_segments_a$t[dim(Y)[1] / 2], zoom.size = 1) +
+#   facet_zoom(x = t >= df_segments_a$t[dim(Y)[1] / 2], zoom.size = 1)
+
+#ggplotly(p_a_res)
+
+p_a_100011836
 
 df_segments_theta <- df_res_100011836 %>%
   group_by(Segment) %>%
   mutate(next_t = dplyr::lead(t), next_theta = dplyr::lead(theta))
 
-p_theta_res <- ggplot(data = df_segments_theta) + 
+#df_segments_theta$zoom_group <- ifelse(df_segments_theta$t < df_segments_theta$t[dim(Y)[1] / 2], "First Half", "Second Half")
+
+# Plot con facet_zoom
+p_theta_100011836=ggplot(data = df_segments_theta[zoom,]) + 
   geom_segment(aes(x = t, y = theta, 
                    xend = next_t, yend = next_theta), 
-               size = 1,color='grey80') +
-  geom_point(aes(x=t,y=theta,
-                 color=as.factor(State)))+
-  scale_color_manual(values = 1:max(df_res_100011836$State)) +
-  labs(title = "100011836", 
-       x = "Time (t)", 
-       y = "Values (theta)") +
-  theme_minimal()
-ggplotly(p_theta_res)
+               size = 1, color = 'grey80') +
+  geom_point(aes(x = t, y = theta, color = as.factor(State))) +
+  scale_color_manual(values = c(4, 2, 3, 1,6),
+                     labels = c("NR", "QS", "CP", "HS","TP"),
+                     name = "Orbital regime") +
+  labs(title = " ", 
+       x = "t (year)", 
+       y = bquote(theta ~ "(rad)")) +
+  theme_minimal() +
+  theme(
+    axis.text = element_text(size = 14),        
+    axis.title = element_text(size = 16),       
+    plot.title = element_text(size = 18),      
+    legend.text = element_text(size = 12),      
+    legend.title = element_text(size = 14),    
+    legend.key.size = unit(1.5, "cm"),          
+    legend.position = "top"                  
+  ) 
+# +
+#   facet_zoom(x = t < df_segments_theta$t[dim(Y)[1] / 2], zoom.size = 1) +
+#   facet_zoom(x = t >= df_segments_theta$t[dim(Y)[1] / 2], zoom.size = 1)
+
+ggarrange(p_a_100011836,p_theta_100011836,nrow=2,common.legend = T)
+
+
+
+#4:NR, 2:QS, 3:CP, 1:HS, 5:TP
+
+
+tapply(df_res_100011836$theta,df_res_100011836$State,mean)
+tapply(df_res_100011836$theta,df_res_100011836$State,sd)
+
+tapply(c(NA,diff(df_res_100011836$theta)),df_res_100011836$State,mean,na.rm=T)
+tapply(c(NA,diff(df_res_100011836$theta)),df_res_100011836$State,sd,na.rm=T)
+
+tapply(df_res_100011836$a,df_res_100011836$State,mean)
+tapply(df_res_100011836$a,df_res_100011836$State,sd)
+
+# tapply(df_res_100011836$omega,df_res_100011836$State,mean)
+# tapply(df_res_100011836$omega,df_res_100011836$State,sd)
+# 
+# tapply(df_res_100011836$e,df_res_100011836$State,mean)
+# tapply(df_res_100011836$e,df_res_100011836$State,sd)
+
+est_states100011836=est100011836[[sel]]$est_states
+
+round(table(est_states100011836)/length(est_states100011836)*100,2)
+# Identify transitions
+sequence=est_states100011836
+transitions <- table(sequence[-length(sequence)], sequence[-1])
+transition_probs <- prop.table(transitions, 1)
+print(transition_probs)
+run_lengths <- rle(sequence)
+avg_duration <- tapply(run_lengths$lengths, run_lengths$values, mean)
+print(avg_duration)
+
 
 
 

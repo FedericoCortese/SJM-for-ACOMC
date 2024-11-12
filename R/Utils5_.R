@@ -2,6 +2,9 @@ library(ggplot2)
 library(zoo)
 library(splus2R)
 library(dplyr)
+library(plotly)
+library(ggpubr)
+library(ggforce)
 
 trans_theta=function(data){
   theta_trans <- data$theta
