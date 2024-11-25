@@ -5,6 +5,7 @@ library(dplyr)
 library(plotly)
 library(ggpubr)
 library(ggforce)
+library(scales)
 
 trans_theta=function(data){
   theta_trans <- data$theta
