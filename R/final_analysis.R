@@ -82,6 +82,8 @@ df_segments_theta_2002AA29 <- dfres_2002AA29 %>%
   group_by(Segment) %>%
   mutate(next_t = dplyr::lead(t), next_theta = dplyr::lead(theta))
 
+
+label_size=18
 p_theta_res_2002AA29 <- ggplot(data = df_segments_theta_2002AA29) + 
   geom_segment(aes(x = t, y = theta, 
                    xend = next_t, yend = next_theta), 
@@ -94,16 +96,21 @@ p_theta_res_2002AA29 <- ggplot(data = df_segments_theta_2002AA29) +
   labs(title = " ", 
        x = "t (year)", 
        y = bquote(theta ~ "(rad)")) +
+  scale_y_continuous(
+    breaks = c(-pi, 0, pi),  # Specify where to place the labels
+    labels = c(expression(-pi), expression(0), expression(pi))  # Use LaTeX-style labels
+  )+
   theme_minimal()+
   theme(
-    axis.text = element_text(size = 14),        
-    axis.title = element_text(size = 16),       
-    plot.title = element_text(size = 18),      
-    legend.text = element_text(size = 12),      
-    legend.title = element_text(size = 14),    
+    axis.text = element_text(size = label_size),        
+    axis.title = element_text(size = label_size),       
+    #plot.title = element_text(size = 18),      
+    legend.text = element_text(size = label_size),      
+    legend.title = element_text(size = label_size),    
     legend.key.size = unit(1.5, "cm"),          
     legend.position = "right"                  
-  )
+  )+
+  guides(color = guide_legend(override.aes = list(size = 5)))
 
 p_theta_res_2002AA29
 
@@ -224,16 +231,21 @@ p_theta_res_2016HO3 <- ggplot(data = df_segments_theta_2016HO3) +
   labs(title = " ", 
        x = "t (year)", 
        y = bquote(theta ~ "(rad)")) +
+  scale_y_continuous(
+    breaks = c(-pi, 0, pi),  # Specify where to place the labels
+    labels = c(expression(-pi), expression(0), expression(pi))  # Use LaTeX-style labels
+  )+
   theme_minimal()+
   theme(
-    axis.text = element_text(size = 14),        
-    axis.title = element_text(size = 16),       
-    plot.title = element_text(size = 18),      
-    legend.text = element_text(size = 12),      
-    legend.title = element_text(size = 14),    
+    axis.text = element_text(size = label_size),        
+    axis.title = element_text(size = label_size),       
+    plot.title = element_text(size = label_size),      
+    legend.text = element_text(size = label_size),      
+    legend.title = element_text(size = label_size),    
     legend.key.size = unit(1.5, "cm"),          
     legend.position = "right"                  
-  )
+  )+
+  guides(color = guide_legend(override.aes = list(size = 5)))
 
 p_theta_res_2016HO3
 
@@ -261,10 +273,6 @@ avg_duration <- tapply(run_lengths$lengths, run_lengths$values, mean)
 print(avg_duration)
 
 
-library(ggpubr)
-ggarrange(p_theta_res_2002AA29,p_theta_res_2016HO3,
-          ncol=1,nrow=2,common.legend = T)
-
 table(est_states2016HO3)/length(est_states2016HO3)*100
 # Identify transitions
 sequence=est_states2016HO3
@@ -274,6 +282,13 @@ print(transition_probs)
 run_lengths <- rle(sequence)
 avg_duration <- tapply(run_lengths$lengths, run_lengths$values, mean)
 print(avg_duration)
+
+
+# Combined plot 2002AA29 - 2016HO3 ----------------------------------------
+
+library(ggpubr)
+ggarrange(p_theta_res_2002AA29,p_theta_res_2016HO3,
+          ncol=1,nrow=2,common.legend = T)
 
 
 # 2015XX169 ---------------------------------------------------------------
@@ -577,7 +592,7 @@ df_segments_a <- df_res_100006174 %>%
 
 #df_segments_a$zoom_group <- ifelse(df_segments_a$t < df_segments_a$t[dim(Y)[1] / 2], "First Half", "Second Half")
 
-zoom=1:1600
+zoom=300:1600
 
 p_a_100006174=ggplot(data = df_segments_a[zoom,]) + 
   geom_segment(aes(x = t, y = a, 
@@ -587,19 +602,21 @@ p_a_100006174=ggplot(data = df_segments_a[zoom,]) +
   scale_color_manual(values = c(4, 1, 2, 3),
                      labels = c("NR", "HS", "QS", "CP"),
                      name = "Orbital regime") +
+  scale_x_continuous(labels = label_scientific())+
   labs(title = " ", 
        x = "t (year)", 
        y = bquote(a ~ "(AU)")) +
   theme_minimal() +
   theme(
-    axis.text = element_text(size = 14),        
-    axis.title = element_text(size = 16),       
-    plot.title = element_text(size = 18),      
-    legend.text = element_text(size = 12),      
-    legend.title = element_text(size = 14),    
+    axis.text = element_text(size = label_size),        
+    axis.title = element_text(size = label_size),       
+    plot.title = element_text(size = label_size),      
+    legend.text = element_text(size = label_size),      
+    legend.title = element_text(size = label_size),    
     legend.key.size = unit(1.5, "cm"),          
     legend.position = "top"                  
-  ) 
+  ) +
+  guides(color = guide_legend(override.aes = list(size = 5)))
 # +
 #   facet_zoom(x = t < df_segments_a$t[dim(Y)[1] / 2], zoom.size = 1) +
 #   facet_zoom(x = t >= df_segments_a$t[dim(Y)[1] / 2], zoom.size = 1)
@@ -623,19 +640,24 @@ p_theta_100006174=ggplot(data = df_segments_theta[zoom,]) +
   scale_color_manual(values = c(4, 1, 2, 3),
                      labels = c("NR", "HS", "QS", "CP"),
                      name = "Orbital regime") +
+  scale_x_continuous(labels = label_scientific())+
+  scale_y_continuous(
+    breaks = c(-pi, 0, pi),  # Specify where to place the labels
+    labels = c(expression(-pi), expression(0), expression(pi))  # Use LaTeX-style labels
+  )+
   labs(title = " ", 
        x = "t (year)", 
        y = bquote(theta ~ "(rad)")) +
   theme_minimal() +
   theme(
-    axis.text = element_text(size = 14),        
-    axis.title = element_text(size = 16),       
-    plot.title = element_text(size = 18),      
-    legend.text = element_text(size = 12),      
-    legend.title = element_text(size = 14),    
+    axis.text = element_text(size = label_size),        
+    axis.title = element_text(size = label_size),       
+    plot.title = element_text(size = label_size),      
+    legend.text = element_text(size = label_size),      
+    legend.title = element_text(size = label_size),    
     legend.key.size = unit(1.5, "cm"),          
     legend.position = "top"                  
-  ) 
+  ) + guides(color = guide_legend(override.aes = list(size = 5)))
 # +
 #   facet_zoom(x = t < df_segments_theta$t[dim(Y)[1] / 2], zoom.size = 1) +
 #   facet_zoom(x = t >= df_segments_theta$t[dim(Y)[1] / 2], zoom.size = 1)
@@ -784,7 +806,7 @@ df_segments_a <- df_res_100011836 %>%
 #df_segments_a$zoom_group <- ifelse(df_segments_a$t < df_segments_a$t[dim(Y)[1] / 2], "First Half", "Second Half")
 
 N=dim(Y)[1]
-zoom=1:(N/3)
+zoom=400:(N/3)
 
 p_a_100011836=ggplot(data = df_segments_a[zoom,]) + 
   geom_segment(aes(x = t, y = a, 
@@ -794,19 +816,24 @@ p_a_100011836=ggplot(data = df_segments_a[zoom,]) +
   scale_color_manual(values = c(4, 2, 3, 1,6),
                      labels = c("NR", "QS", "CP", "HS","TP"),
                      name = "Orbital regime") +
+  scale_x_continuous(breaks=seq(range(df_segments_a$t[zoom])[1],
+                                range(df_segments_a$t[zoom])[2],
+                                length.out=4),
+                     labels = label_scientific())+
   labs(title = " ", 
        x = "t (year)", 
        y = bquote(a ~ "(AU)")) +
   theme_minimal() +
   theme(
-    axis.text = element_text(size = 14),        
-    axis.title = element_text(size = 16),       
-    plot.title = element_text(size = 18),      
-    legend.text = element_text(size = 12),      
-    legend.title = element_text(size = 14),    
+    axis.text = element_text(size = label_size),        
+    axis.title = element_text(size = label_size),       
+    plot.title = element_text(size = label_size),      
+    legend.text = element_text(size = label_size),      
+    legend.title = element_text(size = label_size),    
     legend.key.size = unit(1.5, "cm"),          
     legend.position = "top"                  
-  ) 
+  ) +
+  guides(color = guide_legend(override.aes = list(size = 5)))
 # +
 #   facet_zoom(x = t < df_segments_a$t[dim(Y)[1] / 2], zoom.size = 1) +
 #   facet_zoom(x = t >= df_segments_a$t[dim(Y)[1] / 2], zoom.size = 1)
@@ -833,16 +860,25 @@ p_theta_100011836=ggplot(data = df_segments_theta[zoom,]) +
   labs(title = " ", 
        x = "t (year)", 
        y = bquote(theta ~ "(rad)")) +
+  scale_y_continuous(
+    breaks = c(-pi, 0, pi),  # Specify where to place the labels
+    labels = c(expression(-pi), expression(0), expression(pi))  # Use LaTeX-style labels
+  )+
+  scale_x_continuous(breaks=seq(range(df_segments_theta$t[zoom])[1],
+                                range(df_segments_theta$t[zoom])[2],
+                                length.out=4),
+                     labels = label_scientific())+
   theme_minimal() +
   theme(
-    axis.text = element_text(size = 14),        
-    axis.title = element_text(size = 16),       
-    plot.title = element_text(size = 18),      
-    legend.text = element_text(size = 12),      
-    legend.title = element_text(size = 14),    
+    axis.text = element_text(size = label_size),        
+    axis.title = element_text(size = label_size),       
+    plot.title = element_text(size = label_size),      
+    legend.text = element_text(size = label_size),      
+    legend.title = element_text(size = label_size),    
     legend.key.size = unit(1.5, "cm"),          
     legend.position = "top"                  
-  ) 
+  )+
+  guides(color = guide_legend(override.aes = list(size = 5)))
 # +
 #   facet_zoom(x = t < df_segments_theta$t[dim(Y)[1] / 2], zoom.size = 1) +
 #   facet_zoom(x = t >= df_segments_theta$t[dim(Y)[1] / 2], zoom.size = 1)
