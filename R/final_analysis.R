@@ -219,15 +219,17 @@ df_segments_theta_2016HO3 <- dfres_2016HO3 %>%
   group_by(Segment) %>%
   mutate(next_t = dplyr::lead(t), next_theta = dplyr::lead(theta))
 
+
+label_size=18
 p_theta_res_2016HO3 <- ggplot(data = df_segments_theta_2016HO3) + 
   geom_segment(aes(x = t, y = theta, 
                    xend = next_t, yend = next_theta), 
                size = 1,color='grey80') +
   geom_point(aes(x=t,y=theta,
                  color=as.factor(State)))+
-  scale_color_manual(values = 1:max(dfres_2016HO3$State),
-                     labels = c("HS", "QS"),
-                     name="Orbital regime") +
+  # scale_color_manual(values = 1:max(dfres_2016HO3$State),
+  #                    labels = c("HS", "QS"),
+  #                    name="Orbital regime") +
   labs(title = " ", 
        x = "t (year)", 
        y = bquote(theta ~ "(rad)")) +
@@ -593,7 +595,7 @@ df_segments_a <- df_res_100006174 %>%
 #df_segments_a$zoom_group <- ifelse(df_segments_a$t < df_segments_a$t[dim(Y)[1] / 2], "First Half", "Second Half")
 
 zoom=300:1600
-
+label_size=18
 p_a_100006174=ggplot(data = df_segments_a[zoom,]) + 
   geom_segment(aes(x = t, y = a, 
                    xend = next_t, yend = next_a), 
@@ -637,9 +639,9 @@ p_theta_100006174=ggplot(data = df_segments_theta[zoom,]) +
                    xend = next_t, yend = next_theta), 
                size = 1, color = 'grey80') +
   geom_point(aes(x = t, y = theta, color = as.factor(State))) +
-  scale_color_manual(values = c(4, 1, 2, 3),
-                     labels = c("NR", "HS", "QS", "CP"),
-                     name = "Orbital regime") +
+  # scale_color_manual(values = c(4, 1, 2, 3),
+  #                    labels = c("NR", "HS", "QS", "CP"),
+  #                    name = "Orbital regime") +
   scale_x_continuous(labels = label_scientific())+
   scale_y_continuous(
     breaks = c(-pi, 0, pi),  # Specify where to place the labels
@@ -848,6 +850,7 @@ df_segments_theta <- df_res_100011836 %>%
 
 #df_segments_theta$zoom_group <- ifelse(df_segments_theta$t < df_segments_theta$t[dim(Y)[1] / 2], "First Half", "Second Half")
 
+label_size=18
 # Plot con facet_zoom
 p_theta_100011836=ggplot(data = df_segments_theta[zoom,]) + 
   geom_segment(aes(x = t, y = theta, 
@@ -915,7 +918,7 @@ transition_probs <- prop.table(transitions, 1)
 print(transition_probs)
 run_lengths <- rle(sequence)
 avg_duration <- tapply(run_lengths$lengths, run_lengths$values, mean)
-print(avg_duration)
+print(avg_duration*7500)
 
 
 
