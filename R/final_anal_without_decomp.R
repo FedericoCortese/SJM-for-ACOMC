@@ -1,4 +1,4 @@
-source("Utils5_.R")
+source("Utils6_.R")
 # 2002AA29 ----------------------------------------------------------------
 
 df2002AA29=read.table("propagation_2002AA29_new_v2.txt",header=T)
@@ -14,10 +14,17 @@ summary(diff(df2002AA29$t))
 summary(df2002AA29$theta)
 plot(df2002AA29$theta,type='l')
 
-Y=compute_feat(df2002AA29,wdn=10,wdn_decomp=10,
-               a=T,e=T,theta=T,omega=T)
+Y=compute_feat(df2002AA29,wdn=10,
+               a=F,e=F,theta=T,omega=F)
 names(Y)
 head(Y)
+
+dim(Y)
+x11()
+par(mfrow=c(5,4))
+for(i in 2:ncol(Y)){
+  plot(x=Y$t,y=Y[,i],type='l',xlab=" ",ylab=colnames(Y)[i])
+}
 
 timesY=Y[,1]
 Y=Y[,-1]
@@ -27,7 +34,7 @@ ground_truth=tail(ground_truth,N)
 
 lambda=c(0,5,10,15,20,30)
 K=2
-kappa=seq(1,ceiling(sqrt(dim(Y)[2])),by=1)
+kappa=seq(1,ceiling(sqrt(dim(Y)[2])),by=.25)
 hp=expand.grid(K=K,lambda=lambda,kappa=kappa)
 
 sat_mod=SJM_sat(Y)
@@ -51,7 +58,7 @@ modsel2002AA29=data.frame(hp,
 best_mod=modsel2002AA29[which.min(modsel2002AA29$FTIC),]
 best_mod
 
-sel=13
+sel=4
 estw2002AA29=data.frame(var=colnames(Y),
                         weight=est2002AA29[[sel]]$est_weights)
 
@@ -112,6 +119,7 @@ p_theta_res_2002AA29 <- ggplot(data = df_segments_theta_2002AA29) +
   )+
   guides(color = guide_legend(override.aes = list(size = 5)))
 
+x11()
 p_theta_res_2002AA29
 
 # State conditional summ stat
@@ -153,8 +161,8 @@ summary(diff(df2016HO3$t))
 summary(df2016HO3$theta)
 plot(df2016HO3$theta,type='l')
 
-Y=compute_feat(df2016HO3,wdn=10,wdn_decomp=10,
-               a=T,e=T,theta=T,omega=T)
+Y=compute_feat(df2016HO3,wdn=10,
+               a=F,e=F,theta=T,omega=F)
 names(Y)
 head(Y)
 
@@ -166,7 +174,7 @@ ground_truth=tail(ground_truth,N)
 
 lambda=c(0,5,10,15,20,30)
 K=2
-kappa=seq(1,ceiling(sqrt(dim(Y)[2])),by=1)
+kappa=seq(1,ceiling(sqrt(dim(Y)[2])),by=.25)
 hp=expand.grid(K=K,lambda=lambda,kappa=kappa)
 
 sat_mod=SJM_sat(Y)
@@ -190,7 +198,8 @@ modsel2016HO3=data.frame(hp,
 best_mod=modsel2016HO3[which.min(modsel2016HO3$FTIC),]
 best_mod
 
-sel=15
+#sel=15
+sel=8
 estw2016HO3=data.frame(var=colnames(Y),
                        weight=est2016HO3[[sel]]$est_weights)
 
@@ -249,6 +258,7 @@ p_theta_res_2016HO3 <- ggplot(data = df_segments_theta_2016HO3) +
   )+
   guides(color = guide_legend(override.aes = list(size = 5)))
 
+x11()
 p_theta_res_2016HO3
 
 # State conditional summ stat
@@ -478,7 +488,7 @@ unique(df2015SO2$type)
 
 # 100006174 --------------------------------------------------------------
 
-source("Utils5_.R")
+source("Utils6_.R")
 df100006174=read.table("100006174.txt",header = T)
 
 start=which.min(abs(df100006174$t-1.6e8))
@@ -487,48 +497,81 @@ end=which.min(abs(df100006174$t-1.97e8))
 df100006174=df100006174[start:end,]
 
 summary(diff(df100006174$t))
-plot(diff(df100006174$t),type='p')
+#plot(diff(df100006174$t),type='p')
 
 #df100006174$type=-1
-data=df100006174
+#data=df100006174
 data_name="100006174"
 
 names(df100006174)
 
+df100006174=subset(df100006174,select=-c(i,Omega))
+
+df100006174_trans=df100006174
+temp=inv_trans_theta(df100006174)
+df100006174$theta=temp$theta
+
+#window=10
+window=10
+
+data_feat_vol=compute_feat(df100006174,
+               wdn=window,
+               a=F,e=F,theta=T,omega=F)
+# 
+# Yzoom=data_feat_vol[300:1600,]
+# x11()
+# par(mfrow=c(4,5))
+# for(i in 2:ncol(Yzoom)){
+#   plot(x=Yzoom$t,y=Yzoom[,i],type='l',xlab=" ",ylab=colnames(Yzoom)[i])
+# }
+
 #max_lag=30
-max_lag=10
+# max_lag=10
 # min_lag=5
 # %FC importante che questa soglia sia abbastanza grande da distinguere QS dal resto
-tt_thres_diffmaxmin=pi/4
+#tt_thres_diffmaxmin=pi/4
 
 # data_thetavol=thetavol_feat(inv_trans_theta(data),
 #                             wdn=c(min_lag,max_lag))
 # 
 # data_a=a_feat(data,l3=c(min_lag,max_lag))
 
-data_thetavol=thetavol_feat(inv_trans_theta(data),
-                            wdn=max_lag)
+# data_thetavol=thetavol_feat(inv_trans_theta(data),
+#                             wdn=max_lag)
 
-data_a=a_feat(data,l3=max_lag)
-
+data_a=a_feat(df100006174,l3=window)
+x11()
+plot(data_a$ind_a_short,type='l')
 # data_maxmin=max_min_feat(data,
 #                          l=3,
 #                          tt_thres_maxmin = 2.4,
 #                          l2=c(min_lag,max_lag),
 #                          tt_thres_diffmaxmin=tt_thres_diffmaxmin)
-data_maxmin=max_min_feat(data,
+data_maxmin=max_min_feat(df100006174_trans,
                          l=3,
                          tt_thres_maxmin = 2.4,
-                         l2=max_lag,
-                         tt_thres_diffmaxmin=tt_thres_diffmaxmin)
+                         l2=window)
+
 names(data_maxmin)
 
-data_maxmin_full=data_maxmin
-data_maxmin=data_maxmin[,c("t","I_TD","I_HS","I_QS","mean_osc")]
+# x11()
+# par(mfrow=c(3,1))
+# plot(x=data_maxmin$t,y=data_maxmin$maxs,col='blue',type='l')
+# plot(x=data_maxmin$t,y=data_maxmin$maxs,col='red',type='l')
+# plot(x=df100006174$t,y=df100006174$theta,col='black',type='l')
 
-data_fin=merge(data_thetavol,data_a,by="t")
+data_maxmin_full=data_maxmin
+data_maxmin=data_maxmin[,c("t","I_TP","I_HS","I_QS","I_CP","mean_osc")]
+
+x11()
+par(mfrow=c(2,2))
+for(i in 2:(ncol(data_maxmin)-1)){
+  plot(x=data_maxmin$t,y=data_maxmin[,i],type='l',xlab=" ",ylab=colnames(data_maxmin)[i])
+}
+
+data_fin=merge(data_feat_vol,data_a,by="t")
 data_fin=merge(data_fin,data_maxmin,by="t")
-data_fin=merge(data_fin,inv_trans_theta(data[,c("t","a","theta")]),by="t")
+data_fin=merge(data_fin,df100006174[,c("t","a")],by="t")
 
 names(data_fin)
 summary(data_fin)
@@ -544,7 +587,7 @@ lambda=c(0,5,10,15,20,30)
 # K=4
 K=4
 
-kappa=seq(1,ceiling(sqrt(dim(Y)[2])),by=1)
+kappa=seq(1,ceiling(sqrt(dim(Y)[2])),by=.5)
 hp=expand.grid(K=K,lambda=lambda,kappa=kappa)
 
 sat_mod=SJM_sat(Y)
@@ -569,18 +612,28 @@ modsel100006174=data.frame(hp,
 best_mod=modsel100006174[which.min(modsel100006174$FTIC),]
 best_mod
 
-sel=10
+sel=22
 #sel=68
+#sel=14
 estw100006174=data.frame(var=colnames(Y),
                          weight=est100006174[[sel]]$est_weights)
 
 estw100006174=estw100006174[order(estw100006174$weight,decreasing = T),]
-head(estw100006174,15)
+estw100006174
 
-data_a_theta=tail(data[,c("t","a","theta")],dim(Y)[1])
+x11()
+plot(Y[zoom,]$sd_w1_dtheta,type='l')
+x11()
+plot(df100006174$e[zoom],type='l')
+
+x11()
+plot(df100006174$omega[zoom],type='l')
+
+
+data_a_theta=tail(df100006174_trans[,c("t","a","theta")],dim(Y)[1])
 
 df_res_100006174=data.frame(data_a_theta,
-                            Y,
+                            #Y,
                             State=est100006174[[sel]]$est_states
 )
 
@@ -595,6 +648,8 @@ df_segments_a <- df_res_100006174 %>%
 #df_segments_a$zoom_group <- ifelse(df_segments_a$t < df_segments_a$t[dim(Y)[1] / 2], "First Half", "Second Half")
 
 zoom=300:1600
+
+#zoom=1:dim(df_segments_a)[1]
 label_size=18
 p_a_100006174=ggplot(data = df_segments_a[zoom,]) + 
   geom_segment(aes(x = t, y = a, 
@@ -619,6 +674,9 @@ p_a_100006174=ggplot(data = df_segments_a[zoom,]) +
     legend.position = "top"                  
   ) +
   guides(color = guide_legend(override.aes = list(size = 5)))
+
+x11()
+p_a_100006174
 # +
 #   facet_zoom(x = t < df_segments_a$t[dim(Y)[1] / 2], zoom.size = 1) +
 #   facet_zoom(x = t >= df_segments_a$t[dim(Y)[1] / 2], zoom.size = 1)
@@ -639,9 +697,9 @@ p_theta_100006174=ggplot(data = df_segments_theta[zoom,]) +
                    xend = next_t, yend = next_theta), 
                size = 1, color = 'grey80') +
   geom_point(aes(x = t, y = theta, color = as.factor(State))) +
-  # scale_color_manual(values = c(4, 1, 2, 3),
-  #                    labels = c("NR", "HS", "QS", "CP"),
-  #                    name = "Orbital regime") +
+  scale_color_manual(values = c(4, 1, 2, 3),
+                     labels = c("NR", "HS", "QS", "CP"),
+                     name = "Orbital regime") +
   scale_x_continuous(labels = label_scientific())+
   scale_y_continuous(
     breaks = c(-pi, 0, pi),  # Specify where to place the labels
@@ -659,11 +717,17 @@ p_theta_100006174=ggplot(data = df_segments_theta[zoom,]) +
     legend.title = element_text(size = label_size),    
     legend.key.size = unit(1.5, "cm"),          
     legend.position = "top"                  
-  ) + guides(color = guide_legend(override.aes = list(size = 5)))
+  ) 
+#+ guides(color = guide_legend(override.aes = list(size = 5)))
+
+x11()
+#ggplotly(p_theta_100006174)
+p_theta_100006174
 # +
 #   facet_zoom(x = t < df_segments_theta$t[dim(Y)[1] / 2], zoom.size = 1) +
 #   facet_zoom(x = t >= df_segments_theta$t[dim(Y)[1] / 2], zoom.size = 1)
 
+x11()
 ggarrange(p_a_100006174,p_theta_100006174,nrow=2,common.legend = T)
 
 #1:NR 2:HS 3:QS 4:CP
@@ -697,7 +761,7 @@ print(avg_duration)
 
 # 100011836 ---------------------------------------------------------------
 
-source("Utils5_.R")
+source("Utils6_.R")
 df100011836=read.table("100011836.txt",header = T)
 
 start=which.min(abs(df100011836$t-7.9e8))
@@ -710,54 +774,94 @@ summary(diff(df100011836$t))
 plot(diff(df100011836$t),type='p')
 
 #df100011836$type=-1
-data=df100011836
+#data=df100011836
 data_name="100011836"
 
 names(df100011836)
 
+df100011836=subset(df100011836,select=-c(i,Omega))
+
+df100011836_trans=df100011836
+temp=inv_trans_theta(df100011836)
+df100011836$theta=temp$theta
+
+#window=5
+window=10
+
+data_feat_vol=compute_feat(df100011836,
+                           wdn=window,
+                           a=F,e=F,theta=T,omega=F)
+
+# Yzoom=data_feat_vol[300:1600,]
+# x11()
+# par(mfrow=c(4,5))
+# for(i in 2:ncol(Yzoom)){
+#   plot(x=Yzoom$t,y=Yzoom[,i],type='l',xlab=" ",ylab=colnames(Yzoom)[i])
+# }
+
 #max_lag=30
-max_lag=10
-#min_lag=5
+# max_lag=10
+# min_lag=5
 # %FC importante che questa soglia sia abbastanza grande da distinguere QS dal resto
-tt_thres_diffmaxmin=pi/4
+#tt_thres_diffmaxmin=pi/4
 
-data_thetavol=thetavol_feat(inv_trans_theta(data),
-                            wdn=max_lag)
+# data_thetavol=thetavol_feat(inv_trans_theta(data),
+#                             wdn=c(min_lag,max_lag))
+# 
+# data_a=a_feat(data,l3=c(min_lag,max_lag))
 
-data_a=a_feat(data,l3=max_lag)
+# data_thetavol=thetavol_feat(inv_trans_theta(data),
+#                             wdn=max_lag)
 
-data_maxmin=max_min_feat(data,
+data_a=a_feat(df100011836,l3=window)
+# x11()
+# plot(data_a$ind_a_short,type='l')
+# data_maxmin=max_min_feat(data,
+#                          l=3,
+#                          tt_thres_maxmin = 2.4,
+#                          l2=c(min_lag,max_lag),
+#                          tt_thres_diffmaxmin=tt_thres_diffmaxmin)
+data_maxmin=max_min_feat(df100011836_trans,
                          l=3,
                          tt_thres_maxmin = 2.4,
-                         l2=max_lag,
-                         tt_thres_diffmaxmin=tt_thres_diffmaxmin)
+                         l2=window)
+
 names(data_maxmin)
 
-data_maxmin_full=data_maxmin
-data_maxmin=data_maxmin[,c("t","I_TD","I_HS","I_QS","mean_osc")]
+# x11()
+# par(mfrow=c(3,1))
+# plot(x=data_maxmin$t,y=data_maxmin$maxs,col='blue',type='l')
+# plot(x=data_maxmin$t,y=data_maxmin$maxs,col='red',type='l')
+# plot(x=df100011836$t,y=df100011836$theta,col='black',type='l')
 
-data_fin=merge(data_thetavol,data_a,by="t")
+data_maxmin_full=data_maxmin
+data_maxmin=data_maxmin[,c("t","I_TP","I_HS","I_QS","I_CP","mean_osc")]
+
+# x11()
+# par(mfrow=c(2,2))
+# for(i in 2:(ncol(data_maxmin)-1)){
+#   plot(x=data_maxmin$t,y=data_maxmin[,i],type='l',xlab=" ",ylab=colnames(data_maxmin)[i])
+# }
+# 
+data_fin=merge(data_feat_vol,data_a,by="t")
 data_fin=merge(data_fin,data_maxmin,by="t")
-data_fin=merge(data_fin,inv_trans_theta(data[,c("t","a","theta")]),by="t")
+data_fin=merge(data_fin,df100011836[,c("t","a")],by="t")
 
 names(data_fin)
 summary(data_fin)
-
-ggplotly(ggplot(data_fin)+
-           geom_line(aes(x=t,y=theta)))
 
 Y=data_fin[complete.cases(data_fin),]
 Y=Y[,-1]
 
 lambda=c(0,5,10,15,20,30)
-#K=2:6
+# K=2:6
 # %FC Con K da 2 a 6 seleziona K=3
 # K=5
 # %FC Provato a fissare K=5 ma non vede compound
 # K=4
 K=5
 
-kappa=seq(1,ceiling(sqrt(dim(Y)[2])),by=1)
+kappa=seq(1,ceiling(sqrt(dim(Y)[2])),by=.5)
 hp=expand.grid(K=K,lambda=lambda,kappa=kappa)
 
 sat_mod=SJM_sat(Y)
@@ -782,18 +886,28 @@ modsel100011836=data.frame(hp,
 best_mod=modsel100011836[which.min(modsel100011836$FTIC),]
 best_mod
 
-sel=15
+sel=27
 #sel=68
+#sel=14
 estw100011836=data.frame(var=colnames(Y),
                          weight=est100011836[[sel]]$est_weights)
 
 estw100011836=estw100011836[order(estw100011836$weight,decreasing = T),]
 estw100011836
 
-data_a_theta=tail(data[,c("t","a","theta")],dim(Y)[1])
+x11()
+plot(Y[zoom,]$sd_w1_dtheta,type='l')
+x11()
+plot(df100011836$e[zoom],type='l')
+
+x11()
+plot(df100011836$omega[zoom],type='l')
+
+
+data_a_theta=tail(df100011836_trans[,c("t","a","theta")],dim(Y)[1])
 
 df_res_100011836=data.frame(data_a_theta,
-                            Y,
+                            #Y,
                             State=est100011836[[sel]]$est_states
 )
 
@@ -807,17 +921,20 @@ df_segments_a <- df_res_100011836 %>%
 
 #df_segments_a$zoom_group <- ifelse(df_segments_a$t < df_segments_a$t[dim(Y)[1] / 2], "First Half", "Second Half")
 
+
 N=dim(Y)[1]
 zoom=400:(N/3)
 
+#zoom=1:dim(df_segments_a)[1]
+label_size=18
 p_a_100011836=ggplot(data = df_segments_a[zoom,]) + 
   geom_segment(aes(x = t, y = a, 
                    xend = next_t, yend = next_a), 
                size = 1, color = 'grey80') +
   geom_point(aes(x = t, y = a, color = as.factor(State))) +
-  scale_color_manual(values = c(4, 2, 3, 1,6),
-                     labels = c("NR", "QS", "CP", "HS","TP"),
-                     name = "Orbital regime") +
+  # scale_color_manual(values = c(4, 2, 3, 1, 6),
+  #                    labels = c("NR", "QS", "CP", "HS","TP"),
+  #                    name = "Orbital regime") +
   scale_x_continuous(breaks=seq(range(df_segments_a$t[zoom])[1],
                                 range(df_segments_a$t[zoom])[2],
                                 length.out=4),
@@ -841,8 +958,9 @@ p_a_100011836=ggplot(data = df_segments_a[zoom,]) +
 #   facet_zoom(x = t >= df_segments_a$t[dim(Y)[1] / 2], zoom.size = 1)
 
 #ggplotly(p_a_res)
-
+x11()
 p_a_100011836
+
 
 df_segments_theta <- df_res_100011836 %>%
   group_by(Segment) %>%
@@ -857,9 +975,9 @@ p_theta_100011836=ggplot(data = df_segments_theta[zoom,]) +
                    xend = next_t, yend = next_theta), 
                size = 1, color = 'grey80') +
   geom_point(aes(x = t, y = theta, color = as.factor(State))) +
-  scale_color_manual(values = c(4, 2, 3, 1,6),
-                     labels = c("NR", "QS", "CP", "HS","TP"),
-                     name = "Orbital regime") +
+  # scale_color_manual(values = c(4, 2, 3, 1,6),
+  #                    labels = c("NR", "QS", "CP", "HS","TP"),
+  #                    name = "Orbital regime") +
   labs(title = " ", 
        x = "t (year)", 
        y = bquote(theta ~ "(rad)")) +
@@ -886,8 +1004,10 @@ p_theta_100011836=ggplot(data = df_segments_theta[zoom,]) +
 #   facet_zoom(x = t < df_segments_theta$t[dim(Y)[1] / 2], zoom.size = 1) +
 #   facet_zoom(x = t >= df_segments_theta$t[dim(Y)[1] / 2], zoom.size = 1)
 
-ggarrange(p_a_100011836,p_theta_100011836,nrow=2,common.legend = T)
+x11()
+p_theta_100011836
 
+ggarrange(p_a_100011836,p_theta_100011836,nrow=2,common.legend = T)
 
 
 #4:NR, 2:QS, 3:CP, 1:HS, 5:TP

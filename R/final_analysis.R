@@ -509,6 +509,8 @@ tt_thres_diffmaxmin=pi/4
 data_thetavol=thetavol_feat(inv_trans_theta(data),
                             wdn=max_lag)
 
+
+
 data_a=a_feat(data,l3=max_lag)
 
 # data_maxmin=max_min_feat(data,
@@ -664,6 +666,7 @@ p_theta_100006174=ggplot(data = df_segments_theta[zoom,]) +
 #   facet_zoom(x = t < df_segments_theta$t[dim(Y)[1] / 2], zoom.size = 1) +
 #   facet_zoom(x = t >= df_segments_theta$t[dim(Y)[1] / 2], zoom.size = 1)
 
+X11()
 ggarrange(p_a_100006174,p_theta_100006174,nrow=2,common.legend = T)
 
 #1:NR 2:HS 3:QS 4:CP
