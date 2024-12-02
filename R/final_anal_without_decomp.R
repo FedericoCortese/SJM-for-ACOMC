@@ -517,6 +517,20 @@ window=10
 data_feat_vol=compute_feat(df100006174,
                wdn=window,
                a=F,e=F,theta=T,omega=F)
+
+# temp=ggplot(data = df100006174)+
+#   geom_line(aes(x = t, y = atan(theta)),color='black')+
+#   theme_bw()
+# 
+# ggplotly(temp)
+# 
+# theta_p=ggplot(data = df100006174_trans)+
+#   geom_line(aes(x = t, y = theta),color='black')+
+#   theme_bw()
+# 
+# ggplotly(theta_p)
+
+
 # 
 # Yzoom=data_feat_vol[300:1600,]
 # x11()
