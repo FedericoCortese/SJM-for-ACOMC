@@ -122,18 +122,18 @@ p_theta_res_2002AA29 <- ggplot(data = df_segments_theta_2002AA29) +
 x11()
 p_theta_res_2002AA29
 
-# State conditional summ stat
-tapply(dfres_2002AA29$theta,dfres_2002AA29$State,mean)
-tapply(dfres_2002AA29$theta,dfres_2002AA29$State,sd)
+df_2002AA29_statecond=tail(df2002AA29, length(dfres_2002AA29$State))
+df_2002AA29_statecond=trans_theta(df_2002AA29_statecond)
+df_2002AA29_statecond$State=dfres_2002AA29$State
 
-tapply(c(NA,diff(dfres_2002AA29$theta)),dfres_2002AA29$State,mean,na.rm=T)
-tapply(c(NA,diff(dfres_2002AA29$theta)),dfres_2002AA29$State,sd,na.rm=T)
+tapply(df_2002AA29_statecond$theta,df_2002AA29_statecond$State,mean)
+tapply(df_2002AA29_statecond$theta,df_2002AA29_statecond$State,sd)
 
-# tapply(dfres_2002AA29$omega,dfres_2002AA29$State,mean)
-# tapply(dfres_2002AA29$omega,dfres_2002AA29$State,sd)
+tapply(df_2002AA29_statecond$e,df_2002AA29_statecond$State,mean)
+tapply(df_2002AA29_statecond$e,df_2002AA29_statecond$State,sd)
 
-# tapply(dfres_2002AA29$e,dfres_2002AA29$State,mean)
-# tapply(dfres_2002AA29$e,dfres_2002AA29$State,sd)
+tapply(df_2002AA29_statecond$omega,df_2002AA29_statecond$State,mean)
+tapply(df_2002AA29_statecond$omega,df_2002AA29_statecond$State,sd)
 
 table(est_states2002AA29)/length(est_states2002AA29)*100
 # Identify transitions
@@ -261,18 +261,18 @@ p_theta_res_2016HO3 <- ggplot(data = df_segments_theta_2016HO3) +
 x11()
 p_theta_res_2016HO3
 
-# State conditional summ stat
-tapply(dfres_2016HO3$theta,dfres_2016HO3$State,mean)
-tapply(dfres_2016HO3$theta,dfres_2016HO3$State,sd)
+df_2016HO3_statecond=tail(df2016HO3, length(dfres_2016HO3$State))
+df_2016HO3_statecond=trans_theta(df_2016HO3_statecond)
+df_2016HO3_statecond$State=dfres_2016HO3$State
 
-tapply(c(NA,diff(dfres_2016HO3$theta)),dfres_2016HO3$State,mean,na.rm=T)
-tapply(c(NA,diff(dfres_2016HO3$theta)),dfres_2016HO3$State,sd,na.rm=T)
+tapply(df_2016HO3_statecond$theta,df_2016HO3_statecond$State,mean)
+tapply(df_2016HO3_statecond$theta,df_2016HO3_statecond$State,sd)
 
-# tapply(dfres_2016HO3$omega,dfres_2016HO3$State,mean)
-# tapply(dfres_2016HO3$omega,dfres_2016HO3$State,sd)
+tapply(df_2016HO3_statecond$e,df_2016HO3_statecond$State,mean)
+tapply(df_2016HO3_statecond$e,df_2016HO3_statecond$State,sd)
 
-# tapply(dfres_2016HO3$e,dfres_2016HO3$State,mean)
-# tapply(dfres_2016HO3$e,dfres_2016HO3$State,sd)
+tapply(df_2016HO3_statecond$omega,df_2016HO3_statecond$State,mean)
+tapply(df_2016HO3_statecond$omega,df_2016HO3_statecond$State,sd)
 
 table(est_states2016HO3)/length(est_states2016HO3)*100
 # Identify transitions
