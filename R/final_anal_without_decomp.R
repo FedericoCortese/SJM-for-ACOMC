@@ -58,7 +58,7 @@ modsel2002AA29=data.frame(hp,
 best_mod=modsel2002AA29[which.min(modsel2002AA29$FTIC),]
 best_mod
 
-sel=4
+sel=7
 estw2002AA29=data.frame(var=colnames(Y),
                         weight=est2002AA29[[sel]]$est_weights)
 
@@ -101,7 +101,7 @@ p_theta_res_2002AA29 <- ggplot(data = df_segments_theta_2002AA29) +
                      labels = c("HS", "QS"),
                      name="Orbital regime") +
   labs(title = " ", 
-       x = "t (year)", 
+       x = "t (days)", 
        y = bquote(theta ~ "(rad)")) +
   scale_y_continuous(
     breaks = c(-pi, 0, pi),  # Specify where to place the labels
@@ -129,11 +129,11 @@ tapply(dfres_2002AA29$theta,dfres_2002AA29$State,sd)
 tapply(c(NA,diff(dfres_2002AA29$theta)),dfres_2002AA29$State,mean,na.rm=T)
 tapply(c(NA,diff(dfres_2002AA29$theta)),dfres_2002AA29$State,sd,na.rm=T)
 
-tapply(dfres_2002AA29$omega,dfres_2002AA29$State,mean)
-tapply(dfres_2002AA29$omega,dfres_2002AA29$State,sd)
+# tapply(dfres_2002AA29$omega,dfres_2002AA29$State,mean)
+# tapply(dfres_2002AA29$omega,dfres_2002AA29$State,sd)
 
-tapply(dfres_2002AA29$e,dfres_2002AA29$State,mean)
-tapply(dfres_2002AA29$e,dfres_2002AA29$State,sd)
+# tapply(dfres_2002AA29$e,dfres_2002AA29$State,mean)
+# tapply(dfres_2002AA29$e,dfres_2002AA29$State,sd)
 
 table(est_states2002AA29)/length(est_states2002AA29)*100
 # Identify transitions
@@ -199,7 +199,7 @@ best_mod=modsel2016HO3[which.min(modsel2016HO3$FTIC),]
 best_mod
 
 #sel=15
-sel=8
+sel=7
 estw2016HO3=data.frame(var=colnames(Y),
                        weight=est2016HO3[[sel]]$est_weights)
 
@@ -236,11 +236,11 @@ p_theta_res_2016HO3 <- ggplot(data = df_segments_theta_2016HO3) +
                size = 1,color='grey80') +
   geom_point(aes(x=t,y=theta,
                  color=as.factor(State)))+
-  # scale_color_manual(values = 1:max(dfres_2016HO3$State),
-  #                    labels = c("HS", "QS"),
-  #                    name="Orbital regime") +
+  scale_color_manual(values = 1:max(dfres_2016HO3$State),
+                     labels = c("HS", "QS"),
+                     name="Orbital regime") +
   labs(title = " ", 
-       x = "t (year)", 
+       x = "t (days)", 
        y = bquote(theta ~ "(rad)")) +
   scale_y_continuous(
     breaks = c(-pi, 0, pi),  # Specify where to place the labels
@@ -268,11 +268,11 @@ tapply(dfres_2016HO3$theta,dfres_2016HO3$State,sd)
 tapply(c(NA,diff(dfres_2016HO3$theta)),dfres_2016HO3$State,mean,na.rm=T)
 tapply(c(NA,diff(dfres_2016HO3$theta)),dfres_2016HO3$State,sd,na.rm=T)
 
-tapply(dfres_2016HO3$omega,dfres_2016HO3$State,mean)
-tapply(dfres_2016HO3$omega,dfres_2016HO3$State,sd)
+# tapply(dfres_2016HO3$omega,dfres_2016HO3$State,mean)
+# tapply(dfres_2016HO3$omega,dfres_2016HO3$State,sd)
 
-tapply(dfres_2016HO3$e,dfres_2016HO3$State,mean)
-tapply(dfres_2016HO3$e,dfres_2016HO3$State,sd)
+# tapply(dfres_2016HO3$e,dfres_2016HO3$State,mean)
+# tapply(dfres_2016HO3$e,dfres_2016HO3$State,sd)
 
 table(est_states2016HO3)/length(est_states2016HO3)*100
 # Identify transitions
@@ -635,13 +635,13 @@ estw100006174=data.frame(var=colnames(Y),
 estw100006174=estw100006174[order(estw100006174$weight,decreasing = T),]
 estw100006174
 
-x11()
-plot(Y[zoom,]$sd_w1_dtheta,type='l')
-x11()
-plot(df100006174$e[zoom],type='l')
-
-x11()
-plot(df100006174$omega[zoom],type='l')
+# x11()
+# plot(Y[zoom,]$sd_w1_dtheta,type='l')
+# x11()
+# plot(df100006174$e[zoom],type='l')
+# 
+# x11()
+# plot(df100006174$omega[zoom],type='l')
 
 
 data_a_theta=tail(df100006174_trans[,c("t","a","theta")],dim(Y)[1])
@@ -675,7 +675,7 @@ p_a_100006174=ggplot(data = df_segments_a[zoom,]) +
                      name = "Orbital regime") +
   scale_x_continuous(labels = label_scientific())+
   labs(title = " ", 
-       x = "t (year)", 
+       x = "t (days)", 
        y = bquote(a ~ "(AU)")) +
   theme_minimal() +
   theme(
@@ -720,7 +720,7 @@ p_theta_100006174=ggplot(data = df_segments_theta[zoom,]) +
     labels = c(expression(-pi), expression(0), expression(pi))  # Use LaTeX-style labels
   )+
   labs(title = " ", 
-       x = "t (year)", 
+       x = "t (days)", 
        y = bquote(theta ~ "(rad)")) +
   theme_minimal() +
   theme(
@@ -909,13 +909,13 @@ estw100011836=data.frame(var=colnames(Y),
 estw100011836=estw100011836[order(estw100011836$weight,decreasing = T),]
 estw100011836
 
-x11()
-plot(Y[zoom,]$sd_w1_dtheta,type='l')
-x11()
-plot(df100011836$e[zoom],type='l')
-
-x11()
-plot(df100011836$omega[zoom],type='l')
+# x11()
+# plot(Y[zoom,]$sd_w1_dtheta,type='l')
+# x11()
+# plot(df100011836$e[zoom],type='l')
+# 
+# x11()
+# plot(df100011836$omega[zoom],type='l')
 
 
 data_a_theta=tail(df100011836_trans[,c("t","a","theta")],dim(Y)[1])
@@ -946,15 +946,15 @@ p_a_100011836=ggplot(data = df_segments_a[zoom,]) +
                    xend = next_t, yend = next_a), 
                size = 1, color = 'grey80') +
   geom_point(aes(x = t, y = a, color = as.factor(State))) +
-  # scale_color_manual(values = c(4, 2, 3, 1, 6),
-  #                    labels = c("NR", "QS", "CP", "HS","TP"),
-  #                    name = "Orbital regime") +
+  scale_color_manual(values = c(4, 2, 3, 6,1),
+                     labels = c("NR", "QS", "CP", "TP","HS"),
+                     name = "Orbital regime") +
   scale_x_continuous(breaks=seq(range(df_segments_a$t[zoom])[1],
                                 range(df_segments_a$t[zoom])[2],
                                 length.out=4),
                      labels = label_scientific())+
   labs(title = " ", 
-       x = "t (year)", 
+       x = "t (days)", 
        y = bquote(a ~ "(AU)")) +
   theme_minimal() +
   theme(
@@ -989,11 +989,11 @@ p_theta_100011836=ggplot(data = df_segments_theta[zoom,]) +
                    xend = next_t, yend = next_theta), 
                size = 1, color = 'grey80') +
   geom_point(aes(x = t, y = theta, color = as.factor(State))) +
-  # scale_color_manual(values = c(4, 2, 3, 1,6),
-  #                    labels = c("NR", "QS", "CP", "HS","TP"),
-  #                    name = "Orbital regime") +
+  scale_color_manual(values = c(4, 2, 3, 6,1),
+                     labels = c("NR", "QS", "CP", "TP","HS"),
+                     name = "Orbital regime") +
   labs(title = " ", 
-       x = "t (year)", 
+       x = "t (days)", 
        y = bquote(theta ~ "(rad)")) +
   scale_y_continuous(
     breaks = c(-pi, 0, pi),  # Specify where to place the labels
@@ -1014,12 +1014,12 @@ p_theta_100011836=ggplot(data = df_segments_theta[zoom,]) +
     legend.position = "top"                  
   )+
   guides(color = guide_legend(override.aes = list(size = 5)))
-# +
+  # +
 #   facet_zoom(x = t < df_segments_theta$t[dim(Y)[1] / 2], zoom.size = 1) +
 #   facet_zoom(x = t >= df_segments_theta$t[dim(Y)[1] / 2], zoom.size = 1)
 
 x11()
-p_theta_100011836
+#p_theta_100011836
 
 ggarrange(p_a_100011836,p_theta_100011836,nrow=2,common.legend = T)
 
