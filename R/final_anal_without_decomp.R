@@ -744,22 +744,22 @@ p_theta_100006174
 x11()
 ggarrange(p_a_100006174,p_theta_100006174,nrow=2,common.legend = T)
 
-#1:NR 2:HS 3:QS 4:CP
+df_100006174_statecond=tail(df100006174, length(df_res_100006174$State))
+df_100006174_statecond=trans_theta(df_100006174_statecond)
+df_100006174_statecond$State=df_res_100006174$State
 
-tapply(df_res_100006174$theta,df_res_100006174$State,mean)
-tapply(df_res_100006174$theta,df_res_100006174$State,sd)
+tapply(df_100006174_statecond$theta,df_100006174_statecond$State,mean)
+tapply(df_100006174_statecond$theta,df_100006174_statecond$State,sd)
 
-tapply(c(NA,diff(df_res_100006174$theta)),df_res_100006174$State,mean,na.rm=T)
-tapply(c(NA,diff(df_res_100006174$theta)),df_res_100006174$State,sd,na.rm=T)
+tapply(df_100006174_statecond$e,df_100006174_statecond$State,mean)
+tapply(df_100006174_statecond$e,df_100006174_statecond$State,sd)
 
-tapply(df_res_100006174$a,df_res_100006174$State,mean)
-tapply(df_res_100006174$a,df_res_100006174$State,sd)
+tapply(df_100006174_statecond$omega,df_100006174_statecond$State,mean)
+tapply(df_100006174_statecond$omega,df_100006174_statecond$State,sd)
 
-# tapply(df_res_100006174$omega,df_res_100006174$State,mean)
-# tapply(df_res_100006174$omega,df_res_100006174$State,sd)
-# 
-# tapply(df_res_100006174$e,df_res_100006174$State,mean)
-# tapply(df_res_100006174$e,df_res_100006174$State,sd)
+tapply(df_100006174_statecond$a,df_100006174_statecond$State,mean)
+tapply(df_100006174_statecond$a,df_100006174_statecond$State,sd)
+
 
 est_states100006174=est100006174[[sel]]$est_states
 
@@ -1023,24 +1023,21 @@ x11()
 
 ggarrange(p_a_100011836,p_theta_100011836,nrow=2,common.legend = T)
 
+df_100011836_statecond=tail(df100011836, length(df_res_100011836$State))
+df_100011836_statecond=trans_theta(df_100011836_statecond)
+df_100011836_statecond$State=df_res_100011836$State
 
-#4:NR, 2:QS, 3:CP, 1:HS, 5:TP
+tapply(df_100011836_statecond$theta,df_100011836_statecond$State,mean)
+tapply(df_100011836_statecond$theta,df_100011836_statecond$State,sd)
 
+tapply(df_100011836_statecond$e,df_100011836_statecond$State,mean)
+tapply(df_100011836_statecond$e,df_100011836_statecond$State,sd)
 
-tapply(df_res_100011836$theta,df_res_100011836$State,mean)
-tapply(df_res_100011836$theta,df_res_100011836$State,sd)
+tapply(df_100011836_statecond$omega,df_100011836_statecond$State,mean)
+tapply(df_100011836_statecond$omega,df_100011836_statecond$State,sd)
 
-tapply(c(NA,diff(df_res_100011836$theta)),df_res_100011836$State,mean,na.rm=T)
-tapply(c(NA,diff(df_res_100011836$theta)),df_res_100011836$State,sd,na.rm=T)
-
-tapply(df_res_100011836$a,df_res_100011836$State,mean)
-tapply(df_res_100011836$a,df_res_100011836$State,sd)
-
-# tapply(df_res_100011836$omega,df_res_100011836$State,mean)
-# tapply(df_res_100011836$omega,df_res_100011836$State,sd)
-# 
-# tapply(df_res_100011836$e,df_res_100011836$State,mean)
-# tapply(df_res_100011836$e,df_res_100011836$State,sd)
+tapply(df_100011836_statecond$a,df_100011836_statecond$State,mean)
+tapply(df_100011836_statecond$a,df_100011836_statecond$State,sd)
 
 est_states100011836=est100011836[[sel]]$est_states
 

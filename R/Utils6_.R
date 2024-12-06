@@ -327,52 +327,39 @@ compute_feat=function(dat,wdn=c(10,75),
     dat=subset(dat,select=-omega)
   }
   
-  # dat$corr_w2_da_de=c(rep(NA,wdn[2]-1),rollapply(dat[,c("da","de")],
-  #                                                  width=wdn[2], function(x) cor(x[,1],x[,2]),
-  #                                                  by.column=FALSE))
-  # dat$corr_w2_da_dtheta=c(rep(NA,wdn[2]-1),rollapply(dat[,c("da","dtheta")],
-  #                                                      width=wdn[2], function(x) cor(x[,1],x[,2]),
-  #                                                      by.column=FALSE))
-  # dat$corr_w2_da_domega=c(rep(NA,wdn[2]-1),rollapply(dat[,c("da","domega")],
-  #                                                      width=wdn[2], function(x) cor(x[,1],x[,2]),
-  #                                                      by.column=FALSE))
-  # dat$corr_w2_de_dtheta=c(rep(NA,wdn[2]-1),rollapply(dat[,c("de","dtheta")],
-  #                                                      width=wdn[2], function(x) cor(x[,1],x[,2]), 
-  #                                                      by.column=FALSE))
-  # dat$corr_w2_de_domega=c(rep(NA,wdn[2]-1),rollapply(dat[,c("de","domega")],
-  #                                                      width=wdn[2], function(x) cor(x[,1],x[,2]), 
-  #                                                      by.column=FALSE))
-  # dat$corr_w2_dtheta_domega=c(rep(NA,wdn[2]-1),rollapply(dat[,c("dtheta","domega")],
-  #                                                          width=wdn[2], function(x) cor(x[,1],x[,2]), 
-  #                                                          by.column=FALSE))
-  
-  # Add moving correlations between first differences
-  # dat$corr_w1_da_de=c(rep(NA,wdn[1]-1),rollapply(dat[,c("da","de")],
-  #                                                   width=wdn[1], function(x) cor(x[,1],x[,2]),
-  #                                                   by.column=FALSE))
-  # dat$corr_w1_da_dtheta=c(rep(NA,wdn[1]-1),rollapply(dat[,c("da","dtheta")],
-  #                                                       width=wdn[1], function(x) cor(x[,1],x[,2]),
-  #                                                       by.column=FALSE))
-  # dat$corr_w1_da_domega=c(rep(NA,wdn[1]-1),rollapply(dat[,c("da","domega")],
-  #                                                       width=wdn[1], function(x) cor(x[,1],x[,2]),
-  #                                                       by.column=FALSE))
-  # dat$corr_w1_de_dtheta=c(rep(NA,wdn[1]-1),rollapply(dat[,c("de","dtheta")],
-  #                                                       width=wdn[1], function(x) cor(x[,1],x[,2]), 
-  #                                                       by.column=FALSE))
-  # dat$corr_w1_de_domega=c(rep(NA,wdn[1]-1),rollapply(dat[,c("de","domega")],
-  #                                                       width=wdn[1], function(x) cor(x[,1],x[,2]), 
-  #                                                       by.column=FALSE))
-  # dat$corr_w1_dtheta_domega=c(rep(NA,wdn[1]-1),rollapply(dat[,c("dtheta","domega")],
-  #                                                           width=wdn[1], function(x) cor(x[,1],x[,2]), 
-  #                                                           by.column=FALSE))
-  
-  #datC=dat[complete.cases(dat),]
+
   
   return(dat)
   
 }
 
-
+compute_corr_feat=function(dat,wdn){
+  
+  dat[,-1]=apply(dat[,-1],2,scale)
+  
+  dat$corr_w1_a_e=c(rep(NA,wdn-1),rollapply(dat[,c("a","e")],
+                                                   width=wdn, function(x) cor(x[,1],x[,2]),
+                                                   by.column=FALSE))
+  dat$corr_w1_a_theta=c(rep(NA,wdn-1),rollapply(dat[,c("a","theta")],
+                                                       width=wdn, function(x) cor(x[,1],x[,2]),
+                                                       by.column=FALSE))
+  dat$corr_w1_a_omega=c(rep(NA,wdn-1),rollapply(dat[,c("a","omega")],
+                                                       width=wdn, function(x) cor(x[,1],x[,2]),
+                                                       by.column=FALSE))
+  dat$corr_w1_e_theta=c(rep(NA,wdn-1),rollapply(dat[,c("e","theta")],
+                                                       width=wdn, function(x) cor(x[,1],x[,2]),
+                                                       by.column=FALSE))
+  dat$corr_w1_e_omega=c(rep(NA,wdn-1),rollapply(dat[,c("e","omega")],
+                                                       width=wdn, function(x) cor(x[,1],x[,2]),
+                                                       by.column=FALSE))
+  dat$corr_w1_theta_omega=c(rep(NA,wdn-1),rollapply(dat[,c("theta","omega")],
+                                                           width=wdn, function(x) cor(x[,1],x[,2]),
+                                                           by.column=FALSE))
+  
+  
+  return(dat[,c("t","corr_w1_a_e","corr_w1_a_theta","corr_w1_a_omega",
+                "corr_w1_e_theta","corr_w1_e_omega","corr_w1_theta_omega")])
+}
 
 # Complex cases -----------------------------------------------------------
 
