@@ -96,29 +96,30 @@ label_size=22
 p_theta_res_2002AA29 <- ggplot(data = df_segments_theta_2002AA29) + 
   geom_segment(aes(x = t, y = theta, 
                    xend = next_t, yend = next_theta), 
-               size = 1,color='grey80') +
-  geom_point(aes(x=t,y=theta,
-                 color=as.factor(State)))+
+               size = 1, color = 'grey80') +
+  geom_point(aes(x = t, y = theta,
+                 color = as.factor(State))) +
   scale_color_manual(values = 1:max(dfres_2002AA29$State),
                      labels = c("HS", "QS"),
-                     name="Orbital regime") +
+                     name = "Orbital regime") +
   labs(title = " ", 
        x = "t (days)", 
        y = bquote(theta ~ "(rad)")) +
   scale_y_continuous(
-    breaks = c(-pi, 0, pi),  # Specify where to place the labels
-    labels = c(expression(-pi), expression(0), expression(pi))  # Use LaTeX-style labels
-  )+
-  theme_minimal()+
+    breaks = c(-pi, 0, pi),  
+    labels = c(expression(-pi), expression(0), expression(pi))  
+  ) +
+  theme_minimal() +
   theme(
     axis.text = element_text(size = label_size),        
     axis.title = element_text(size = label_size),       
-    #plot.title = element_text(size = 18),      
     legend.text = element_text(size = label_size),      
     legend.title = element_text(size = label_size),    
     legend.key.size = unit(1.5, "cm"),          
-    legend.position = "right"                  
-  )+
+    legend.position = "right",
+    panel.border = element_rect(color = "black", fill = NA, size = 1),  # Add black frame
+    panel.grid.major = element_line(color = "grey80", size = 0.5, linetype = "dashed")  # Lighter and dashed grid lines
+  ) +
   guides(color = guide_legend(override.aes = list(size = 5)))
 
 x11()
@@ -235,20 +236,20 @@ label_size=22
 p_theta_res_2016HO3 <- ggplot(data = df_segments_theta_2016HO3) + 
   geom_segment(aes(x = t, y = theta, 
                    xend = next_t, yend = next_theta), 
-               size = 1,color='grey80') +
-  geom_point(aes(x=t,y=theta,
-                 color=as.factor(State)))+
+               size = 1, color = 'grey80') +
+  geom_point(aes(x = t, y = theta,
+                 color = as.factor(State))) +
   scale_color_manual(values = 1:max(dfres_2016HO3$State),
                      labels = c("HS", "QS"),
-                     name="Orbital regime") +
+                     name = "Orbital regime") +
   labs(title = " ", 
        x = "t (days)", 
        y = bquote(theta ~ "(rad)")) +
   scale_y_continuous(
-    breaks = c(-pi, 0, pi),  # Specify where to place the labels
-    labels = c(expression(-pi), expression(0), expression(pi))  # Use LaTeX-style labels
-  )+
-  theme_minimal()+
+    breaks = c(-pi, 0, pi),  
+    labels = c(expression(-pi), expression(0), expression(pi))  
+  ) +
+  theme_minimal() +
   theme(
     axis.text = element_text(size = label_size),        
     axis.title = element_text(size = label_size),       
@@ -256,8 +257,10 @@ p_theta_res_2016HO3 <- ggplot(data = df_segments_theta_2016HO3) +
     legend.text = element_text(size = label_size),      
     legend.title = element_text(size = label_size),    
     legend.key.size = unit(1.5, "cm"),          
-    legend.position = "right"                  
-  )+
+    legend.position = "right",
+    panel.border = element_rect(color = "black", fill = NA, size = 1),  # Add black frame
+    panel.grid.major = element_line(color = "grey80", size = 0.5, linetype = "dashed")  # Lighter and dashed grid lines
+  ) +
   guides(color = guide_legend(override.aes = list(size = 5)))
 
 x11()
@@ -668,7 +671,7 @@ zoom=400:1700
 #zoom=1:dim(df_segments_a)[1]
 #label_size=18
 label_size=22
-p_a_100006174=ggplot(data = df_segments_a[zoom,]) + 
+p_a_100006174 <- ggplot(data = df_segments_a[zoom,]) + 
   geom_segment(aes(x = t, y = a, 
                    xend = next_t, yend = next_a), 
                size = 1, color = 'grey80') +
@@ -676,7 +679,7 @@ p_a_100006174=ggplot(data = df_segments_a[zoom,]) +
   scale_color_manual(values = c(4, 1, 2, 3),
                      labels = c("NR", "HS", "QS", "CP"),
                      name = "Orbital regime") +
-  scale_x_continuous(labels = label_scientific())+
+  scale_x_continuous(labels = label_scientific()) +
   labs(title = " ", 
        x = "t (days)", 
        y = bquote(a ~ "(AU)")) +
@@ -688,7 +691,9 @@ p_a_100006174=ggplot(data = df_segments_a[zoom,]) +
     legend.text = element_text(size = label_size),      
     legend.title = element_text(size = label_size),    
     legend.key.size = unit(1.5, "cm"),          
-    legend.position = "top"                  
+    legend.position = "top",
+    panel.border = element_rect(color = "black", fill = NA, size = 1),  # Add black frame
+    panel.grid.major = element_line(color = "grey80", size = 0.5, linetype = "dashed")  # Lighter and dashed grid lines
   ) +
   guides(color = guide_legend(override.aes = list(size = 5)))
 
@@ -709,7 +714,7 @@ df_segments_theta <- df_res_100006174 %>%
 #df_segments_theta$zoom_group <- ifelse(df_segments_theta$t < df_segments_theta$t[dim(Y)[1] / 2], "First Half", "Second Half")
 
 # Plot con facet_zoom
-p_theta_100006174=ggplot(data = df_segments_theta[zoom,]) + 
+p_theta_100006174 <- ggplot(data = df_segments_theta[zoom,]) + 
   geom_segment(aes(x = t, y = theta, 
                    xend = next_t, yend = next_theta), 
                size = 1, color = 'grey80') +
@@ -717,11 +722,11 @@ p_theta_100006174=ggplot(data = df_segments_theta[zoom,]) +
   scale_color_manual(values = c(4, 1, 2, 3),
                      labels = c("NR", "HS", "QS", "CP"),
                      name = "Orbital regime") +
-  scale_x_continuous(labels = label_scientific())+
+  scale_x_continuous(labels = label_scientific()) +
   scale_y_continuous(
-    breaks = c(-pi, 0, pi),  # Specify where to place the labels
-    labels = c(expression(-pi), expression(0), expression(pi))  # Use LaTeX-style labels
-  )+
+    breaks = c(-pi, 0, pi),  
+    labels = c(expression(-pi), expression(0), expression(pi))  
+  ) +
   labs(title = " ", 
        x = "t (days)", 
        y = bquote(theta ~ "(rad)")) +
@@ -733,8 +738,11 @@ p_theta_100006174=ggplot(data = df_segments_theta[zoom,]) +
     legend.text = element_text(size = label_size),      
     legend.title = element_text(size = label_size),    
     legend.key.size = unit(1.5, "cm"),          
-    legend.position = "top"                  
-  ) 
+    legend.position = "top",
+    panel.border = element_rect(color = "black", fill = NA, size = 1),  # Add black frame
+    panel.grid.major = element_line(color = "grey80", size = 0.5, linetype = "dashed")  # Lighter and dashed grid lines
+  )
+
 #+ guides(color = guide_legend(override.aes = list(size = 5)))
 
 x11()
@@ -944,18 +952,18 @@ zoom=400:(N/3)
 
 #zoom=1:dim(df_segments_a)[1]
 label_size=22
-p_a_100011836=ggplot(data = df_segments_a[zoom,]) + 
+p_a_100011836 <- ggplot(data = df_segments_a[zoom,]) + 
   geom_segment(aes(x = t, y = a, 
                    xend = next_t, yend = next_a), 
                size = 1, color = 'grey80') +
   geom_point(aes(x = t, y = a, color = as.factor(State))) +
-  scale_color_manual(values = c(4, 2, 3, 6,1),
-                     labels = c("NR", "QS", "CP", "TP","HS"),
+  scale_color_manual(values = c(4, 2, 3, 6, 1),
+                     labels = c("NR", "QS", "CP", "TP", "HS"),
                      name = "Orbital regime") +
-  scale_x_continuous(breaks=seq(range(df_segments_a$t[zoom])[1],
-                                range(df_segments_a$t[zoom])[2],
-                                length.out=4),
-                     labels = label_scientific())+
+  scale_x_continuous(breaks = seq(range(df_segments_a$t[zoom])[1],
+                                  range(df_segments_a$t[zoom])[2],
+                                  length.out = 4),
+                     labels = label_scientific()) +
   labs(title = " ", 
        x = "t (days)", 
        y = bquote(a ~ "(AU)")) +
@@ -967,7 +975,9 @@ p_a_100011836=ggplot(data = df_segments_a[zoom,]) +
     legend.text = element_text(size = label_size),      
     legend.title = element_text(size = label_size),    
     legend.key.size = unit(1.5, "cm"),          
-    legend.position = "top"                  
+    legend.position = "top",
+    panel.border = element_rect(color = "black", fill = NA, size = 1),  # Add black frame
+    panel.grid.major = element_line(color = "grey80", size = 0.5, linetype = "dashed")  # Lighter and dashed grid lines
   ) +
   guides(color = guide_legend(override.aes = list(size = 5)))
 # +
@@ -987,25 +997,27 @@ df_segments_theta <- df_res_100011836 %>%
 
 #label_size=28
 # Plot con facet_zoom
-p_theta_100011836=ggplot(data = df_segments_theta[zoom,]) + 
+p_theta_100011836 <- ggplot(data = df_segments_theta[zoom,]) + 
   geom_segment(aes(x = t, y = theta, 
                    xend = next_t, yend = next_theta), 
                size = 1, color = 'grey80') +
   geom_point(aes(x = t, y = theta, color = as.factor(State))) +
-  scale_color_manual(values = c(4, 2, 3, 6,1),
-                     labels = c("NR", "QS", "CP", "TP","HS"),
+  scale_color_manual(values = c(4, 2, 3, 6, 1),
+                     labels = c("NR", "QS", "CP", "TP", "HS"),
                      name = "Orbital regime") +
   labs(title = " ", 
        x = "t (days)", 
        y = bquote(theta ~ "(rad)")) +
   scale_y_continuous(
-    breaks = c(-pi, 0, pi),  # Specify where to place the labels
-    labels = c(expression(-pi), expression(0), expression(pi))  # Use LaTeX-style labels
-  )+
-  scale_x_continuous(breaks=seq(range(df_segments_theta$t[zoom])[1],
-                                range(df_segments_theta$t[zoom])[2],
-                                length.out=4),
-                     labels = label_scientific())+
+    breaks = c(-pi, 0, pi),  
+    labels = c(expression(-pi), expression(0), expression(pi))  
+  ) +
+  scale_x_continuous(
+    breaks = seq(range(df_segments_theta$t[zoom])[1],
+                 range(df_segments_theta$t[zoom])[2],
+                 length.out = 4),
+    labels = label_scientific()
+  ) +
   theme_minimal() +
   theme(
     axis.text = element_text(size = label_size),        
@@ -1014,10 +1026,12 @@ p_theta_100011836=ggplot(data = df_segments_theta[zoom,]) +
     legend.text = element_text(size = label_size),      
     legend.title = element_text(size = label_size),    
     legend.key.size = unit(1.5, "cm"),          
-    legend.position = "top"                  
-  )+
+    legend.position = "top",
+    panel.border = element_rect(color = "black", fill = NA, size = 1),  # Add black frame
+    panel.grid.major = element_line(color = "grey80", size = 0.5, linetype = "dashed")  # Lighter and dashed grid lines
+  ) +
   guides(color = guide_legend(override.aes = list(size = 5)))
-  # +
+# +
 #   facet_zoom(x = t < df_segments_theta$t[dim(Y)[1] / 2], zoom.size = 1) +
 #   facet_zoom(x = t >= df_segments_theta$t[dim(Y)[1] / 2], zoom.size = 1)
 
