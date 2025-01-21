@@ -90,7 +90,9 @@ df_segments_theta_2002AA29 <- dfres_2002AA29 %>%
   mutate(next_t = dplyr::lead(t), next_theta = dplyr::lead(theta))
 
 
-label_size=18
+#label_size=18
+label_size=22
+  
 p_theta_res_2002AA29 <- ggplot(data = df_segments_theta_2002AA29) + 
   geom_segment(aes(x = t, y = theta, 
                    xend = next_t, yend = next_theta), 
@@ -229,7 +231,7 @@ df_segments_theta_2016HO3 <- dfres_2016HO3 %>%
   mutate(next_t = dplyr::lead(t), next_theta = dplyr::lead(theta))
 
 
-label_size=18
+label_size=22
 p_theta_res_2016HO3 <- ggplot(data = df_segments_theta_2016HO3) + 
   geom_segment(aes(x = t, y = theta, 
                    xend = next_t, yend = next_theta), 
@@ -661,10 +663,11 @@ df_segments_a <- df_res_100006174 %>%
 
 #df_segments_a$zoom_group <- ifelse(df_segments_a$t < df_segments_a$t[dim(Y)[1] / 2], "First Half", "Second Half")
 
-zoom=300:1600
+zoom=400:1700
 
 #zoom=1:dim(df_segments_a)[1]
-label_size=18
+#label_size=18
+label_size=22
 p_a_100006174=ggplot(data = df_segments_a[zoom,]) + 
   geom_segment(aes(x = t, y = a, 
                    xend = next_t, yend = next_a), 
@@ -940,7 +943,7 @@ N=dim(Y)[1]
 zoom=400:(N/3)
 
 #zoom=1:dim(df_segments_a)[1]
-label_size=18
+label_size=22
 p_a_100011836=ggplot(data = df_segments_a[zoom,]) + 
   geom_segment(aes(x = t, y = a, 
                    xend = next_t, yend = next_a), 
@@ -982,7 +985,7 @@ df_segments_theta <- df_res_100011836 %>%
 
 #df_segments_theta$zoom_group <- ifelse(df_segments_theta$t < df_segments_theta$t[dim(Y)[1] / 2], "First Half", "Second Half")
 
-label_size=18
+#label_size=28
 # Plot con facet_zoom
 p_theta_100011836=ggplot(data = df_segments_theta[zoom,]) + 
   geom_segment(aes(x = t, y = theta, 
