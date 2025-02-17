@@ -32,6 +32,8 @@ Y=Y[complete.cases(Y),]
 N=dim(Y)[1]
 ground_truth=tail(ground_truth,N)
 
+save(Y,timesY,df2002AA29,file="2002AA29_cleaned.Rdata")
+
 lambda=c(0,5,10,15,20,30)
 K=2
 kappa=seq(1,ceiling(sqrt(dim(Y)[2])),by=.25)
@@ -171,6 +173,8 @@ Y=Y[,-1]
 Y=Y[complete.cases(Y),]
 N=dim(Y)[1]
 ground_truth=tail(ground_truth,N)
+
+save(Y,timesY,df2016HO3,file="2016HO3_cleaned.Rdata")
 
 lambda=c(0,5,10,15,20,30)
 K=2
@@ -593,6 +597,9 @@ summary(data_fin)
 Y=data_fin[complete.cases(data_fin),]
 Y=Y[,-1]
 
+timesY=tail(df100006174_trans$t,dim(Y)[1])
+save(Y,timesY,df100006174,file="100006174_cleaned.Rdata")
+
 lambda=c(0,5,10,15,20,30)
 # K=2:6
 # %FC Con K da 2 a 6 seleziona K=3
@@ -866,6 +873,10 @@ summary(data_fin)
 
 Y=data_fin[complete.cases(data_fin),]
 Y=Y[,-1]
+
+timesY=tail(df100011836_trans$t,dim(Y)[1])
+
+save(Y,timesY,df100011836,file="100011836_cleaned.Rdata")
 
 lambda=c(0,5,10,15,20,30)
 # K=2:6
