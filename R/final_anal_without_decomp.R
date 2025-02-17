@@ -32,7 +32,7 @@ Y=Y[complete.cases(Y),]
 N=dim(Y)[1]
 ground_truth=tail(ground_truth,N)
 
-save(Y,timesY,df2002AA29,file="2002AA29_cleaned.Rdata")
+save(Y,timesY,ground_truth,df2002AA29,file="2002AA29_cleaned.Rdata")
 
 lambda=c(0,5,10,15,20,30)
 K=2
@@ -177,7 +177,7 @@ Y=Y[complete.cases(Y),]
 N=dim(Y)[1]
 ground_truth=tail(ground_truth,N)
 
-save(Y,timesY,df2016HO3,file="2016HO3_cleaned.Rdata")
+save(Y,timesY,ground_truth,df2016HO3,file="2016HO3_cleaned.Rdata")
 
 lambda=c(0,5,10,15,20,30)
 K=2
